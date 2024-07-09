@@ -487,6 +487,63 @@ RUBY18 = T.let(T.unsafe(nil), FalseClass)
 # source://yard//lib/yard.rb#62
 RUBY19 = T.let(T.unsafe(nil), TrueClass)
 
+# @private
+#
+# source://yard//lib/yard/server/rack_adapter.rb#93
+class Rack::Request
+  # source://rack/3.1.6/lib/rack/request.rb#62
+  def initialize(env); end
+
+  # source://rack/3.1.6/lib/rack/request.rb#76
+  def delete_param(k); end
+
+  # source://rack/3.1.6/lib/rack/request.rb#67
+  def params; end
+
+  # source://rack/3.1.6/lib/rack/request.rb#67
+  def query; end
+
+  # source://rack/3.1.6/lib/rack/request.rb#71
+  def update_param(k, v); end
+
+  # Returns the value of attribute version_supplied.
+  #
+  # source://yard//lib/yard/server/rack_adapter.rb#94
+  def version_supplied; end
+
+  # Sets the attribute version_supplied
+  #
+  # @param value the value to set the attribute version_supplied to.
+  #
+  # source://yard//lib/yard/server/rack_adapter.rb#94
+  def version_supplied=(_arg0); end
+
+  # @return [Boolean]
+  #
+  # source://yard//lib/yard/server/rack_adapter.rb#96
+  def xhr?; end
+
+  class << self
+    # source://rack/3.1.6/lib/rack/request.rb#31
+    def forwarded_priority; end
+
+    # source://rack/3.1.6/lib/rack/request.rb#31
+    def forwarded_priority=(_arg0); end
+
+    # source://rack/3.1.6/lib/rack/request.rb#18
+    def ip_filter; end
+
+    # source://rack/3.1.6/lib/rack/request.rb#18
+    def ip_filter=(_arg0); end
+
+    # source://rack/3.1.6/lib/rack/request.rb#40
+    def x_forwarded_proto_priority; end
+
+    # source://rack/3.1.6/lib/rack/request.rb#40
+    def x_forwarded_proto_priority=(_arg0); end
+  end
+end
+
 # source://yard//lib/yard/core_ext/string.rb#2
 class String
   include ::Comparable
@@ -589,6 +646,28 @@ class SymbolHash < ::Hash
     # source://yard//lib/yard/core_ext/symbol_hash.rb#28
     def [](*hsh); end
   end
+end
+
+# @private
+#
+# source://yard//lib/yard/server/webrick_adapter.rb#42
+class WEBrick::HTTPRequest
+  # Returns the value of attribute version_supplied.
+  #
+  # source://yard//lib/yard/server/webrick_adapter.rb#43
+  def version_supplied; end
+
+  # Sets the attribute version_supplied
+  #
+  # @param value the value to set the attribute version_supplied to.
+  #
+  # source://yard//lib/yard/server/webrick_adapter.rb#43
+  def version_supplied=(_arg0); end
+
+  # @return [Boolean]
+  #
+  # source://yard//lib/yard/server/webrick_adapter.rb#44
+  def xhr?; end
 end
 
 # Gem::YARDoc provides methods to generate YARDoc and yri data for installed gems
@@ -14337,6 +14416,74 @@ end
 # source://yard//lib/yard/server/adapter.rb#11
 class YARD::Server::NotFoundError < ::RuntimeError; end
 
+# A server adapter to respond to requests using the Rack server infrastructure.
+#
+# @since 0.6.0
+#
+# source://yard//lib/yard/server/rack_adapter.rb#52
+class YARD::Server::RackAdapter < ::YARD::Server::Adapter
+  include ::YARD::Server::HTTPUtils
+
+  # Responds to Rack requests and builds a response with the {Router}.
+  #
+  # @return [Array(Numeric,Hash,Array)] the Rack-style response
+  # @since 0.6.0
+  #
+  # source://yard//lib/yard/server/rack_adapter.rb#57
+  def call(env); end
+
+  # Starts the Rack server. This method will pass control to the server and
+  # block.
+  #
+  # @return [void]
+  # @since 0.6.0
+  #
+  # source://yard//lib/yard/server/rack_adapter.rb#70
+  def start; end
+
+  private
+
+  # @since 0.6.0
+  #
+  # source://yard//lib/yard/server/rack_adapter.rb#79
+  def print_start_message(server); end
+end
+
+# This class wraps the {RackAdapter} into a Rack-compatible middleware.
+# See {#initialize} for a list of options to pass via Rack's +#use+ method.
+#
+# @example Using the RackMiddleware in a Rack application
+#   libraries = {:mylib => [YARD::Server::LibraryVersion.new('mylib', nil, '/path/to/.yardoc')]}
+#   use YARD::Server::RackMiddleware, :libraries => libraries
+# @note You must pass a +:libraries+ option to the RackMiddleware via +#use+. To
+#   read about how to return a list of libraries, see {LibraryVersion} or look
+#   at the example below.
+# @since 0.6.0
+#
+# source://yard//lib/yard/server/rack_adapter.rb#25
+class YARD::Server::RackMiddleware
+  # Creates a new Rack-based middleware for serving YARD documentation.
+  #
+  # @option opts
+  # @option opts
+  # @option opts
+  # @param app the next Rack middleware in the stack
+  # @param opts [Hash] a customizable set of options
+  # @return [RackMiddleware] a new instance of RackMiddleware
+  # @since 0.6.0
+  #
+  # source://yard//lib/yard/server/rack_adapter.rb#35
+  def initialize(app, opts = T.unsafe(nil)); end
+
+  # @since 0.6.0
+  #
+  # source://yard//lib/yard/server/rack_adapter.rb#41
+  def call(env); end
+end
+
+# source://yard//lib/yard/server/rack_adapter.rb#8
+YARD::Server::RackServer = Rackup::Server
+
 # A router class implements the logic used to recognize a request for a specific
 # URL and run specific {Commands::Base commands}.
 #
@@ -14555,6 +14702,50 @@ module YARD::Server::StaticCaching
   #
   # source://yard//lib/yard/server/static_caching.rb#34
   def check_static_cache; end
+end
+
+# The main adapter to initialize a WEBrick server.
+#
+# @since 0.6.0
+#
+# source://yard//lib/yard/server/webrick_adapter.rb#7
+class YARD::Server::WebrickAdapter < ::YARD::Server::Adapter
+  # Initializes a WEBrick server. If {Adapter#server_options} contains a
+  # +:daemonize+ key set to true, the server will be daemonized.
+  #
+  # @since 0.6.0
+  #
+  # source://yard//lib/yard/server/webrick_adapter.rb#10
+  def start; end
+end
+
+# The main WEBrick servlet implementation, accepting only GET requests.
+#
+# @since 0.6.0
+#
+# source://yard//lib/yard/server/webrick_adapter.rb#20
+class YARD::Server::WebrickServlet < ::WEBrick::HTTPServlet::AbstractServlet
+  # @return [WebrickServlet] a new instance of WebrickServlet
+  # @since 0.6.0
+  #
+  # source://yard//lib/yard/server/webrick_adapter.rb#23
+  def initialize(server, adapter); end
+
+  # @since 0.6.0
+  #
+  # source://yard//lib/yard/server/webrick_adapter.rb#21
+  def adapter; end
+
+  # @since 0.6.0
+  #
+  # source://yard//lib/yard/server/webrick_adapter.rb#21
+  def adapter=(_arg0); end
+
+  # @private
+  # @since 0.6.0
+  #
+  # source://yard//lib/yard/server/webrick_adapter.rb#29
+  def do_GET(request, response); end
 end
 
 # Stubs marshal dumps and acts a delegate class for an object by path

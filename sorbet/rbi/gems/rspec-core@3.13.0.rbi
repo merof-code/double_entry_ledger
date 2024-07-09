@@ -6229,6 +6229,9 @@ module RSpec::Core::HashImitatable
   def any?(*args, &block); end
 
   # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def assert_valid_keys(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
   def assoc(*args, &block); end
 
   # source://rspec-core//lib/rspec/core/metadata.rb#367
@@ -6269,6 +6272,33 @@ module RSpec::Core::HashImitatable
 
   # source://rspec-core//lib/rspec/core/metadata.rb#367
   def deconstruct_keys(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def deep_merge(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def deep_merge!(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def deep_merge?(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def deep_stringify_keys(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def deep_stringify_keys!(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def deep_symbolize_keys(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def deep_symbolize_keys!(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def deep_transform_keys(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def deep_transform_keys!(*args, &block); end
 
   # source://rspec-core//lib/rspec/core/metadata.rb#367
   def default(*args, &block); end
@@ -6335,6 +6365,15 @@ module RSpec::Core::HashImitatable
 
   # source://rspec-core//lib/rspec/core/metadata.rb#367
   def except(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def except!(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def extract!(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def extractable_options?(*args, &block); end
 
   # source://rspec-core//lib/rspec/core/metadata.rb#367
   def fetch(*args, &block); end
@@ -6442,6 +6481,9 @@ module RSpec::Core::HashImitatable
   def minmax_by(*args, &block); end
 
   # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def nested_under_indifferent_access(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
   def none?(*args, &block); end
 
   # source://rspec-core//lib/rspec/core/metadata.rb#367
@@ -6472,6 +6514,15 @@ module RSpec::Core::HashImitatable
   def reverse_each(*args, &block); end
 
   # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def reverse_merge(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def reverse_merge!(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def reverse_update(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
   def select(*args, &block); end
 
   # source://rspec-core//lib/rspec/core/metadata.rb#367
@@ -6485,6 +6536,9 @@ module RSpec::Core::HashImitatable
 
   # source://rspec-core//lib/rspec/core/metadata.rb#367
   def slice(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def slice!(*args, &block); end
 
   # source://rspec-core//lib/rspec/core/metadata.rb#367
   def slice_after(*args, &block); end
@@ -6505,7 +6559,19 @@ module RSpec::Core::HashImitatable
   def store(*args, &block); end
 
   # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def stringify_keys(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def stringify_keys!(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
   def sum(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def symbolize_keys(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def symbolize_keys!(*args, &block); end
 
   # source://rspec-core//lib/rspec/core/metadata.rb#367
   def take(*args, &block); end
@@ -6524,6 +6590,12 @@ module RSpec::Core::HashImitatable
 
   # source://rspec-core//lib/rspec/core/metadata.rb#367
   def to_hash(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def to_options(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def to_options!(*args, &block); end
 
   # source://rspec-core//lib/rspec/core/metadata.rb#367
   def to_proc(*args, &block); end
@@ -6557,6 +6629,15 @@ module RSpec::Core::HashImitatable
 
   # source://rspec-core//lib/rspec/core/metadata.rb#367
   def values_at(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def with_defaults(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def with_defaults!(*args, &block); end
+
+  # source://rspec-core//lib/rspec/core/metadata.rb#367
+  def with_indifferent_access(*args, &block); end
 
   # source://rspec-core//lib/rspec/core/metadata.rb#367
   def zip(*args, &block); end

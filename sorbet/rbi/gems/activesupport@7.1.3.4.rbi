@@ -5,7 +5,4723 @@
 # Please instead update this file by running `bin/tapioca gem activesupport`.
 
 
+# :include: activesupport/README.rdoc
+#
+# source://activesupport//lib/active_support/deprecation.rb#5
+module ActiveSupport
+  extend ::ActiveSupport::LazyLoadHooks
+
+  # source://activesupport//lib/active_support/json/decoding.rb#9
+  def parse_json_times; end
+
+  # source://activesupport//lib/active_support/json/decoding.rb#9
+  def parse_json_times=(val); end
+
+  class << self
+    # source://activesupport//lib/active_support/json/decoding.rb#9
+    def parse_json_times; end
+
+    # source://activesupport//lib/active_support/json/decoding.rb#9
+    def parse_json_times=(val); end
+  end
+end
+
+# source://activesupport//lib/active_support/core_ext/big_decimal/conversions.rb#7
+module ActiveSupport::BigDecimalWithDefaultFormat
+  # source://activesupport//lib/active_support/core_ext/big_decimal/conversions.rb#8
+  def to_s(format = T.unsafe(nil)); end
+end
+
+# Provides +deep_merge+ and +deep_merge!+ methods. Expects the including class
+# to provide a <tt>merge!(other, &block)</tt> method.
+#
+# source://activesupport//lib/active_support/deep_mergeable.rb#6
+module ActiveSupport::DeepMergeable
+  # Returns a new instance with the values from +other+ merged recursively.
+  #
+  #   class Hash
+  #     include ActiveSupport::DeepMergeable
+  #   end
+  #
+  #   hash_1 = { a: true, b: { c: [1, 2, 3] } }
+  #   hash_2 = { a: false, b: { x: [3, 4, 5] } }
+  #
+  #   hash_1.deep_merge(hash_2)
+  #   # => { a: false, b: { c: [1, 2, 3], x: [3, 4, 5] } }
+  #
+  # A block can be provided to merge non-<tt>DeepMergeable</tt> values:
+  #
+  #   hash_1 = { a: 100, b: 200, c: { c1: 100 } }
+  #   hash_2 = { b: 250, c: { c1: 200 } }
+  #
+  #   hash_1.deep_merge(hash_2) do |key, this_val, other_val|
+  #     this_val + other_val
+  #   end
+  #   # => { a: 100, b: 450, c: { c1: 300 } }
+  #
+  # source://activesupport//lib/active_support/deep_mergeable.rb#29
+  def deep_merge(other, &block); end
+
+  # Same as #deep_merge, but modifies +self+.
+  #
+  # source://activesupport//lib/active_support/deep_mergeable.rb#34
+  def deep_merge!(other, &block); end
+
+  # Returns true if +other+ can be deep merged into +self+. Classes may
+  # override this method to restrict or expand the domain of deep mergeable
+  # values. Defaults to checking that +other+ is of type +self.class+.
+  #
+  # @return [Boolean]
+  #
+  # source://activesupport//lib/active_support/deep_mergeable.rb#49
+  def deep_merge?(other); end
+end
+
+# = Active Support \Deprecation
+#
+# \Deprecation specifies the API used by \Rails to deprecate methods, instance variables, objects, and constants. It's
+# also available for gems or applications.
+#
+# For a gem, use Deprecation.new to create a Deprecation object and store it in your module or class (in order for
+# users to be able to configure it).
+#
+#   module MyLibrary
+#     def self.deprecator
+#       @deprecator ||= ActiveSupport::Deprecation.new("2.0", "MyLibrary")
+#     end
+#   end
+#
+# For a Railtie or Engine, you may also want to add it to the application's deprecators, so that the application's
+# configuration can be applied to it.
+#
+#   module MyLibrary
+#     class Railtie < Rails::Railtie
+#       initializer "my_library.deprecator" do |app|
+#         app.deprecators[:my_library] = MyLibrary.deprecator
+#       end
+#     end
+#   end
+#
+# With the above initializer, configuration settings like the following will affect +MyLibrary.deprecator+:
+#
+#   # in config/environments/test.rb
+#   config.active_support.deprecation = :raise
+#
+# source://activesupport//lib/active_support/deprecation.rb#35
+class ActiveSupport::Deprecation
+  include ::ActiveSupport::Deprecation::InstanceDelegator
+  include ::ActiveSupport::Deprecation::Behavior
+  include ::ActiveSupport::Deprecation::Reporting
+  include ::ActiveSupport::Deprecation::Disallowed
+  include ::ActiveSupport::Deprecation::MethodWrapper
+  extend ::ActiveSupport::Deprecation::InstanceDelegator::ClassMethods
+  extend ::ActiveSupport::Deprecation::InstanceDelegator::OverrideDelegators
+
+  # It accepts two parameters on initialization. The first is a version of library
+  # and the second is a library name.
+  #
+  #   ActiveSupport::Deprecation.new('2.0', 'MyLibrary')
+  #
+  # @return [Deprecation] a new instance of Deprecation
+  #
+  # source://activesupport//lib/active_support/deprecation.rb#68
+  def initialize(deprecation_horizon = T.unsafe(nil), gem_name = T.unsafe(nil)); end
+
+  # The version number in which the deprecated behavior will be removed, by default.
+  #
+  # source://activesupport//lib/active_support/deprecation.rb#62
+  def deprecation_horizon; end
+
+  # The version number in which the deprecated behavior will be removed, by default.
+  #
+  # source://activesupport//lib/active_support/deprecation.rb#62
+  def deprecation_horizon=(_arg0); end
+
+  class << self
+    # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#34
+    def allow(*_arg0, **_arg1, &_arg2); end
+
+    # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#34
+    def begin_silence(*_arg0, **_arg1, &_arg2); end
+
+    # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#34
+    def behavior(*_arg0, **_arg1, &_arg2); end
+
+    # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#34
+    def behavior=(arg); end
+
+    # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#34
+    def debug(*_arg0, **_arg1, &_arg2); end
+
+    # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#34
+    def debug=(arg); end
+
+    # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#34
+    def deprecate_methods(*_arg0, **_arg1, &_arg2); end
+
+    # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#34
+    def deprecation_horizon(*_arg0, **_arg1, &_arg2); end
+
+    # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#34
+    def deprecation_horizon=(arg); end
+
+    # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#58
+    def deprecation_warning(deprecated_method_name, message = T.unsafe(nil), caller_backtrace = T.unsafe(nil)); end
+
+    # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#34
+    def disallowed_behavior(*_arg0, **_arg1, &_arg2); end
+
+    # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#34
+    def disallowed_behavior=(arg); end
+
+    # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#34
+    def disallowed_warnings(*_arg0, **_arg1, &_arg2); end
+
+    # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#34
+    def disallowed_warnings=(arg); end
+
+    # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#34
+    def end_silence(*_arg0, **_arg1, &_arg2); end
+
+    # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#34
+    def gem_name(*_arg0, **_arg1, &_arg2); end
+
+    # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#34
+    def gem_name=(arg); end
+
+    # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#34
+    def silence(*_arg0, **_arg1, &_arg2); end
+
+    # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#34
+    def silenced(*_arg0, **_arg1, &_arg2); end
+
+    # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#34
+    def silenced=(arg); end
+
+    # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#53
+    def warn(message = T.unsafe(nil), callstack = T.unsafe(nil)); end
+  end
+end
+
+# Behavior module allows to determine how to display deprecation messages.
+# You can create a custom behavior or set any from the +DEFAULT_BEHAVIORS+
+# constant. Available behaviors are:
+#
+# [+:raise+]   Raise ActiveSupport::DeprecationException.
+# [+:stderr+]  Log all deprecation warnings to <tt>$stderr</tt>.
+# [+:log+]     Log all deprecation warnings to +Rails.logger+.
+# [+:notify+]  Use ActiveSupport::Notifications to notify +deprecation.rails+.
+# [+:report+]  Use ActiveSupport::ErrorReporter to report deprecations.
+# [+:silence+] Do nothing. On \Rails, set <tt>config.active_support.report_deprecations = false</tt> to disable all behaviors.
+#
+# Setting behaviors only affects deprecations that happen after boot time.
+# For more information you can read the documentation of the #behavior= method.
+#
+# source://activesupport//lib/active_support/deprecation/behaviors.rb#69
+module ActiveSupport::Deprecation::Behavior
+  # Returns the current behavior or if one isn't set, defaults to +:stderr+.
+  #
+  # source://activesupport//lib/active_support/deprecation/behaviors.rb#74
+  def behavior; end
+
+  # Sets the behavior to the specified value. Can be a single value, array,
+  # or an object that responds to +call+.
+  #
+  # Available behaviors:
+  #
+  # [+:raise+]   Raise ActiveSupport::DeprecationException.
+  # [+:stderr+]  Log all deprecation warnings to <tt>$stderr</tt>.
+  # [+:log+]     Log all deprecation warnings to +Rails.logger+.
+  # [+:notify+]  Use ActiveSupport::Notifications to notify +deprecation.rails+.
+  # [+:report+]  Use ActiveSupport::ErrorReporter to report deprecations.
+  # [+:silence+] Do nothing.
+  #
+  # Setting behaviors only affects deprecations that happen after boot time.
+  # Deprecation warnings raised by gems are not affected by this setting
+  # because they happen before \Rails boots up.
+  #
+  #   deprecator = ActiveSupport::Deprecation.new
+  #   deprecator.behavior = :stderr
+  #   deprecator.behavior = [:stderr, :log]
+  #   deprecator.behavior = MyCustomHandler
+  #   deprecator.behavior = ->(message, callstack, deprecation_horizon, gem_name) {
+  #     # custom stuff
+  #   }
+  #
+  # If you are using \Rails, you can set
+  # <tt>config.active_support.report_deprecations = false</tt> to disable
+  # all deprecation behaviors. This is similar to the +:silence+ option but
+  # more performant.
+  #
+  # source://activesupport//lib/active_support/deprecation/behaviors.rb#111
+  def behavior=(behavior); end
+
+  # Whether to print a backtrace along with the warning.
+  #
+  # source://activesupport//lib/active_support/deprecation/behaviors.rb#71
+  def debug; end
+
+  # Whether to print a backtrace along with the warning.
+  #
+  # source://activesupport//lib/active_support/deprecation/behaviors.rb#71
+  def debug=(_arg0); end
+
+  # Returns the current behavior for disallowed deprecations or if one isn't set, defaults to +:raise+.
+  #
+  # source://activesupport//lib/active_support/deprecation/behaviors.rb#79
+  def disallowed_behavior; end
+
+  # Sets the behavior for disallowed deprecations (those configured by
+  # ActiveSupport::Deprecation#disallowed_warnings=) to the specified
+  # value. As with #behavior=, this can be a single value, array, or an
+  # object that responds to +call+.
+  #
+  # source://activesupport//lib/active_support/deprecation/behaviors.rb#119
+  def disallowed_behavior=(behavior); end
+
+  private
+
+  # source://activesupport//lib/active_support/deprecation/behaviors.rb#124
+  def arity_coerce(behavior); end
+
+  # source://activesupport//lib/active_support/deprecation/behaviors.rb#143
+  def arity_of_callable(callable); end
+end
+
+# Default warning behaviors per Rails.env.
+#
+# source://activesupport//lib/active_support/deprecation/behaviors.rb#13
+ActiveSupport::Deprecation::DEFAULT_BEHAVIORS = T.let(T.unsafe(nil), Hash)
+
+# DeprecatedConstantAccessor transforms a constant into a deprecated one by
+# hooking +const_missing+.
+#
+# It takes the names of an old (deprecated) constant and of a new constant
+# (both in string form) and a deprecator.
+#
+# The deprecated constant now returns the same object as the new one rather
+# than a proxy object, so it can be used transparently in +rescue+ blocks
+# etc.
+#
+#   PLANETS = %w(mercury venus earth mars jupiter saturn uranus neptune pluto)
+#
+#   # (In a later update, the original implementation of `PLANETS` has been removed.)
+#
+#   PLANETS_POST_2006 = %w(mercury venus earth mars jupiter saturn uranus neptune)
+#   include ActiveSupport::Deprecation::DeprecatedConstantAccessor
+#   deprecate_constant 'PLANETS', 'PLANETS_POST_2006', deprecator: ActiveSupport::Deprecation.new
+#
+#   PLANETS.map { |planet| planet.capitalize }
+#   # => DEPRECATION WARNING: PLANETS is deprecated! Use PLANETS_POST_2006 instead.
+#        (Backtrace information…)
+#        ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"]
+#
+# source://activesupport//lib/active_support/deprecation/constant_accessor.rb#27
+module ActiveSupport::Deprecation::DeprecatedConstantAccessor
+  class << self
+    # @private
+    #
+    # source://activesupport//lib/active_support/deprecation/constant_accessor.rb#28
+    def included(base); end
+  end
+end
+
+# DeprecatedConstantProxy transforms a constant into a deprecated one. It takes the full names of an old
+# (deprecated) constant and of a new constant (both in string form) and a deprecator. The deprecated constant now
+# returns the value of the new one.
+#
+#   PLANETS = %w(mercury venus earth mars jupiter saturn uranus neptune pluto)
+#
+#   # (In a later update, the original implementation of `PLANETS` has been removed.)
+#
+#   PLANETS_POST_2006 = %w(mercury venus earth mars jupiter saturn uranus neptune)
+#   PLANETS = ActiveSupport::Deprecation::DeprecatedConstantProxy.new("PLANETS", "PLANETS_POST_2006", ActiveSupport::Deprecation.new)
+#
+#   PLANETS.map { |planet| planet.capitalize }
+#   # => DEPRECATION WARNING: PLANETS is deprecated! Use PLANETS_POST_2006 instead.
+#        (Backtrace information…)
+#        ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"]
+#
+# source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#122
+class ActiveSupport::Deprecation::DeprecatedConstantProxy < ::Module
+  # @return [DeprecatedConstantProxy] a new instance of DeprecatedConstantProxy
+  #
+  # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#130
+  def initialize(old_const, new_const, deprecator = T.unsafe(nil), message: T.unsafe(nil)); end
+
+  # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#161
+  def append_features(base); end
+
+  # Returns the class of the new constant.
+  #
+  #   PLANETS_POST_2006 = %w(mercury venus earth mars jupiter saturn uranus neptune)
+  #   PLANETS = ActiveSupport::Deprecation::DeprecatedConstantProxy.new('PLANETS', 'PLANETS_POST_2006')
+  #   PLANETS.class # => Array
+  #
+  # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#157
+  def class; end
+
+  # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#171
+  def extended(base); end
+
+  # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#150
+  def hash(*_arg0, **_arg1, &_arg2); end
+
+  # Don't give a deprecation warning on inspect since test/unit and error
+  # logs rely on it for diagnostics.
+  #
+  # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#144
+  def inspect; end
+
+  # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#150
+  def instance_methods(*_arg0, **_arg1, &_arg2); end
+
+  # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#150
+  def name(*_arg0, **_arg1, &_arg2); end
+
+  # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#166
+  def prepend_features(base); end
+
+  # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#150
+  def respond_to?(*_arg0, **_arg1, &_arg2); end
+
+  private
+
+  # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#181
+  def const_missing(name); end
+
+  # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#186
+  def method_missing(called, *args, &block); end
+
+  # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#177
+  def target; end
+
+  class << self
+    # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#123
+    def new(*args, **options, &block); end
+  end
+end
+
+# DeprecatedInstanceVariableProxy transforms an instance variable into a deprecated one. It takes an instance of a
+# class, a method on that class, an instance variable, and a deprecator as the last argument.
+#
+# Trying to use the deprecated instance variable will result in a deprecation warning, pointing to the method as a
+# replacement.
+#
+#   class Example
+#     def initialize
+#       @request = ActiveSupport::Deprecation::DeprecatedInstanceVariableProxy.new(self, :request, :@request, ActiveSupport::Deprecation.new)
+#       @_request = :special_request
+#     end
+#
+#     def request
+#       @_request
+#     end
+#
+#     def old_request
+#       @request
+#     end
+#   end
+#
+#   example = Example.new
+#   # => #<Example:0x007fb9b31090b8 @_request=:special_request, @request=:special_request>
+#
+#   example.old_request.to_s
+#   # => DEPRECATION WARNING: @request is deprecated! Call request.to_s instead of
+#      @request.to_s
+#      (Backtrace information…)
+#      "special_request"
+#
+#   example.request.to_s
+#   # => "special_request"
+#
+# source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#88
+class ActiveSupport::Deprecation::DeprecatedInstanceVariableProxy < ::ActiveSupport::Deprecation::DeprecationProxy
+  # @return [DeprecatedInstanceVariableProxy] a new instance of DeprecatedInstanceVariableProxy
+  #
+  # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#89
+  def initialize(instance, method, var = T.unsafe(nil), deprecator = T.unsafe(nil)); end
+
+  private
+
+  # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#98
+  def target; end
+
+  # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#102
+  def warn(callstack, called, args); end
+end
+
+# DeprecatedObjectProxy transforms an object into a deprecated one. It takes an object, a deprecation message, and
+# a deprecator.
+#
+#   deprecated_object = ActiveSupport::Deprecation::DeprecatedObjectProxy.new(Object.new, "This object is now deprecated", ActiveSupport::Deprecation.new)
+#   # => #<Object:0x007fb9b34c34b0>
+#
+#   deprecated_object.to_s
+#   DEPRECATION WARNING: This object is now deprecated.
+#   (Backtrace)
+#   # => "#<Object:0x007fb9b34c34b0>"
+#
+# source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#38
+class ActiveSupport::Deprecation::DeprecatedObjectProxy < ::ActiveSupport::Deprecation::DeprecationProxy
+  # @return [DeprecatedObjectProxy] a new instance of DeprecatedObjectProxy
+  #
+  # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#39
+  def initialize(object, message, deprecator = T.unsafe(nil)); end
+
+  private
+
+  # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#47
+  def target; end
+
+  # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#51
+  def warn(callstack, called, args); end
+end
+
+# source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#5
+class ActiveSupport::Deprecation::DeprecationProxy
+  # Don't give a deprecation warning on inspect since test/unit and error
+  # logs rely on it for diagnostics.
+  #
+  # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#17
+  def inspect; end
+
+  private
+
+  # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#22
+  def method_missing(called, *args, &block); end
+
+  class << self
+    # source://activesupport//lib/active_support/deprecation/proxy_wrappers.rb#6
+    def new(*args, &block); end
+  end
+end
+
+# A managed collection of deprecators. Configuration methods, such as
+# #behavior=, affect all deprecators in the collection. Additionally, the
+# #silence method silences all deprecators in the collection for the
+# duration of a given block.
+#
+# source://activesupport//lib/active_support/deprecation/deprecators.rb#9
+class ActiveSupport::Deprecation::Deprecators
+  # @return [Deprecators] a new instance of Deprecators
+  #
+  # source://activesupport//lib/active_support/deprecation/deprecators.rb#10
+  def initialize; end
+
+  # Returns a deprecator added to this collection via #[]=.
+  #
+  # source://activesupport//lib/active_support/deprecation/deprecators.rb#16
+  def [](name); end
+
+  # Adds a given +deprecator+ to this collection. The deprecator will be
+  # immediately configured with any options previously set on this
+  # collection.
+  #
+  #   deprecators = ActiveSupport::Deprecation::Deprecators.new
+  #   deprecators.debug = true
+  #
+  #   foo_deprecator = ActiveSupport::Deprecation.new("2.0", "Foo")
+  #   foo_deprecator.debug    # => false
+  #
+  #   deprecators[:foo] = foo_deprecator
+  #   deprecators[:foo].debug # => true
+  #   foo_deprecator.debug    # => true
+  #
+  # source://activesupport//lib/active_support/deprecation/deprecators.rb#34
+  def []=(name, deprecator); end
+
+  # Sets the deprecation warning behavior for all deprecators in this
+  # collection.
+  #
+  # See ActiveSupport::Deprecation#behavior=.
+  #
+  # source://activesupport//lib/active_support/deprecation/deprecators.rb#60
+  def behavior=(behavior); end
+
+  # Sets the debug flag for all deprecators in this collection.
+  #
+  # source://activesupport//lib/active_support/deprecation/deprecators.rb#52
+  def debug=(debug); end
+
+  # Sets the disallowed deprecation warning behavior for all deprecators in
+  # this collection.
+  #
+  # See ActiveSupport::Deprecation#disallowed_behavior=.
+  #
+  # source://activesupport//lib/active_support/deprecation/deprecators.rb#68
+  def disallowed_behavior=(disallowed_behavior); end
+
+  # Sets the disallowed deprecation warnings for all deprecators in this
+  # collection.
+  #
+  # See ActiveSupport::Deprecation#disallowed_warnings=.
+  #
+  # source://activesupport//lib/active_support/deprecation/deprecators.rb#76
+  def disallowed_warnings=(disallowed_warnings); end
+
+  # Iterates over all deprecators in this collection. If no block is given,
+  # returns an +Enumerator+.
+  #
+  # source://activesupport//lib/active_support/deprecation/deprecators.rb#41
+  def each(&block); end
+
+  # Silences all deprecators in this collection for the duration of the
+  # given block.
+  #
+  # See ActiveSupport::Deprecation#silence.
+  #
+  # source://activesupport//lib/active_support/deprecation/deprecators.rb#84
+  def silence(&block); end
+
+  # Sets the silenced flag for all deprecators in this collection.
+  #
+  # source://activesupport//lib/active_support/deprecation/deprecators.rb#47
+  def silenced=(silenced); end
+
+  private
+
+  # source://activesupport//lib/active_support/deprecation/deprecators.rb#97
+  def apply_options(deprecator); end
+
+  # source://activesupport//lib/active_support/deprecation/deprecators.rb#92
+  def set_option(name, value); end
+end
+
+# source://activesupport//lib/active_support/deprecation/disallowed.rb#5
+module ActiveSupport::Deprecation::Disallowed
+  # Returns the configured criteria used to identify deprecation messages
+  # which should be treated as disallowed.
+  #
+  # source://activesupport//lib/active_support/deprecation/disallowed.rb#21
+  def disallowed_warnings; end
+
+  # Sets the criteria used to identify deprecation messages which should be
+  # disallowed. Can be an array containing strings, symbols, or regular
+  # expressions. (Symbols are treated as strings.) These are compared against
+  # the text of the generated deprecation warning.
+  #
+  # Additionally the scalar symbol +:all+ may be used to treat all
+  # deprecations as disallowed.
+  #
+  # Deprecations matching a substring or regular expression will be handled
+  # using the configured Behavior#disallowed_behavior rather than
+  # Behavior#behavior.
+  #
+  # source://activesupport//lib/active_support/deprecation/disallowed.rb#17
+  def disallowed_warnings=(_arg0); end
+
+  private
+
+  # @return [Boolean]
+  #
+  # source://activesupport//lib/active_support/deprecation/disallowed.rb#26
+  def deprecation_disallowed?(message); end
+
+  # @return [Boolean]
+  #
+  # source://activesupport//lib/active_support/deprecation/disallowed.rb#39
+  def explicitly_allowed?(message); end
+end
+
+# source://activesupport//lib/active_support/deprecation/instance_delegator.rb#5
+module ActiveSupport::Deprecation::InstanceDelegator
+  mixes_in_class_methods ::ActiveSupport::Deprecation::InstanceDelegator::ClassMethods
+  mixes_in_class_methods ::ActiveSupport::Deprecation::InstanceDelegator::OverrideDelegators
+
+  class << self
+    # @private
+    #
+    # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#6
+    def included(base); end
+  end
+end
+
+# source://activesupport//lib/active_support/deprecation/instance_delegator.rb#11
+module ActiveSupport::Deprecation::InstanceDelegator::ClassMethods
+  # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#47
+  def _instance; end
+
+  # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#15
+  def include(included_module); end
+
+  # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#42
+  def instance; end
+
+  # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#20
+  def method_added(method_name); end
+end
+
+# source://activesupport//lib/active_support/deprecation/instance_delegator.rb#12
+ActiveSupport::Deprecation::InstanceDelegator::ClassMethods::MUTEX = T.let(T.unsafe(nil), Thread::Mutex)
+
+# source://activesupport//lib/active_support/deprecation/instance_delegator.rb#52
+module ActiveSupport::Deprecation::InstanceDelegator::OverrideDelegators
+  # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#58
+  def deprecation_warning(deprecated_method_name, message = T.unsafe(nil), caller_backtrace = T.unsafe(nil)); end
+
+  # source://activesupport//lib/active_support/deprecation/instance_delegator.rb#53
+  def warn(message = T.unsafe(nil), callstack = T.unsafe(nil)); end
+end
+
+# source://activesupport//lib/active_support/deprecation/method_wrappers.rb#8
+module ActiveSupport::Deprecation::MethodWrapper
+  # Declare that a method has been deprecated.
+  #
+  #   class Fred
+  #     def aaa; end
+  #     def bbb; end
+  #     def ccc; end
+  #     def ddd; end
+  #     def eee; end
+  #   end
+  #
+  #   deprecator = ActiveSupport::Deprecation.new('next-release', 'MyGem')
+  #
+  #   deprecator.deprecate_methods(Fred, :aaa, bbb: :zzz, ccc: 'use Bar#ccc instead')
+  #   # => Fred
+  #
+  #   Fred.new.aaa
+  #   # DEPRECATION WARNING: aaa is deprecated and will be removed from MyGem next-release. (called from irb_binding at (irb):10)
+  #   # => nil
+  #
+  #   Fred.new.bbb
+  #   # DEPRECATION WARNING: bbb is deprecated and will be removed from MyGem next-release (use zzz instead). (called from irb_binding at (irb):11)
+  #   # => nil
+  #
+  #   Fred.new.ccc
+  #   # DEPRECATION WARNING: ccc is deprecated and will be removed from MyGem next-release (use Bar#ccc instead). (called from irb_binding at (irb):12)
+  #   # => nil
+  #
+  # source://activesupport//lib/active_support/deprecation/method_wrappers.rb#35
+  def deprecate_methods(target_module, *method_names); end
+end
+
+# source://activesupport//lib/active_support/deprecation/reporting.rb#7
+module ActiveSupport::Deprecation::Reporting
+  # Allow previously disallowed deprecation warnings within the block.
+  # <tt>allowed_warnings</tt> can be an array containing strings, symbols, or regular
+  # expressions. (Symbols are treated as strings). These are compared against
+  # the text of deprecation warning messages generated within the block.
+  # Matching warnings will be exempt from the rules set by
+  # ActiveSupport::Deprecation#disallowed_warnings.
+  #
+  # The optional <tt>if:</tt> argument accepts a truthy/falsy value or an object that
+  # responds to <tt>.call</tt>. If truthy, then matching warnings will be allowed.
+  # If falsey then the method yields to the block without allowing the warning.
+  #
+  #   deprecator = ActiveSupport::Deprecation.new
+  #   deprecator.disallowed_behavior = :raise
+  #   deprecator.disallowed_warnings = [
+  #     "something broke"
+  #   ]
+  #
+  #   deprecator.warn('something broke!')
+  #   # => ActiveSupport::DeprecationException
+  #
+  #   deprecator.allow ['something broke'] do
+  #     deprecator.warn('something broke!')
+  #   end
+  #   # => nil
+  #
+  #   deprecator.allow ['something broke'], if: Rails.env.production? do
+  #     deprecator.warn('something broke!')
+  #   end
+  #   # => ActiveSupport::DeprecationException for dev/test, nil for production
+  #
+  # source://activesupport//lib/active_support/deprecation/reporting.rb#89
+  def allow(allowed_warnings = T.unsafe(nil), if: T.unsafe(nil), &block); end
+
+  # source://activesupport//lib/active_support/deprecation/reporting.rb#48
+  def begin_silence; end
+
+  # source://activesupport//lib/active_support/deprecation/reporting.rb#99
+  def deprecation_warning(deprecated_method_name, message = T.unsafe(nil), caller_backtrace = T.unsafe(nil)); end
+
+  # source://activesupport//lib/active_support/deprecation/reporting.rb#52
+  def end_silence; end
+
+  # Name of gem where method is deprecated
+  #
+  # source://activesupport//lib/active_support/deprecation/reporting.rb#11
+  def gem_name; end
+
+  # Name of gem where method is deprecated
+  #
+  # source://activesupport//lib/active_support/deprecation/reporting.rb#11
+  def gem_name=(_arg0); end
+
+  # Silence deprecation warnings within the block.
+  #
+  #   deprecator = ActiveSupport::Deprecation.new
+  #   deprecator.warn('something broke!')
+  #   # => "DEPRECATION WARNING: something broke! (called from your_code.rb:1)"
+  #
+  #   deprecator.silence do
+  #     deprecator.warn('something broke!')
+  #   end
+  #   # => nil
+  #
+  # source://activesupport//lib/active_support/deprecation/reporting.rb#41
+  def silence(&block); end
+
+  # source://activesupport//lib/active_support/deprecation/reporting.rb#56
+  def silenced; end
+
+  # Whether to print a message (silent mode)
+  #
+  # source://activesupport//lib/active_support/deprecation/reporting.rb#9
+  def silenced=(_arg0); end
+
+  # Outputs a deprecation warning to the output configured by
+  # ActiveSupport::Deprecation#behavior.
+  #
+  #   ActiveSupport::Deprecation.new.warn('something broke!')
+  #   # => "DEPRECATION WARNING: something broke! (called from your_code.rb:1)"
+  #
+  # source://activesupport//lib/active_support/deprecation/reporting.rb#18
+  def warn(message = T.unsafe(nil), callstack = T.unsafe(nil)); end
+
+  private
+
+  # source://activesupport//lib/active_support/deprecation/reporting.rb#153
+  def _extract_callstack(callstack); end
+
+  # Outputs a deprecation warning message
+  #
+  #   deprecated_method_warning(:method_name)
+  #   # => "method_name is deprecated and will be removed from Rails #{deprecation_horizon}"
+  #   deprecated_method_warning(:method_name, :another_method)
+  #   # => "method_name is deprecated and will be removed from Rails #{deprecation_horizon} (use another_method instead)"
+  #   deprecated_method_warning(:method_name, "Optional message")
+  #   # => "method_name is deprecated and will be removed from Rails #{deprecation_horizon} (Optional message)"
+  #
+  # source://activesupport//lib/active_support/deprecation/reporting.rb#115
+  def deprecated_method_warning(method_name, message = T.unsafe(nil)); end
+
+  # source://activesupport//lib/active_support/deprecation/reporting.rb#129
+  def deprecation_caller_message(callstack); end
+
+  # source://activesupport//lib/active_support/deprecation/reporting.rb#124
+  def deprecation_message(callstack, message = T.unsafe(nil)); end
+
+  # source://activesupport//lib/active_support/deprecation/reporting.rb#140
+  def extract_callstack(callstack); end
+
+  # @return [Boolean]
+  #
+  # source://activesupport//lib/active_support/deprecation/reporting.rb#169
+  def ignored_callstack?(path); end
+end
+
+# source://activesupport//lib/active_support/deprecation/reporting.rb#167
+ActiveSupport::Deprecation::Reporting::LIB_DIR = T.let(T.unsafe(nil), String)
+
+# source://activesupport//lib/active_support/deprecation/reporting.rb#166
+ActiveSupport::Deprecation::Reporting::RAILS_GEM_ROOT = T.let(T.unsafe(nil), String)
+
+# Raised when ActiveSupport::Deprecation::Behavior#behavior is set with <tt>:raise</tt>.
+# You would set <tt>:raise</tt>, as a behavior to raise errors and proactively report exceptions from deprecations.
+#
+# source://activesupport//lib/active_support/deprecation/behaviors.rb#8
+class ActiveSupport::DeprecationException < ::StandardError; end
+
+# = \Hash With Indifferent Access
+#
+# Implements a hash where keys <tt>:foo</tt> and <tt>"foo"</tt> are considered
+# to be the same.
+#
+#   rgb = ActiveSupport::HashWithIndifferentAccess.new
+#
+#   rgb[:black] = '#000000'
+#   rgb[:black]  # => '#000000'
+#   rgb['black'] # => '#000000'
+#
+#   rgb['white'] = '#FFFFFF'
+#   rgb[:white]  # => '#FFFFFF'
+#   rgb['white'] # => '#FFFFFF'
+#
+# Internally symbols are mapped to strings when used as keys in the entire
+# writing interface (calling <tt>[]=</tt>, <tt>merge</tt>, etc). This
+# mapping belongs to the public interface. For example, given:
+#
+#   hash = ActiveSupport::HashWithIndifferentAccess.new(a: 1)
+#
+# You are guaranteed that the key is returned as a string:
+#
+#   hash.keys # => ["a"]
+#
+# Technically other types of keys are accepted:
+#
+#   hash = ActiveSupport::HashWithIndifferentAccess.new(a: 1)
+#   hash[0] = 0
+#   hash # => {"a"=>1, 0=>0}
+#
+# but this class is intended for use cases where strings or symbols are the
+# expected keys and it is convenient to understand both as the same. For
+# example the +params+ hash in Ruby on \Rails.
+#
+# Note that core extensions define <tt>Hash#with_indifferent_access</tt>:
+#
+#   rgb = { black: '#000000', white: '#FFFFFF' }.with_indifferent_access
+#
+# which may be handy.
+#
+# To access this class outside of \Rails, require the core extension with:
+#
+#   require "active_support/core_ext/hash/indifferent_access"
+#
+# which will, in turn, require this file.
+#
+# source://activesupport//lib/active_support/hash_with_indifferent_access.rb#55
+class ActiveSupport::HashWithIndifferentAccess < ::Hash
+  # @return [HashWithIndifferentAccess] a new instance of HashWithIndifferentAccess
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#70
+  def initialize(constructor = T.unsafe(nil)); end
+
+  # Same as <tt>Hash#[]</tt> where the key passed as argument can be
+  # either a string or a symbol:
+  #
+  #   counters = ActiveSupport::HashWithIndifferentAccess.new
+  #   counters[:foo] = 1
+  #
+  #   counters['foo'] # => 1
+  #   counters[:foo]  # => 1
+  #   counters[:zoo]  # => nil
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#168
+  def [](key); end
+
+  # Assigns a new value to the hash:
+  #
+  #   hash = ActiveSupport::HashWithIndifferentAccess.new
+  #   hash[:key] = 'value'
+  #
+  # This value can be later fetched using either +:key+ or <tt>'key'</tt>.
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#98
+  def []=(key, value); end
+
+  # Same as <tt>Hash#assoc</tt> where the key passed as argument can be
+  # either a string or a symbol:
+  #
+  #   counters = ActiveSupport::HashWithIndifferentAccess.new
+  #   counters[:foo] = 1
+  #
+  #   counters.assoc('foo') # => ["foo", 1]
+  #   counters.assoc(:foo)  # => ["foo", 1]
+  #   counters.assoc(:zoo)  # => nil
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#181
+  def assoc(key); end
+
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#375
+  def compact; end
+
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#319
+  def deep_stringify_keys; end
+
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#317
+  def deep_stringify_keys!; end
+
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#324
+  def deep_symbolize_keys; end
+
+  # Same as <tt>Hash#default</tt> where the key passed as argument can be
+  # either a string or a symbol:
+  #
+  #   hash = ActiveSupport::HashWithIndifferentAccess.new(1)
+  #   hash.default                   # => 1
+  #
+  #   hash = ActiveSupport::HashWithIndifferentAccess.new { |hash, key| key }
+  #   hash.default                   # => nil
+  #   hash.default('foo')            # => 'foo'
+  #   hash.default(:foo)             # => 'foo'
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#223
+  def default(key = T.unsafe(nil)); end
+
+  # Removes the specified key from the hash.
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#303
+  def delete(key); end
+
+  # Same as <tt>Hash#dig</tt> where the key passed as argument can be
+  # either a string or a symbol:
+  #
+  #   counters = ActiveSupport::HashWithIndifferentAccess.new
+  #   counters[:foo] = { bar: 1 }
+  #
+  #   counters.dig('foo', 'bar')     # => 1
+  #   counters.dig(:foo, :bar)       # => 1
+  #   counters.dig(:zoo)             # => nil
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#208
+  def dig(*args); end
+
+  # Returns a shallow copy of the hash.
+  #
+  #   hash = ActiveSupport::HashWithIndifferentAccess.new({ a: { b: 'b' } })
+  #   dup  = hash.dup
+  #   dup[:a][:c] = 'c'
+  #
+  #   hash[:a][:c] # => "c"
+  #   dup[:a][:c]  # => "c"
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#264
+  def dup; end
+
+  # Returns a hash with indifferent access that includes everything except given keys.
+  #   hash = { a: "x", b: "y", c: 10 }.with_indifferent_access
+  #   hash.except(:a, "b") # => {c: 10}.with_indifferent_access
+  #   hash                 # => { a: "x", b: "y", c: 10 }.with_indifferent_access
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#311
+  def except(*keys); end
+
+  # Returns +true+ so that <tt>Array#extract_options!</tt> finds members of
+  # this class.
+  #
+  # @return [Boolean]
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#58
+  def extractable_options?; end
+
+  # Same as <tt>Hash#fetch</tt> where the key passed as argument can be
+  # either a string or a symbol:
+  #
+  #   counters = ActiveSupport::HashWithIndifferentAccess.new
+  #   counters[:foo] = 1
+  #
+  #   counters.fetch('foo')          # => 1
+  #   counters.fetch(:bar, 0)        # => 0
+  #   counters.fetch(:bar) { |key| 0 } # => 0
+  #   counters.fetch(:zoo)           # => KeyError: key not found: "zoo"
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#195
+  def fetch(key, *extras); end
+
+  # Returns an array of the values at the specified indices, but also
+  # raises an exception when one of the keys can't be found.
+  #
+  #   hash = ActiveSupport::HashWithIndifferentAccess.new
+  #   hash[:a] = 'x'
+  #   hash[:b] = 'y'
+  #   hash.fetch_values('a', 'b') # => ["x", "y"]
+  #   hash.fetch_values('a', 'c') { |key| 'z' } # => ["x", "z"]
+  #   hash.fetch_values('a', 'c') # => KeyError: key not found: "c"
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#251
+  def fetch_values(*indices, &block); end
+
+  # Checks the hash for a key matching the argument passed in:
+  #
+  #   hash = ActiveSupport::HashWithIndifferentAccess.new
+  #   hash['key'] = 'value'
+  #   hash.key?(:key)  # => true
+  #   hash.key?('key') # => true
+  #
+  # @return [Boolean]
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#151
+  def has_key?(key); end
+
+  # Checks the hash for a key matching the argument passed in:
+  #
+  #   hash = ActiveSupport::HashWithIndifferentAccess.new
+  #   hash['key'] = 'value'
+  #   hash.key?(:key)  # => true
+  #   hash.key?('key') # => true
+  #
+  # @return [Boolean]
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#151
+  def include?(key); end
+
+  # Checks the hash for a key matching the argument passed in:
+  #
+  #   hash = ActiveSupport::HashWithIndifferentAccess.new
+  #   hash['key'] = 'value'
+  #   hash.key?(:key)  # => true
+  #   hash.key?('key') # => true
+  #
+  # @return [Boolean]
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#151
+  def key?(key); end
+
+  # Checks the hash for a key matching the argument passed in:
+  #
+  #   hash = ActiveSupport::HashWithIndifferentAccess.new
+  #   hash['key'] = 'value'
+  #   hash.key?(:key)  # => true
+  #   hash.key?('key') # => true
+  #
+  # @return [Boolean]
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#151
+  def member?(key); end
+
+  # This method has the same semantics of +update+, except it does not
+  # modify the receiver but rather returns a new hash with indifferent
+  # access with the result of the merge.
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#273
+  def merge(*hashes, &block); end
+
+  # Updates the receiver in-place, merging in the hashes passed as arguments:
+  #
+  #   hash_1 = ActiveSupport::HashWithIndifferentAccess.new
+  #   hash_1[:key] = 'value'
+  #
+  #   hash_2 = ActiveSupport::HashWithIndifferentAccess.new
+  #   hash_2[:key] = 'New Value!'
+  #
+  #   hash_1.update(hash_2) # => {"key"=>"New Value!"}
+  #
+  #   hash = ActiveSupport::HashWithIndifferentAccess.new
+  #   hash.update({ "a" => 1 }, { "b" => 2 }) # => { "a" => 1, "b" => 2 }
+  #
+  # The arguments can be either an
+  # +ActiveSupport::HashWithIndifferentAccess+ or a regular +Hash+.
+  # In either case the merge respects the semantics of indifferent access.
+  #
+  # If the argument is a regular hash with keys +:key+ and <tt>"key"</tt> only one
+  # of the values end up in the receiver, but which one is unspecified.
+  #
+  # When given a block, the value for duplicated keys will be determined
+  # by the result of invoking the block with the duplicated key, the value
+  # in the receiver, and the value in +other_hash+. The rules for duplicated
+  # keys follow the semantics of indifferent access:
+  #
+  #   hash_1[:key] = 10
+  #   hash_2['key'] = 12
+  #   hash_1.update(hash_2) { |key, old, new| old + new } # => {"key"=>22}
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#132
+  def merge!(*other_hashes, &block); end
+
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#66
+  def nested_under_indifferent_access; end
+
+  def regular_update(*_arg0); end
+  def regular_writer(_arg0, _arg1); end
+
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#332
+  def reject(*args, &block); end
+
+  # Replaces the contents of this hash with other_hash.
+  #
+  #   h = { "a" => 100, "b" => 200 }
+  #   h.replace({ "c" => 300, "d" => 400 }) # => {"c"=>300, "d"=>400}
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#298
+  def replace(other_hash); end
+
+  # Like +merge+ but the other way around: Merges the receiver into the
+  # argument and returns a new hash with indifferent access as result:
+  #
+  #   hash = ActiveSupport::HashWithIndifferentAccess.new
+  #   hash['a'] = nil
+  #   hash.reverse_merge(a: 0, b: 1) # => {"a"=>nil, "b"=>1}
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#283
+  def reverse_merge(other_hash); end
+
+  # Same semantics as +reverse_merge+ but modifies the receiver in-place.
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#289
+  def reverse_merge!(other_hash); end
+
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#327
+  def select(*args, &block); end
+
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#365
+  def slice(*keys); end
+
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#370
+  def slice!(*keys); end
+
+  # Assigns a new value to the hash:
+  #
+  #   hash = ActiveSupport::HashWithIndifferentAccess.new
+  #   hash[:key] = 'value'
+  #
+  # This value can be later fetched using either +:key+ or <tt>'key'</tt>.
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#98
+  def store(key, value); end
+
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#318
+  def stringify_keys; end
+
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#316
+  def stringify_keys!; end
+
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#322
+  def symbolize_keys; end
+
+  # Convert to a regular hash with string keys.
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#380
+  def to_hash; end
+
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#322
+  def to_options; end
+
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#325
+  def to_options!; end
+
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#344
+  def transform_keys(hash = T.unsafe(nil), &block); end
+
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#349
+  def transform_keys!(hash = T.unsafe(nil), &block); end
+
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#337
+  def transform_values(&block); end
+
+  # Updates the receiver in-place, merging in the hashes passed as arguments:
+  #
+  #   hash_1 = ActiveSupport::HashWithIndifferentAccess.new
+  #   hash_1[:key] = 'value'
+  #
+  #   hash_2 = ActiveSupport::HashWithIndifferentAccess.new
+  #   hash_2[:key] = 'New Value!'
+  #
+  #   hash_1.update(hash_2) # => {"key"=>"New Value!"}
+  #
+  #   hash = ActiveSupport::HashWithIndifferentAccess.new
+  #   hash.update({ "a" => 1 }, { "b" => 2 }) # => { "a" => 1, "b" => 2 }
+  #
+  # The arguments can be either an
+  # +ActiveSupport::HashWithIndifferentAccess+ or a regular +Hash+.
+  # In either case the merge respects the semantics of indifferent access.
+  #
+  # If the argument is a regular hash with keys +:key+ and <tt>"key"</tt> only one
+  # of the values end up in the receiver, but which one is unspecified.
+  #
+  # When given a block, the value for duplicated keys will be determined
+  # by the result of invoking the block with the duplicated key, the value
+  # in the receiver, and the value in +other_hash+. The rules for duplicated
+  # keys follow the semantics of indifferent access:
+  #
+  #   hash_1[:key] = 10
+  #   hash_2['key'] = 12
+  #   hash_1.update(hash_2) { |key, old, new| old + new } # => {"key"=>22}
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#132
+  def update(*other_hashes, &block); end
+
+  # Returns an array of the values at the specified indices:
+  #
+  #   hash = ActiveSupport::HashWithIndifferentAccess.new
+  #   hash[:a] = 'x'
+  #   hash[:b] = 'y'
+  #   hash.values_at('a', 'b') # => ["x", "y"]
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#237
+  def values_at(*keys); end
+
+  # Like +merge+ but the other way around: Merges the receiver into the
+  # argument and returns a new hash with indifferent access as result:
+  #
+  #   hash = ActiveSupport::HashWithIndifferentAccess.new
+  #   hash['a'] = nil
+  #   hash.reverse_merge(a: 0, b: 1) # => {"a"=>nil, "b"=>1}
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#283
+  def with_defaults(other_hash); end
+
+  # Same semantics as +reverse_merge+ but modifies the receiver in-place.
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#289
+  def with_defaults!(other_hash); end
+
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#62
+  def with_indifferent_access; end
+
+  # Returns a hash with indifferent access that includes everything except given keys.
+  #   hash = { a: "x", b: "y", c: 10 }.with_indifferent_access
+  #   hash.except(:a, "b") # => {c: 10}.with_indifferent_access
+  #   hash                 # => { a: "x", b: "y", c: 10 }.with_indifferent_access
+  #
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#311
+  def without(*keys); end
+
+  private
+
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#392
+  def convert_key(key); end
+
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#401
+  def convert_value(value, conversion: T.unsafe(nil)); end
+
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#418
+  def set_defaults(target); end
+
+  # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#426
+  def update_with_single_argument(other_hash, block); end
+
+  class << self
+    # source://activesupport//lib/active_support/hash_with_indifferent_access.rb#85
+    def [](*args); end
+  end
+end
+
+# source://activesupport//lib/active_support/hash_with_indifferent_access.rb#342
+ActiveSupport::HashWithIndifferentAccess::NOT_GIVEN = T.let(T.unsafe(nil), Object)
+
+# = Active Support \Inflector
+#
+# The Inflector transforms words from singular to plural, class names to table
+# names, modularized class names to ones without, and class names to foreign
+# keys. The default inflections for pluralization, singularization, and
+# uncountable words are kept in inflections.rb.
+#
+# The \Rails core team has stated patches for the inflections library will not
+# be accepted in order to avoid breaking legacy applications which may be
+# relying on errant inflections. If you discover an incorrect inflection and
+# require it for your application or wish to define rules for languages other
+# than English, please correct or add them yourself (explained below).
+#
+# source://activesupport//lib/active_support/inflector/inflections.rb#7
+module ActiveSupport::Inflector
+  extend ::ActiveSupport::Inflector
+
+  # Converts strings to UpperCamelCase.
+  # If the +uppercase_first_letter+ parameter is set to false, then produces
+  # lowerCamelCase.
+  #
+  # Also converts '/' to '::' which is useful for converting
+  # paths to namespaces.
+  #
+  #   camelize('active_model')                # => "ActiveModel"
+  #   camelize('active_model', false)         # => "activeModel"
+  #   camelize('active_model/errors')         # => "ActiveModel::Errors"
+  #   camelize('active_model/errors', false)  # => "activeModel::Errors"
+  #
+  # As a rule of thumb you can think of +camelize+ as the inverse of
+  # #underscore, though there are cases where that does not hold:
+  #
+  #   camelize(underscore('SSLError'))        # => "SslError"
+  #
+  # source://activesupport//lib/active_support/inflector/methods.rb#70
+  def camelize(term, uppercase_first_letter = T.unsafe(nil)); end
+
+  # Creates a class name from a plural table name like \Rails does for table
+  # names to models. Note that this returns a string and not a Class. (To
+  # convert to an actual class follow +classify+ with #constantize.)
+  #
+  #   classify('ham_and_eggs') # => "HamAndEgg"
+  #   classify('posts')        # => "Post"
+  #
+  # Singular names are not handled correctly:
+  #
+  #   classify('calculus')     # => "Calculu"
+  #
+  # source://activesupport//lib/active_support/inflector/methods.rb#218
+  def classify(table_name); end
+
+  # Tries to find a constant with the name specified in the argument string.
+  #
+  #   constantize('Module')   # => Module
+  #   constantize('Foo::Bar') # => Foo::Bar
+  #
+  # The name is assumed to be the one of a top-level constant, no matter
+  # whether it starts with "::" or not. No lexical context is taken into
+  # account:
+  #
+  #   C = 'outside'
+  #   module M
+  #     C = 'inside'
+  #     C                # => 'inside'
+  #     constantize('C') # => 'outside', same as ::C
+  #   end
+  #
+  # NameError is raised when the name is not in CamelCase or the constant is
+  # unknown.
+  #
+  # source://activesupport//lib/active_support/inflector/methods.rb#289
+  def constantize(camel_cased_word); end
+
+  # Replaces underscores with dashes in the string.
+  #
+  #   dasherize('puni_puni') # => "puni-puni"
+  #
+  # source://activesupport//lib/active_support/inflector/methods.rb#226
+  def dasherize(underscored_word); end
+
+  # Removes the rightmost segment from the constant expression in the string.
+  #
+  #   deconstantize('Net::HTTP')   # => "Net"
+  #   deconstantize('::Net::HTTP') # => "::Net"
+  #   deconstantize('String')      # => ""
+  #   deconstantize('::String')    # => ""
+  #   deconstantize('')            # => ""
+  #
+  # See also #demodulize.
+  #
+  # source://activesupport//lib/active_support/inflector/methods.rb#256
+  def deconstantize(path); end
+
+  # Removes the module part from the expression in the string.
+  #
+  #   demodulize('ActiveSupport::Inflector::Inflections') # => "Inflections"
+  #   demodulize('Inflections')                           # => "Inflections"
+  #   demodulize('::Inflections')                         # => "Inflections"
+  #   demodulize('')                                      # => ""
+  #
+  # See also #deconstantize.
+  #
+  # source://activesupport//lib/active_support/inflector/methods.rb#238
+  def demodulize(path); end
+
+  # Converts the first character in the string to lowercase.
+  #
+  #   downcase_first('If they enjoyed The Matrix') # => "if they enjoyed The Matrix"
+  #   downcase_first('I')                          # => "i"
+  #   downcase_first('')                           # => ""
+  #
+  # source://activesupport//lib/active_support/inflector/methods.rb#175
+  def downcase_first(string); end
+
+  # Creates a foreign key name from a class name.
+  # +separate_class_name_and_id_with_underscore+ sets whether
+  # the method should put '_' between the name and 'id'.
+  #
+  #   foreign_key('Message')        # => "message_id"
+  #   foreign_key('Message', false) # => "messageid"
+  #   foreign_key('Admin::Post')    # => "post_id"
+  #
+  # source://activesupport//lib/active_support/inflector/methods.rb#267
+  def foreign_key(class_name, separate_class_name_and_id_with_underscore = T.unsafe(nil)); end
+
+  # Tweaks an attribute name for display to end users.
+  #
+  # Specifically, performs these transformations:
+  #
+  # * Applies human inflection rules to the argument.
+  # * Deletes leading underscores, if any.
+  # * Removes an "_id" suffix if present.
+  # * Replaces underscores with spaces, if any.
+  # * Downcases all words except acronyms.
+  # * Capitalizes the first word.
+  # The capitalization of the first word can be turned off by setting the
+  # +:capitalize+ option to false (default is true).
+  #
+  # The trailing '_id' can be kept and capitalized by setting the
+  # optional parameter +keep_id_suffix+ to true (default is false).
+  #
+  #   humanize('employee_salary')                  # => "Employee salary"
+  #   humanize('author_id')                        # => "Author"
+  #   humanize('author_id', capitalize: false)     # => "author"
+  #   humanize('_id')                              # => "Id"
+  #   humanize('author_id', keep_id_suffix: true)  # => "Author id"
+  #
+  # If "SSL" was defined to be an acronym:
+  #
+  #   humanize('ssl_error') # => "SSL error"
+  #
+  # source://activesupport//lib/active_support/inflector/methods.rb#135
+  def humanize(lower_case_and_underscored_word, capitalize: T.unsafe(nil), keep_id_suffix: T.unsafe(nil)); end
+
+  # Yields a singleton instance of Inflector::Inflections so you can specify
+  # additional inflector rules. If passed an optional locale, rules for other
+  # languages can be specified. If not specified, defaults to <tt>:en</tt>.
+  # Only rules for English are provided.
+  #
+  #   ActiveSupport::Inflector.inflections(:en) do |inflect|
+  #     inflect.uncountable 'rails'
+  #   end
+  #
+  # source://activesupport//lib/active_support/inflector/inflections.rb#265
+  def inflections(locale = T.unsafe(nil)); end
+
+  # Returns the suffix that should be added to a number to denote the position
+  # in an ordered sequence such as 1st, 2nd, 3rd, 4th.
+  #
+  #   ordinal(1)     # => "st"
+  #   ordinal(2)     # => "nd"
+  #   ordinal(1002)  # => "nd"
+  #   ordinal(1003)  # => "rd"
+  #   ordinal(-11)   # => "th"
+  #   ordinal(-1021) # => "st"
+  #
+  # source://activesupport//lib/active_support/inflector/methods.rb#334
+  def ordinal(number); end
+
+  # Turns a number into an ordinal string used to denote the position in an
+  # ordered sequence such as 1st, 2nd, 3rd, 4th.
+  #
+  #   ordinalize(1)     # => "1st"
+  #   ordinalize(2)     # => "2nd"
+  #   ordinalize(1002)  # => "1002nd"
+  #   ordinalize(1003)  # => "1003rd"
+  #   ordinalize(-11)   # => "-11th"
+  #   ordinalize(-1021) # => "-1021st"
+  #
+  # source://activesupport//lib/active_support/inflector/methods.rb#347
+  def ordinalize(number); end
+
+  # Replaces special characters in a string so that it may be used as part of
+  # a 'pretty' URL.
+  #
+  #   parameterize("Donald E. Knuth") # => "donald-e-knuth"
+  #   parameterize("^très|Jolie-- ")  # => "tres-jolie"
+  #
+  # To use a custom separator, override the +separator+ argument.
+  #
+  #   parameterize("Donald E. Knuth", separator: '_') # => "donald_e_knuth"
+  #   parameterize("^très|Jolie__ ", separator: '_')  # => "tres_jolie"
+  #
+  # To preserve the case of the characters in a string, use the +preserve_case+ argument.
+  #
+  #   parameterize("Donald E. Knuth", preserve_case: true) # => "Donald-E-Knuth"
+  #   parameterize("^très|Jolie-- ", preserve_case: true) # => "tres-Jolie"
+  #
+  # It preserves dashes and underscores unless they are used as separators:
+  #
+  #   parameterize("^très|Jolie__ ")                 # => "tres-jolie__"
+  #   parameterize("^très|Jolie-- ", separator: "_") # => "tres_jolie--"
+  #   parameterize("^très_Jolie-- ", separator: ".") # => "tres_jolie--"
+  #
+  # If the optional parameter +locale+ is specified,
+  # the word will be parameterized as a word of that language.
+  # By default, this parameter is set to <tt>nil</tt> and it will use
+  # the configured <tt>I18n.locale</tt>.
+  #
+  # source://activesupport//lib/active_support/inflector/transliterate.rb#123
+  def parameterize(string, separator: T.unsafe(nil), preserve_case: T.unsafe(nil), locale: T.unsafe(nil)); end
+
+  # Returns the plural form of the word in the string.
+  #
+  # If passed an optional +locale+ parameter, the word will be
+  # pluralized using rules defined for that language. By default,
+  # this parameter is set to <tt>:en</tt>.
+  #
+  #   pluralize('post')             # => "posts"
+  #   pluralize('octopus')          # => "octopi"
+  #   pluralize('sheep')            # => "sheep"
+  #   pluralize('words')            # => "words"
+  #   pluralize('CamelOctopus')     # => "CamelOctopi"
+  #   pluralize('ley', :es)         # => "leyes"
+  #
+  # source://activesupport//lib/active_support/inflector/methods.rb#33
+  def pluralize(word, locale = T.unsafe(nil)); end
+
+  # Tries to find a constant with the name specified in the argument string.
+  #
+  #   safe_constantize('Module')   # => Module
+  #   safe_constantize('Foo::Bar') # => Foo::Bar
+  #
+  # The name is assumed to be the one of a top-level constant, no matter
+  # whether it starts with "::" or not. No lexical context is taken into
+  # account:
+  #
+  #   C = 'outside'
+  #   module M
+  #     C = 'inside'
+  #     C                     # => 'inside'
+  #     safe_constantize('C') # => 'outside', same as ::C
+  #   end
+  #
+  # +nil+ is returned when the name is not in CamelCase or the constant (or
+  # part of it) is unknown.
+  #
+  #   safe_constantize('blargle')                  # => nil
+  #   safe_constantize('UnknownModule')            # => nil
+  #   safe_constantize('UnknownModule::Foo::Bar')  # => nil
+  #
+  # source://activesupport//lib/active_support/inflector/methods.rb#315
+  def safe_constantize(camel_cased_word); end
+
+  # The reverse of #pluralize, returns the singular form of a word in a
+  # string.
+  #
+  # If passed an optional +locale+ parameter, the word will be
+  # singularized using rules defined for that language. By default,
+  # this parameter is set to <tt>:en</tt>.
+  #
+  #   singularize('posts')            # => "post"
+  #   singularize('octopi')           # => "octopus"
+  #   singularize('sheep')            # => "sheep"
+  #   singularize('word')             # => "word"
+  #   singularize('CamelOctopi')      # => "CamelOctopus"
+  #   singularize('leyes', :es)       # => "ley"
+  #
+  # source://activesupport//lib/active_support/inflector/methods.rb#50
+  def singularize(word, locale = T.unsafe(nil)); end
+
+  # Creates the name of a table like \Rails does for models to table names.
+  # This method uses the #pluralize method on the last word in the string.
+  #
+  #   tableize('RawScaledScorer') # => "raw_scaled_scorers"
+  #   tableize('ham_and_egg')     # => "ham_and_eggs"
+  #   tableize('fancyCategory')   # => "fancy_categories"
+  #
+  # source://activesupport//lib/active_support/inflector/methods.rb#204
+  def tableize(class_name); end
+
+  # Capitalizes all the words and replaces some characters in the string to
+  # create a nicer looking title. +titleize+ is meant for creating pretty
+  # output. It is not used in the \Rails internals.
+  #
+  # The trailing '_id','Id'.. can be kept and capitalized by setting the
+  # optional parameter +keep_id_suffix+ to true.
+  # By default, this parameter is false.
+  #
+  #   titleize('man from the boondocks')                       # => "Man From The Boondocks"
+  #   titleize('x-men: the last stand')                        # => "X Men: The Last Stand"
+  #   titleize('TheManWithoutAPast')                           # => "The Man Without A Past"
+  #   titleize('raiders_of_the_lost_ark')                      # => "Raiders Of The Lost Ark"
+  #   titleize('string_ending_with_id', keep_id_suffix: true)  # => "String Ending With Id"
+  #
+  # source://activesupport//lib/active_support/inflector/methods.rb#192
+  def titleize(word, keep_id_suffix: T.unsafe(nil)); end
+
+  # Replaces non-ASCII characters with an ASCII approximation, or if none
+  # exists, a replacement character which defaults to "?".
+  #
+  #    transliterate('Ærøskøbing')
+  #    # => "AEroskobing"
+  #
+  # Default approximations are provided for Western/Latin characters,
+  # e.g, "ø", "ñ", "é", "ß", etc.
+  #
+  # This method is I18n aware, so you can set up custom approximations for a
+  # locale. This can be useful, for example, to transliterate German's "ü"
+  # and "ö" to "ue" and "oe", or to add support for transliterating Russian
+  # to ASCII.
+  #
+  # In order to make your custom transliterations available, you must set
+  # them as the <tt>i18n.transliterate.rule</tt> i18n key:
+  #
+  #   # Store the transliterations in locales/de.yml
+  #   i18n:
+  #     transliterate:
+  #       rule:
+  #         ü: "ue"
+  #         ö: "oe"
+  #
+  #   # Or set them using Ruby
+  #   I18n.backend.store_translations(:de, i18n: {
+  #     transliterate: {
+  #       rule: {
+  #         'ü' => 'ue',
+  #         'ö' => 'oe'
+  #       }
+  #     }
+  #   })
+  #
+  # The value for <tt>i18n.transliterate.rule</tt> can be a simple Hash that
+  # maps characters to ASCII approximations as shown above, or, for more
+  # complex requirements, a Proc:
+  #
+  #   I18n.backend.store_translations(:de, i18n: {
+  #     transliterate: {
+  #       rule: ->(string) { MyTransliterator.transliterate(string) }
+  #     }
+  #   })
+  #
+  # Now you can have different transliterations for each locale:
+  #
+  #   transliterate('Jürgen', locale: :en)
+  #   # => "Jurgen"
+  #
+  #   transliterate('Jürgen', locale: :de)
+  #   # => "Juergen"
+  #
+  # Transliteration is restricted to UTF-8, US-ASCII, and GB18030 strings.
+  # Other encodings will raise an ArgumentError.
+  #
+  # @raise [ArgumentError]
+  #
+  # source://activesupport//lib/active_support/inflector/transliterate.rb#64
+  def transliterate(string, replacement = T.unsafe(nil), locale: T.unsafe(nil)); end
+
+  # Makes an underscored, lowercase form from the expression in the string.
+  #
+  # Changes '::' to '/' to convert namespaces to paths.
+  #
+  #   underscore('ActiveModel')         # => "active_model"
+  #   underscore('ActiveModel::Errors') # => "active_model/errors"
+  #
+  # As a rule of thumb you can think of +underscore+ as the inverse of
+  # #camelize, though there are cases where that does not hold:
+  #
+  #   camelize(underscore('SSLError'))  # => "SslError"
+  #
+  # source://activesupport//lib/active_support/inflector/methods.rb#99
+  def underscore(camel_cased_word); end
+
+  # Converts the first character in the string to uppercase.
+  #
+  #   upcase_first('what a Lovely Day') # => "What a Lovely Day"
+  #   upcase_first('w')                 # => "W"
+  #   upcase_first('')                  # => ""
+  #
+  # source://activesupport//lib/active_support/inflector/methods.rb#166
+  def upcase_first(string); end
+
+  private
+
+  # Applies inflection rules for +singularize+ and +pluralize+.
+  #
+  # If passed an optional +locale+ parameter, the uncountables will be
+  # found for that locale.
+  #
+  #   apply_inflections('post', inflections.plurals, :en)    # => "posts"
+  #   apply_inflections('posts', inflections.singulars, :en) # => "post"
+  #
+  # source://activesupport//lib/active_support/inflector/methods.rb#376
+  def apply_inflections(word, rules, locale = T.unsafe(nil)); end
+
+  # Mounts a regular expression, returned as a string to ease interpolation,
+  # that will match part by part the given constant.
+  #
+  #   const_regexp("Foo::Bar::Baz") # => "Foo(::Bar(::Baz)?)?"
+  #   const_regexp("::")            # => "::"
+  #
+  # source://activesupport//lib/active_support/inflector/methods.rb#357
+  def const_regexp(camel_cased_word); end
+end
+
+# source://activesupport//lib/active_support/inflector/transliterate.rb#8
+ActiveSupport::Inflector::ALLOWED_ENCODINGS_FOR_TRANSLITERATE = T.let(T.unsafe(nil), Array)
+
+# = Active Support \Inflections
+#
+# A singleton instance of this class is yielded by Inflector.inflections,
+# which can then be used to specify additional inflection rules. If passed
+# an optional locale, rules for other languages can be specified. The
+# default locale is <tt>:en</tt>. Only rules for English are provided.
+#
+#   ActiveSupport::Inflector.inflections(:en) do |inflect|
+#     inflect.plural /^(ox)$/i, '\1\2en'
+#     inflect.singular /^(ox)en/i, '\1'
+#
+#     inflect.irregular 'cactus', 'cacti'
+#
+#     inflect.uncountable 'equipment'
+#   end
+#
+# New rules are added at the top. So in the example above, the irregular
+# rule for cactus will now be the first of the pluralization and
+# singularization rules that is runs. This guarantees that your rules run
+# before any of the rules that may already have been loaded.
+#
+# source://activesupport//lib/active_support/inflector/inflections.rb#30
+class ActiveSupport::Inflector::Inflections
+  # @return [Inflections] a new instance of Inflections
+  #
+  # source://activesupport//lib/active_support/inflector/inflections.rb#80
+  def initialize; end
+
+  # Specifies a new acronym. An acronym must be specified as it will appear
+  # in a camelized string. An underscore string that contains the acronym
+  # will retain the acronym when passed to +camelize+, +humanize+, or
+  # +titleize+. A camelized string that contains the acronym will maintain
+  # the acronym when titleized or humanized, and will convert the acronym
+  # into a non-delimited single lowercase word when passed to +underscore+.
+  #
+  #   acronym 'HTML'
+  #   titleize 'html'     # => 'HTML'
+  #   camelize 'html'     # => 'HTML'
+  #   underscore 'MyHTML' # => 'my_html'
+  #
+  # The acronym, however, must occur as a delimited unit and not be part of
+  # another word for conversions to recognize it:
+  #
+  #   acronym 'HTTP'
+  #   camelize 'my_http_delimited' # => 'MyHTTPDelimited'
+  #   camelize 'https'             # => 'Https', not 'HTTPs'
+  #   underscore 'HTTPS'           # => 'http_s', not 'https'
+  #
+  #   acronym 'HTTPS'
+  #   camelize 'https'   # => 'HTTPS'
+  #   underscore 'HTTPS' # => 'https'
+  #
+  # Note: Acronyms that are passed to +pluralize+ will no longer be
+  # recognized, since the acronym will not occur as a delimited unit in the
+  # pluralized result. To work around this, you must specify the pluralized
+  # form as an acronym as well:
+  #
+  #    acronym 'API'
+  #    camelize(pluralize('api')) # => 'Apis'
+  #
+  #    acronym 'APIs'
+  #    camelize(pluralize('api')) # => 'APIs'
+  #
+  # +acronym+ may be used to specify any word that contains an acronym or
+  # otherwise needs to maintain a non-standard capitalization. The only
+  # restriction is that the word must begin with a capital letter.
+  #
+  #   acronym 'RESTful'
+  #   underscore 'RESTful'           # => 'restful'
+  #   underscore 'RESTfulController' # => 'restful_controller'
+  #   titleize 'RESTfulController'   # => 'RESTful Controller'
+  #   camelize 'restful'             # => 'RESTful'
+  #   camelize 'restful_controller'  # => 'RESTfulController'
+  #
+  #   acronym 'McDonald'
+  #   underscore 'McDonald' # => 'mcdonald'
+  #   camelize 'mcdonald'   # => 'McDonald'
+  #
+  # source://activesupport//lib/active_support/inflector/inflections.rb#142
+  def acronym(word); end
+
+  # Returns the value of attribute acronyms.
+  #
+  # source://activesupport//lib/active_support/inflector/inflections.rb#76
+  def acronyms; end
+
+  # source://activesupport//lib/active_support/inflector/inflections.rb#78
+  def acronyms_camelize_regex; end
+
+  # source://activesupport//lib/active_support/inflector/inflections.rb#78
+  def acronyms_underscore_regex; end
+
+  # Clears the loaded inflections within a given scope (default is
+  # <tt>:all</tt>). Give the scope as a symbol of the inflection type, the
+  # options are: <tt>:plurals</tt>, <tt>:singulars</tt>, <tt>:uncountables</tt>,
+  # <tt>:humans</tt>, <tt>:acronyms</tt>.
+  #
+  #   clear :all
+  #   clear :plurals
+  #
+  # source://activesupport//lib/active_support/inflector/inflections.rb#231
+  def clear(scope = T.unsafe(nil)); end
+
+  # Specifies a humanized form of a string by a regular expression rule or
+  # by a string mapping. When using a regular expression based replacement,
+  # the normal humanize formatting is called after the replacement. When a
+  # string is used, the human form should be specified as desired (example:
+  # 'The name', not 'the_name').
+  #
+  #   human /_cnt$/i, '\1_count'
+  #   human 'legacy_col_person_name', 'Name'
+  #
+  # source://activesupport//lib/active_support/inflector/inflections.rb#220
+  def human(rule, replacement); end
+
+  # Returns the value of attribute humans.
+  #
+  # source://activesupport//lib/active_support/inflector/inflections.rb#76
+  def humans; end
+
+  # Specifies a new irregular that applies to both pluralization and
+  # singularization at the same time. This can only be used for strings, not
+  # regular expressions. You simply pass the irregular in singular and
+  # plural form.
+  #
+  #   irregular 'cactus', 'cacti'
+  #   irregular 'person', 'people'
+  #
+  # source://activesupport//lib/active_support/inflector/inflections.rb#174
+  def irregular(singular, plural); end
+
+  # Specifies a new pluralization rule and its replacement. The rule can
+  # either be a string or a regular expression. The replacement should
+  # always be a string that may include references to the matched data from
+  # the rule.
+  #
+  # source://activesupport//lib/active_support/inflector/inflections.rb#151
+  def plural(rule, replacement); end
+
+  # Returns the value of attribute plurals.
+  #
+  # source://activesupport//lib/active_support/inflector/inflections.rb#76
+  def plurals; end
+
+  # Specifies a new singularization rule and its replacement. The rule can
+  # either be a string or a regular expression. The replacement should
+  # always be a string that may include references to the matched data from
+  # the rule.
+  #
+  # source://activesupport//lib/active_support/inflector/inflections.rb#161
+  def singular(rule, replacement); end
+
+  # Returns the value of attribute singulars.
+  #
+  # source://activesupport//lib/active_support/inflector/inflections.rb#76
+  def singulars; end
+
+  # Specifies words that are uncountable and should not be inflected.
+  #
+  #   uncountable 'money'
+  #   uncountable 'money', 'information'
+  #   uncountable %w( money information rice )
+  #
+  # source://activesupport//lib/active_support/inflector/inflections.rb#208
+  def uncountable(*words); end
+
+  # Returns the value of attribute uncountables.
+  #
+  # source://activesupport//lib/active_support/inflector/inflections.rb#76
+  def uncountables; end
+
+  private
+
+  # source://activesupport//lib/active_support/inflector/inflections.rb#250
+  def define_acronym_regex_patterns; end
+
+  # Private, for the test suite.
+  #
+  # source://activesupport//lib/active_support/inflector/inflections.rb#86
+  def initialize_dup(orig); end
+
+  class << self
+    # source://activesupport//lib/active_support/inflector/inflections.rb#65
+    def instance(locale = T.unsafe(nil)); end
+
+    # source://activesupport//lib/active_support/inflector/inflections.rb#69
+    def instance_or_fallback(locale); end
+  end
+end
+
+# source://activesupport//lib/active_support/inflector/inflections.rb#33
+class ActiveSupport::Inflector::Inflections::Uncountables < ::Array
+  # @return [Uncountables] a new instance of Uncountables
+  #
+  # source://activesupport//lib/active_support/inflector/inflections.rb#34
+  def initialize; end
+
+  # source://activesupport//lib/active_support/inflector/inflections.rb#44
+  def <<(*word); end
+
+  # source://activesupport//lib/active_support/inflector/inflections.rb#48
+  def add(words); end
+
+  # source://activesupport//lib/active_support/inflector/inflections.rb#39
+  def delete(entry); end
+
+  # @return [Boolean]
+  #
+  # source://activesupport//lib/active_support/inflector/inflections.rb#55
+  def uncountable?(str); end
+
+  private
+
+  # source://activesupport//lib/active_support/inflector/inflections.rb#60
+  def to_regex(string); end
+end
+
+# source://activesupport//lib/active_support/json/decoding.rb#11
+module ActiveSupport::JSON
+  class << self
+    # Parses a JSON string (JavaScript Object Notation) into a hash.
+    # See http://www.json.org for more info.
+    #
+    #   ActiveSupport::JSON.decode("{\"team\":\"rails\",\"players\":\"36\"}")
+    #   => {"team" => "rails", "players" => "36"}
+    #
+    # source://activesupport//lib/active_support/json/decoding.rb#22
+    def decode(json); end
+
+    # Parses a JSON string (JavaScript Object Notation) into a hash.
+    # See http://www.json.org for more info.
+    #
+    #   ActiveSupport::JSON.decode("{\"team\":\"rails\",\"players\":\"36\"}")
+    #   => {"team" => "rails", "players" => "36"}
+    #
+    # source://activesupport//lib/active_support/json/decoding.rb#22
+    def load(json); end
+
+    # Returns the class of the error that will be raised when there is an
+    # error in decoding JSON. Using this method means you won't directly
+    # depend on the ActiveSupport's JSON implementation, in case it changes
+    # in the future.
+    #
+    #   begin
+    #     obj = ActiveSupport::JSON.decode(some_string)
+    #   rescue ActiveSupport::JSON.parse_error
+    #     Rails.logger.warn("Attempted to decode invalid JSON: #{some_string}")
+    #   end
+    #
+    # source://activesupport//lib/active_support/json/decoding.rb#43
+    def parse_error; end
+
+    private
+
+    # source://activesupport//lib/active_support/json/decoding.rb#48
+    def convert_dates_from(data); end
+  end
+end
+
+# source://activesupport//lib/active_support/json/decoding.rb#14
+ActiveSupport::JSON::DATETIME_REGEX = T.let(T.unsafe(nil), Regexp)
+
+# matches YAML-formatted dates
+#
+# source://activesupport//lib/active_support/json/decoding.rb#13
+ActiveSupport::JSON::DATE_REGEX = T.let(T.unsafe(nil), Regexp)
+
+# = Lazy Load Hooks
+#
+# LazyLoadHooks allows \Rails to lazily load a lot of components and thus
+# making the app boot faster. Because of this feature now there is no need to
+# require +ActiveRecord::Base+ at boot time purely to apply
+# configuration. Instead a hook is registered that applies configuration once
+# +ActiveRecord::Base+ is loaded. Here +ActiveRecord::Base+ is
+# used as example but this feature can be applied elsewhere too.
+#
+# Here is an example where on_load method is called to register a hook.
+#
+#   initializer 'active_record.initialize_timezone' do
+#     ActiveSupport.on_load(:active_record) do
+#       self.time_zone_aware_attributes = true
+#       self.default_timezone = :utc
+#     end
+#   end
+#
+# When the entirety of +ActiveRecord::Base+ has been
+# evaluated then run_load_hooks is invoked. The very last line of
+# +ActiveRecord::Base+ is:
+#
+#   ActiveSupport.run_load_hooks(:active_record, ActiveRecord::Base)
+#
+# run_load_hooks will then execute all the hooks that were registered
+# with the on_load method. In the case of the above example, it will
+# execute the block of code that is in the +initializer+.
+#
+# Registering a hook that has already run results in that hook executing
+# immediately. This allows hooks to be nested for code that relies on
+# multiple lazily loaded components:
+#
+#   initializer "action_text.renderer" do
+#     ActiveSupport.on_load(:action_controller_base) do
+#       ActiveSupport.on_load(:action_text_content) do
+#         self.default_renderer = Class.new(ActionController::Base).renderer
+#       end
+#     end
+#   end
+#
+# source://activesupport//lib/active_support/lazy_load_hooks.rb#43
+module ActiveSupport::LazyLoadHooks
+  # Declares a block that will be executed when a \Rails component is fully
+  # loaded. If the component has already loaded, the block is executed
+  # immediately.
+  #
+  # Options:
+  #
+  # * <tt>:yield</tt> - Yields the object that run_load_hooks to +block+.
+  # * <tt>:run_once</tt> - Given +block+ will run only once.
+  #
+  # source://activesupport//lib/active_support/lazy_load_hooks.rb#60
+  def on_load(name, options = T.unsafe(nil), &block); end
+
+  # Executes all blocks registered to +name+ via on_load, using +base+ as the
+  # evaluation context.
+  #
+  #   ActiveSupport.run_load_hooks(:active_record, ActiveRecord::Base)
+  #
+  # In the case of the above example, it will execute all hooks registered
+  # for +:active_record+ within the class +ActiveRecord::Base+.
+  #
+  # source://activesupport//lib/active_support/lazy_load_hooks.rb#75
+  def run_load_hooks(name, base = T.unsafe(nil)); end
+
+  private
+
+  # source://activesupport//lib/active_support/lazy_load_hooks.rb#91
+  def execute_hook(name, base, options, block); end
+
+  # source://activesupport//lib/active_support/lazy_load_hooks.rb#83
+  def with_execution_control(name, block, once); end
+
+  class << self
+    # source://activesupport//lib/active_support/lazy_load_hooks.rb#44
+    def extended(base); end
+  end
+end
+
+# source://activesupport//lib/active_support/multibyte.rb#4
+module ActiveSupport::Multibyte
+  class << self
+    # Returns the current proxy class.
+    #
+    # source://activesupport//lib/active_support/multibyte.rb#19
+    def proxy_class; end
+
+    # The proxy class returned when calling mb_chars. You can use this accessor
+    # to configure your own proxy class so you can support other encodings. See
+    # the ActiveSupport::Multibyte::Chars implementation for an example how to
+    # do this.
+    #
+    #   ActiveSupport::Multibyte.proxy_class = CharsForUTF32
+    #
+    # source://activesupport//lib/active_support/multibyte.rb#14
+    def proxy_class=(klass); end
+  end
+end
+
+# source://activesupport//lib/active_support/multibyte/unicode.rb#5
+module ActiveSupport::Multibyte::Unicode
+  extend ::ActiveSupport::Multibyte::Unicode
+
+  # Compose decomposed characters to the composed form.
+  #
+  # source://activesupport//lib/active_support/multibyte/unicode.rb#21
+  def compose(codepoints); end
+
+  # Decompose composed characters to the decomposed form.
+  #
+  # source://activesupport//lib/active_support/multibyte/unicode.rb#12
+  def decompose(type, codepoints); end
+
+  # Replaces all ISO-8859-1 or CP1252 characters by their UTF-8 equivalent
+  # resulting in a valid UTF-8 string.
+  #
+  # Passing +true+ will forcibly tidy all bytes, assuming that the string's
+  # encoding is entirely CP1252 or ISO-8859-1.
+  #
+  # source://activesupport//lib/active_support/multibyte/unicode.rb#30
+  def tidy_bytes(string, force = T.unsafe(nil)); end
+
+  private
+
+  # source://activesupport//lib/active_support/multibyte/unicode.rb#37
+  def recode_windows1252_chars(string); end
+end
+
+# The Unicode version that is supported by the implementation
+#
+# source://activesupport//lib/active_support/multibyte/unicode.rb#9
+ActiveSupport::Multibyte::Unicode::UNICODE_VERSION = T.let(T.unsafe(nil), String)
+
+# = \Notifications
+#
+# +ActiveSupport::Notifications+ provides an instrumentation API for
+# Ruby.
+#
+# == Instrumenters
+#
+# To instrument an event you just need to do:
+#
+#   ActiveSupport::Notifications.instrument('render', extra: :information) do
+#     render plain: 'Foo'
+#   end
+#
+# That first executes the block and then notifies all subscribers once done.
+#
+# In the example above +render+ is the name of the event, and the rest is called
+# the _payload_. The payload is a mechanism that allows instrumenters to pass
+# extra information to subscribers. Payloads consist of a hash whose contents
+# are arbitrary and generally depend on the event.
+#
+# == Subscribers
+#
+# You can consume those events and the information they provide by registering
+# a subscriber.
+#
+#   ActiveSupport::Notifications.subscribe('render') do |name, start, finish, id, payload|
+#     name    # => String, name of the event (such as 'render' from above)
+#     start   # => Time, when the instrumented block started execution
+#     finish  # => Time, when the instrumented block ended execution
+#     id      # => String, unique ID for the instrumenter that fired the event
+#     payload # => Hash, the payload
+#   end
+#
+# Here, the +start+ and +finish+ values represent wall-clock time. If you are
+# concerned about accuracy, you can register a monotonic subscriber.
+#
+#   ActiveSupport::Notifications.monotonic_subscribe('render') do |name, start, finish, id, payload|
+#     name    # => String, name of the event (such as 'render' from above)
+#     start   # => Monotonic time, when the instrumented block started execution
+#     finish  # => Monotonic time, when the instrumented block ended execution
+#     id      # => String, unique ID for the instrumenter that fired the event
+#     payload # => Hash, the payload
+#   end
+#
+# The +start+ and +finish+ values above represent monotonic time.
+#
+# For instance, let's store all "render" events in an array:
+#
+#   events = []
+#
+#   ActiveSupport::Notifications.subscribe('render') do |*args|
+#     events << ActiveSupport::Notifications::Event.new(*args)
+#   end
+#
+# That code returns right away, you are just subscribing to "render" events.
+# The block is saved and will be called whenever someone instruments "render":
+#
+#   ActiveSupport::Notifications.instrument('render', extra: :information) do
+#     render plain: 'Foo'
+#   end
+#
+#   event = events.first
+#   event.name      # => "render"
+#   event.duration  # => 10 (in milliseconds)
+#   event.payload   # => { extra: :information }
+#
+# The block in the <tt>subscribe</tt> call gets the name of the event, start
+# timestamp, end timestamp, a string with a unique identifier for that event's instrumenter
+# (something like "535801666f04d0298cd6"), and a hash with the payload, in
+# that order.
+#
+# If an exception happens during that particular instrumentation the payload will
+# have a key <tt>:exception</tt> with an array of two elements as value: a string with
+# the name of the exception class, and the exception message.
+# The <tt>:exception_object</tt> key of the payload will have the exception
+# itself as the value:
+#
+#   event.payload[:exception]         # => ["ArgumentError", "Invalid value"]
+#   event.payload[:exception_object]  # => #<ArgumentError: Invalid value>
+#
+# As the earlier example depicts, the class ActiveSupport::Notifications::Event
+# is able to take the arguments as they come and provide an object-oriented
+# interface to that data.
+#
+# It is also possible to pass an object which responds to <tt>call</tt> method
+# as the second parameter to the <tt>subscribe</tt> method instead of a block:
+#
+#   module ActionController
+#     class PageRequest
+#       def call(name, started, finished, unique_id, payload)
+#         Rails.logger.debug ['notification:', name, started, finished, unique_id, payload].join(' ')
+#       end
+#     end
+#   end
+#
+#   ActiveSupport::Notifications.subscribe('process_action.action_controller', ActionController::PageRequest.new)
+#
+# resulting in the following output within the logs including a hash with the payload:
+#
+#   notification: process_action.action_controller 2012-04-13 01:08:35 +0300 2012-04-13 01:08:35 +0300 af358ed7fab884532ec7 {
+#      controller: "Devise::SessionsController",
+#      action: "new",
+#      params: {"action"=>"new", "controller"=>"devise/sessions"},
+#      format: :html,
+#      method: "GET",
+#      path: "/login/sign_in",
+#      status: 200,
+#      view_runtime: 279.3080806732178,
+#      db_runtime: 40.053
+#    }
+#
+# You can also subscribe to all events whose name matches a certain regexp:
+#
+#   ActiveSupport::Notifications.subscribe(/render/) do |*args|
+#     ...
+#   end
+#
+# and even pass no argument to <tt>subscribe</tt>, in which case you are subscribing
+# to all events.
+#
+# == Temporary Subscriptions
+#
+# Sometimes you do not want to subscribe to an event for the entire life of
+# the application. There are two ways to unsubscribe.
+#
+# WARNING: The instrumentation framework is designed for long-running subscribers,
+# use this feature sparingly because it wipes some internal caches and that has
+# a negative impact on performance.
+#
+# === Subscribe While a Block Runs
+#
+# You can subscribe to some event temporarily while some block runs. For
+# example, in
+#
+#   callback = lambda {|*args| ... }
+#   ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+#     ...
+#   end
+#
+# the callback will be called for all "sql.active_record" events instrumented
+# during the execution of the block. The callback is unsubscribed automatically
+# after that.
+#
+# To record +started+ and +finished+ values with monotonic time,
+# specify the optional <tt>:monotonic</tt> option to the
+# <tt>subscribed</tt> method. The <tt>:monotonic</tt> option is set
+# to +false+ by default.
+#
+#   callback = lambda {|name, started, finished, unique_id, payload| ... }
+#   ActiveSupport::Notifications.subscribed(callback, "sql.active_record", monotonic: true) do
+#     ...
+#   end
+#
+# === Manual Unsubscription
+#
+# The +subscribe+ method returns a subscriber object:
+#
+#   subscriber = ActiveSupport::Notifications.subscribe("render") do |*args|
+#     ...
+#   end
+#
+# To prevent that block from being called anymore, just unsubscribe passing
+# that reference:
+#
+#   ActiveSupport::Notifications.unsubscribe(subscriber)
+#
+# You can also unsubscribe by passing the name of the subscriber object. Note
+# that this will unsubscribe all subscriptions with the given name:
+#
+#   ActiveSupport::Notifications.unsubscribe("render")
+#
+# Subscribers using a regexp or other pattern-matching object will remain subscribed
+# to all events that match their original pattern, unless those events match a string
+# passed to +unsubscribe+:
+#
+#   subscriber = ActiveSupport::Notifications.subscribe(/render/) { }
+#   ActiveSupport::Notifications.unsubscribe('render_template.action_view')
+#   subscriber.matches?('render_template.action_view') # => false
+#   subscriber.matches?('render_partial.action_view') # => true
+#
+# == Default Queue
+#
+# Notifications ships with a queue implementation that consumes and publishes events
+# to all log subscribers. You can use any queue implementation you want.
+#
+# source://activesupport//lib/active_support/notifications/instrumenter.rb#7
+module ActiveSupport::Notifications
+  class << self
+    # source://activesupport//lib/active_support/notifications.rb#204
+    def instrument(name, payload = T.unsafe(nil)); end
+
+    # source://activesupport//lib/active_support/notifications.rb#268
+    def instrumenter; end
+
+    # Performs the same functionality as #subscribe, but the +start+ and
+    # +finish+ block arguments are in monotonic time instead of wall-clock
+    # time. Monotonic time will not jump forward or backward (due to NTP or
+    # Daylights Savings). Use +monotonic_subscribe+ when accuracy of time
+    # duration is important. For example, computing elapsed time between
+    # two events.
+    #
+    # source://activesupport//lib/active_support/notifications.rb#253
+    def monotonic_subscribe(pattern = T.unsafe(nil), callback = T.unsafe(nil), &block); end
+
+    # Returns the value of attribute notifier.
+    #
+    # source://activesupport//lib/active_support/notifications.rb#194
+    def notifier; end
+
+    # Sets the attribute notifier
+    #
+    # @param value the value to set the attribute notifier to.
+    #
+    # source://activesupport//lib/active_support/notifications.rb#194
+    def notifier=(_arg0); end
+
+    # source://activesupport//lib/active_support/notifications.rb#196
+    def publish(name, *args); end
+
+    # source://activesupport//lib/active_support/notifications.rb#200
+    def publish_event(event); end
+
+    # Subscribe to a given event name with the passed +block+.
+    #
+    # You can subscribe to events by passing a String to match exact event
+    # names, or by passing a Regexp to match all events that match a pattern.
+    #
+    #   ActiveSupport::Notifications.subscribe(/render/) do |*args|
+    #     @event = ActiveSupport::Notifications::Event.new(*args)
+    #   end
+    #
+    # The +block+ will receive five parameters with information about the event:
+    #
+    #   ActiveSupport::Notifications.subscribe('render') do |name, start, finish, id, payload|
+    #     name    # => String, name of the event (such as 'render' from above)
+    #     start   # => Time, when the instrumented block started execution
+    #     finish  # => Time, when the instrumented block ended execution
+    #     id      # => String, unique ID for the instrumenter that fired the event
+    #     payload # => Hash, the payload
+    #   end
+    #
+    # If the block passed to the method only takes one parameter,
+    # it will yield an event object to the block:
+    #
+    #   ActiveSupport::Notifications.subscribe(/render/) do |event|
+    #     @event = event
+    #   end
+    #
+    # Raises an error if invalid event name type is passed:
+    #
+    #   ActiveSupport::Notifications.subscribe(:render) {|*args| ...}
+    #   #=> ArgumentError (pattern must be specified as a String, Regexp or empty)
+    #
+    # source://activesupport//lib/active_support/notifications.rb#243
+    def subscribe(pattern = T.unsafe(nil), callback = T.unsafe(nil), &block); end
+
+    # source://activesupport//lib/active_support/notifications.rb#257
+    def subscribed(callback, pattern = T.unsafe(nil), monotonic: T.unsafe(nil), &block); end
+
+    # source://activesupport//lib/active_support/notifications.rb#264
+    def unsubscribe(subscriber_or_name); end
+
+    private
+
+    # source://activesupport//lib/active_support/notifications.rb#273
+    def registry; end
+  end
+end
+
+# source://activesupport//lib/active_support/notifications/instrumenter.rb#106
+class ActiveSupport::Notifications::Event
+  # @return [Event] a new instance of Event
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#110
+  def initialize(name, start, ending, transaction_id, payload); end
+
+  # Returns the number of allocations made between the call to #start! and
+  # the call to #finish!.
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#164
+  def allocations; end
+
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#168
+  def children; end
+
+  # Returns the CPU time (in milliseconds) passed between the call to
+  # #start! and the call to #finish!.
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#151
+  def cpu_time; end
+
+  # Returns the difference in milliseconds between when the execution of the
+  # event started and when it ended.
+  #
+  #   ActiveSupport::Notifications.subscribe('wait') do |*args|
+  #     @event = ActiveSupport::Notifications::Event.new(*args)
+  #   end
+  #
+  #   ActiveSupport::Notifications.instrument('wait') do
+  #     sleep 1
+  #   end
+  #
+  #   @event.duration # => 1000.138
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#197
+  def duration; end
+
+  # Returns the value of attribute end.
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#107
+  def end; end
+
+  # Record information at the time this event finishes
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#143
+  def finish!; end
+
+  # Returns the idle time time (in milliseconds) passed between the call to
+  # #start! and the call to #finish!.
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#157
+  def idle_time; end
+
+  # Returns the value of attribute name.
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#107
+  def name; end
+
+  # @return [Boolean]
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#176
+  def parent_of?(event); end
+
+  # Returns the value of attribute payload.
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#108
+  def payload; end
+
+  # Sets the attribute payload
+  #
+  # @param value the value to set the attribute payload to.
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#108
+  def payload=(_arg0); end
+
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#122
+  def record; end
+
+  # Record information at the time this event starts
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#136
+  def start!; end
+
+  # Returns the value of attribute time.
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#107
+  def time; end
+
+  # Returns the value of attribute transaction_id.
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#107
+  def transaction_id; end
+
+  private
+
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#202
+  def now; end
+
+  # Likely on JRuby, TruffleRuby
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#219
+  def now_allocations; end
+
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#209
+  def now_cpu; end
+end
+
+# This is a default queue implementation that ships with Notifications.
+# It just pushes events to all registered log subscribers.
+#
+# This class is thread safe. All methods are reentrant.
+#
+# source://activesupport//lib/active_support/notifications/fanout.rb#51
+class ActiveSupport::Notifications::Fanout
+  include ::Mutex_m
+  include ::ActiveSupport::Notifications::FanoutIteration
+
+  # @return [Fanout] a new instance of Fanout
+  #
+  # source://activesupport//lib/active_support/notifications/fanout.rb#54
+  def initialize; end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#301
+  def all_listeners_for(name); end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#276
+  def build_handle(name, id, payload); end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#105
+  def clear_cache(key = T.unsafe(nil)); end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#287
+  def finish(name, id, payload, listeners = T.unsafe(nil)); end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#191
+  def groups_for(name); end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#63
+  def inspect; end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#310
+  def listeners_for(name); end
+
+  # @return [Boolean]
+  #
+  # source://activesupport//lib/active_support/notifications/fanout.rb#314
+  def listening?(name); end
+
+  # source://mutex_m/0.2.0/mutex_m.rb#91
+  def lock; end
+
+  # source://mutex_m/0.2.0/mutex_m.rb#81
+  def locked?; end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#293
+  def publish(name, *args); end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#297
+  def publish_event(event); end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#280
+  def start(name, id, payload); end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#68
+  def subscribe(pattern = T.unsafe(nil), callable = T.unsafe(nil), monotonic: T.unsafe(nil), &block); end
+
+  # source://mutex_m/0.2.0/mutex_m.rb#76
+  def synchronize(&block); end
+
+  # source://mutex_m/0.2.0/mutex_m.rb#86
+  def try_lock; end
+
+  # source://mutex_m/0.2.0/mutex_m.rb#96
+  def unlock; end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#85
+  def unsubscribe(subscriber_or_name); end
+
+  # This is a sync queue, so there is no waiting.
+  #
+  # source://activesupport//lib/active_support/notifications/fanout.rb#319
+  def wait; end
+end
+
+# source://activesupport//lib/active_support/notifications/fanout.rb#117
+class ActiveSupport::Notifications::Fanout::BaseGroup
+  include ::ActiveSupport::Notifications::FanoutIteration
+
+  # @return [BaseGroup] a new instance of BaseGroup
+  #
+  # source://activesupport//lib/active_support/notifications/fanout.rb#120
+  def initialize(listeners, name, id, payload); end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#124
+  def each(&block); end
+end
+
+# source://activesupport//lib/active_support/notifications/fanout.rb#129
+class ActiveSupport::Notifications::Fanout::BaseTimeGroup < ::ActiveSupport::Notifications::Fanout::BaseGroup
+  # source://activesupport//lib/active_support/notifications/fanout.rb#134
+  def finish(name, id, payload); end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#130
+  def start(name, id, payload); end
+end
+
+# source://activesupport//lib/active_support/notifications/fanout.rb#170
+class ActiveSupport::Notifications::Fanout::EventObjectGroup < ::ActiveSupport::Notifications::Fanout::BaseGroup
+  # source://activesupport//lib/active_support/notifications/fanout.rb#176
+  def finish(name, id, payload); end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#171
+  def start(name, id, payload); end
+
+  private
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#186
+  def build_event(name, id, payload); end
+end
+
+# source://activesupport//lib/active_support/notifications/fanout.rb#156
+class ActiveSupport::Notifications::Fanout::EventedGroup < ::ActiveSupport::Notifications::Fanout::BaseGroup
+  # source://activesupport//lib/active_support/notifications/fanout.rb#163
+  def finish(name, id, payload); end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#157
+  def start(name, id, payload); end
+end
+
+# A +Handle+ is used to record the start and finish time of event.
+#
+# Both #start and #finish must each be called exactly once.
+#
+# Where possible, it's best to use the block form: ActiveSupport::Notifications.instrument.
+# +Handle+ is a low-level API intended for cases where the block form can't be used.
+#
+#   handle = ActiveSupport::Notifications.instrumenter.build_handle("my.event", {})
+#   begin
+#     handle.start
+#     # work to be instrumented
+#   ensure
+#     handle.finish
+#   end
+#
+# source://activesupport//lib/active_support/notifications/fanout.rb#231
+class ActiveSupport::Notifications::Fanout::Handle
+  include ::ActiveSupport::Notifications::FanoutIteration
+
+  # @return [Handle] a new instance of Handle
+  #
+  # source://activesupport//lib/active_support/notifications/fanout.rb#234
+  def initialize(notifier, name, id, payload); end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#253
+  def finish; end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#257
+  def finish_with_values(name, id, payload); end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#244
+  def start; end
+
+  private
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#267
+  def ensure_state!(expected); end
+end
+
+# source://activesupport//lib/active_support/notifications/fanout.rb#142
+class ActiveSupport::Notifications::Fanout::MonotonicTimedGroup < ::ActiveSupport::Notifications::Fanout::BaseTimeGroup
+  private
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#144
+  def now; end
+end
+
+# source://activesupport//lib/active_support/notifications/fanout.rb#322
+module ActiveSupport::Notifications::Fanout::Subscribers
+  class << self
+    # source://activesupport//lib/active_support/notifications/fanout.rb#323
+    def new(pattern, listener, monotonic); end
+  end
+end
+
+# source://activesupport//lib/active_support/notifications/fanout.rb#437
+class ActiveSupport::Notifications::Fanout::Subscribers::EventObject < ::ActiveSupport::Notifications::Fanout::Subscribers::Evented
+  # source://activesupport//lib/active_support/notifications/fanout.rb#438
+  def group_class; end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#442
+  def publish_event(event); end
+end
+
+# source://activesupport//lib/active_support/notifications/fanout.rb#379
+class ActiveSupport::Notifications::Fanout::Subscribers::Evented
+  # @return [Evented] a new instance of Evented
+  #
+  # source://activesupport//lib/active_support/notifications/fanout.rb#382
+  def initialize(pattern, delegate); end
+
+  # Returns the value of attribute delegate.
+  #
+  # source://activesupport//lib/active_support/notifications/fanout.rb#380
+  def delegate; end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#390
+  def group_class; end
+
+  # Returns the value of attribute pattern.
+  #
+  # source://activesupport//lib/active_support/notifications/fanout.rb#380
+  def pattern; end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#394
+  def publish(name, *args); end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#400
+  def publish_event(event); end
+
+  # Returns the value of attribute silenceable.
+  #
+  # source://activesupport//lib/active_support/notifications/fanout.rb#380
+  def silenceable; end
+
+  # @return [Boolean]
+  #
+  # source://activesupport//lib/active_support/notifications/fanout.rb#408
+  def silenced?(name); end
+
+  # @return [Boolean]
+  #
+  # source://activesupport//lib/active_support/notifications/fanout.rb#412
+  def subscribed_to?(name); end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#416
+  def unsubscribe!(name); end
+end
+
+# source://activesupport//lib/active_support/notifications/fanout.rb#342
+class ActiveSupport::Notifications::Fanout::Subscribers::Matcher
+  # @return [Matcher] a new instance of Matcher
+  #
+  # source://activesupport//lib/active_support/notifications/fanout.rb#355
+  def initialize(pattern); end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#364
+  def ===(name); end
+
+  # Returns the value of attribute exclusions.
+  #
+  # source://activesupport//lib/active_support/notifications/fanout.rb#343
+  def exclusions; end
+
+  # Returns the value of attribute pattern.
+  #
+  # source://activesupport//lib/active_support/notifications/fanout.rb#343
+  def pattern; end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#360
+  def unsubscribe!(name); end
+
+  class << self
+    # source://activesupport//lib/active_support/notifications/fanout.rb#345
+    def wrap(pattern); end
+  end
+end
+
+# source://activesupport//lib/active_support/notifications/fanout.rb#368
+class ActiveSupport::Notifications::Fanout::Subscribers::Matcher::AllMessages
+  # source://activesupport//lib/active_support/notifications/fanout.rb#369
+  def ===(name); end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#373
+  def unsubscribe!(*_arg0); end
+end
+
+# source://activesupport//lib/active_support/notifications/fanout.rb#431
+class ActiveSupport::Notifications::Fanout::Subscribers::MonotonicTimed < ::ActiveSupport::Notifications::Fanout::Subscribers::Timed
+  # source://activesupport//lib/active_support/notifications/fanout.rb#432
+  def group_class; end
+end
+
+# source://activesupport//lib/active_support/notifications/fanout.rb#421
+class ActiveSupport::Notifications::Fanout::Subscribers::Timed < ::ActiveSupport::Notifications::Fanout::Subscribers::Evented
+  # source://activesupport//lib/active_support/notifications/fanout.rb#422
+  def group_class; end
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#426
+  def publish(name, *args); end
+end
+
+# source://activesupport//lib/active_support/notifications/fanout.rb#149
+class ActiveSupport::Notifications::Fanout::TimedGroup < ::ActiveSupport::Notifications::Fanout::BaseTimeGroup
+  private
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#151
+  def now; end
+end
+
+# source://activesupport//lib/active_support/notifications/fanout.rb#20
+module ActiveSupport::Notifications::FanoutIteration
+  private
+
+  # source://activesupport//lib/active_support/notifications/fanout.rb#22
+  def iterate_guarding_exceptions(collection); end
+end
+
+# source://activesupport//lib/active_support/notifications/fanout.rb#10
+class ActiveSupport::Notifications::InstrumentationSubscriberError < ::RuntimeError
+  # @return [InstrumentationSubscriberError] a new instance of InstrumentationSubscriberError
+  #
+  # source://activesupport//lib/active_support/notifications/fanout.rb#13
+  def initialize(exceptions); end
+
+  # Returns the value of attribute exceptions.
+  #
+  # source://activesupport//lib/active_support/notifications/fanout.rb#11
+  def exceptions; end
+end
+
+# Instrumenters are stored in a thread local.
+#
+# source://activesupport//lib/active_support/notifications/instrumenter.rb#9
+class ActiveSupport::Notifications::Instrumenter
+  # @return [Instrumenter] a new instance of Instrumenter
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#12
+  def initialize(notifier); end
+
+  # Returns a "handle" for an event with the given +name+ and +payload+.
+  #
+  # #start and #finish must each be called exactly once on the returned object.
+  #
+  # Where possible, it's best to use #instrument, which will record the
+  # start and finish of the event and correctly handle any exceptions.
+  # +build_handle+ is a low-level API intended for cases where using
+  # +instrument+ isn't possible.
+  #
+  # See ActiveSupport::Notifications::Fanout::Handle.
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#78
+  def build_handle(name, payload); end
+
+  # Send a finish notification with +name+ and +payload+.
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#92
+  def finish(name, payload); end
+
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#96
+  def finish_with_state(listeners_state, name, payload); end
+
+  # Returns the value of attribute id.
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#10
+  def id; end
+
+  # Given a block, instrument it by measuring the time taken to execute
+  # and publish it. Without a block, simply send a message via the
+  # notifier. Notice that events get sent even if an error occurs in the
+  # passed-in block.
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#54
+  def instrument(name, payload = T.unsafe(nil)); end
+
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#82
+  def new_event(name, payload = T.unsafe(nil)); end
+
+  # Send a start notification with +name+ and +payload+.
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#87
+  def start(name, payload); end
+
+  private
+
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#101
+  def unique_id; end
+end
+
+# source://activesupport//lib/active_support/notifications/instrumenter.rb#21
+class ActiveSupport::Notifications::Instrumenter::LegacyHandle
+  # @return [LegacyHandle] a new instance of LegacyHandle
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#34
+  def initialize(notifier, name, id, payload); end
+
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#45
+  def finish; end
+
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#41
+  def start; end
+end
+
+# source://activesupport//lib/active_support/notifications/instrumenter.rb#22
+class ActiveSupport::Notifications::Instrumenter::LegacyHandle::Wrapper
+  # @return [Wrapper] a new instance of Wrapper
+  #
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#23
+  def initialize(notifier); end
+
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#27
+  def build_handle(name, id, payload); end
+
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#31
+  def finish(*_arg0, **_arg1, &_arg2); end
+
+  # source://activesupport//lib/active_support/notifications/instrumenter.rb#31
+  def start(*_arg0, **_arg1, &_arg2); end
+end
+
+# = Active Support \Time Zone
+#
+# The TimeZone class serves as a wrapper around +TZInfo::Timezone+ instances.
+# It allows us to do the following:
+#
+# * Limit the set of zones provided by TZInfo to a meaningful subset of 134
+#   zones.
+# * Retrieve and display zones with a friendlier name
+#   (e.g., "Eastern Time (US & Canada)" instead of "America/New_York").
+# * Lazily load +TZInfo::Timezone+ instances only when they're needed.
+# * Create ActiveSupport::TimeWithZone instances via TimeZone's +local+,
+#   +parse+, +at+, and +now+ methods.
+#
+# If you set <tt>config.time_zone</tt> in the \Rails Application, you can
+# access this TimeZone object via <tt>Time.zone</tt>:
+#
+#   # application.rb:
+#   class Application < Rails::Application
+#     config.time_zone = 'Eastern Time (US & Canada)'
+#   end
+#
+#   Time.zone      # => #<ActiveSupport::TimeZone:0x514834...>
+#   Time.zone.name # => "Eastern Time (US & Canada)"
+#   Time.zone.now  # => Sun, 18 May 2008 14:30:44 EDT -04:00
+#
+# source://activesupport//lib/active_support/values/time_zone.rb#31
+class ActiveSupport::TimeZone
+  include ::Comparable
+
+  # Create a new TimeZone object with the given name and offset. The
+  # offset is the number of seconds that this time zone is offset from UTC
+  # (GMT). Seconds were chosen as the offset unit because that is the unit
+  # that Ruby uses to represent time zone offsets (see Time#utc_offset).
+  #
+  # @return [TimeZone] a new instance of TimeZone
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#303
+  def initialize(name, utc_offset = T.unsafe(nil), tzinfo = T.unsafe(nil)); end
+
+  # Compare this time zone to the parameter. The two are compared first on
+  # their offsets, and then by name.
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#326
+  def <=>(zone); end
+
+  # Compare #name and TZInfo identifier to a supplied regexp, returning +true+
+  # if a match is found.
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#335
+  def =~(re); end
+
+  # Method for creating new ActiveSupport::TimeWithZone instance in time zone
+  # of +self+ from number of seconds since the Unix epoch.
+  #
+  #   Time.zone = 'Hawaii'        # => "Hawaii"
+  #   Time.utc(2000).to_f         # => 946684800.0
+  #   Time.zone.at(946684800.0)   # => Fri, 31 Dec 1999 14:00:00 HST -10:00
+  #
+  # A second argument can be supplied to specify sub-second precision.
+  #
+  #   Time.zone = 'Hawaii'                # => "Hawaii"
+  #   Time.at(946684800, 123456.789).nsec # => 123456789
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#372
+  def at(*args); end
+
+  # source://activesupport//lib/active_support/values/time_zone.rb#568
+  def encode_with(coder); end
+
+  # Returns a formatted string of the offset from UTC, or an alternative
+  # string if the time zone is already UTC.
+  #
+  #   zone = ActiveSupport::TimeZone['Central Time (US & Canada)']
+  #   zone.formatted_offset        # => "-06:00"
+  #   zone.formatted_offset(false) # => "-0600"
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#320
+  def formatted_offset(colon = T.unsafe(nil), alternate_utc_string = T.unsafe(nil)); end
+
+  # source://activesupport//lib/active_support/values/time_zone.rb#564
+  def init_with(coder); end
+
+  # Method for creating new ActiveSupport::TimeWithZone instance in time zone
+  # of +self+ from an ISO 8601 string.
+  #
+  #   Time.zone = 'Hawaii'                     # => "Hawaii"
+  #   Time.zone.iso8601('1999-12-31T14:00:00') # => Fri, 31 Dec 1999 14:00:00 HST -10:00
+  #
+  # If the time components are missing then they will be set to zero.
+  #
+  #   Time.zone = 'Hawaii'            # => "Hawaii"
+  #   Time.zone.iso8601('1999-12-31') # => Fri, 31 Dec 1999 00:00:00 HST -10:00
+  #
+  # If the string is invalid then an +ArgumentError+ will be raised unlike +parse+
+  # which usually returns +nil+ when given an invalid date string.
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#389
+  def iso8601(str); end
+
+  # Method for creating new ActiveSupport::TimeWithZone instance in time zone
+  # of +self+ from given values.
+  #
+  #   Time.zone = 'Hawaii'                    # => "Hawaii"
+  #   Time.zone.local(2007, 2, 1, 15, 30, 45) # => Thu, 01 Feb 2007 15:30:45 HST -10:00
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#356
+  def local(*args); end
+
+  # Adjust the given time to the simultaneous time in UTC. Returns a
+  # Time.utc() instance.
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#544
+  def local_to_utc(time, dst = T.unsafe(nil)); end
+
+  # Compare #name and TZInfo identifier to a supplied regexp, returning +true+
+  # if a match is found.
+  #
+  # @return [Boolean]
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#341
+  def match?(re); end
+
+  # Returns the value of attribute name.
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#296
+  def name; end
+
+  # Returns an ActiveSupport::TimeWithZone instance representing the current
+  # time in the time zone represented by +self+.
+  #
+  #   Time.zone = 'Hawaii'  # => "Hawaii"
+  #   Time.zone.now         # => Wed, 23 Jan 2008 20:24:27 HST -10:00
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#509
+  def now; end
+
+  # Method for creating new ActiveSupport::TimeWithZone instance in time zone
+  # of +self+ from parsed string.
+  #
+  #   Time.zone = 'Hawaii'                   # => "Hawaii"
+  #   Time.zone.parse('1999-12-31 14:00:00') # => Fri, 31 Dec 1999 14:00:00 HST -10:00
+  #
+  # If upper components are missing from the string, they are supplied from
+  # TimeZone#now:
+  #
+  #   Time.zone.now               # => Fri, 31 Dec 1999 14:00:00 HST -10:00
+  #   Time.zone.parse('22:30:00') # => Fri, 31 Dec 1999 22:30:00 HST -10:00
+  #
+  # However, if the date component is not provided, but any other upper
+  # components are supplied, then the day of the month defaults to 1:
+  #
+  #   Time.zone.parse('Mar 2000') # => Wed, 01 Mar 2000 00:00:00 HST -10:00
+  #
+  # If the string is invalid then an +ArgumentError+ could be raised.
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#446
+  def parse(str, now = T.unsafe(nil)); end
+
+  # Available so that TimeZone instances respond like +TZInfo::Timezone+
+  # instances.
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#556
+  def period_for_local(time, dst = T.unsafe(nil)); end
+
+  # Available so that TimeZone instances respond like +TZInfo::Timezone+
+  # instances.
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#550
+  def period_for_utc(time); end
+
+  # source://activesupport//lib/active_support/values/time_zone.rb#560
+  def periods_for_local(time); end
+
+  # Method for creating new ActiveSupport::TimeWithZone instance in time zone
+  # of +self+ from an RFC 3339 string.
+  #
+  #   Time.zone = 'Hawaii'                     # => "Hawaii"
+  #   Time.zone.rfc3339('2000-01-01T00:00:00Z') # => Fri, 31 Dec 1999 14:00:00 HST -10:00
+  #
+  # If the time or zone components are missing then an +ArgumentError+ will
+  # be raised. This is much stricter than either +parse+ or +iso8601+ which
+  # allow for missing components.
+  #
+  #   Time.zone = 'Hawaii'            # => "Hawaii"
+  #   Time.zone.rfc3339('1999-12-31') # => ArgumentError: invalid date
+  #
+  # @raise [ArgumentError]
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#462
+  def rfc3339(str); end
+
+  # Parses +str+ according to +format+ and returns an ActiveSupport::TimeWithZone.
+  #
+  # Assumes that +str+ is a time in the time zone +self+,
+  # unless +format+ includes an explicit time zone.
+  # (This is the same behavior as +parse+.)
+  # In either case, the returned TimeWithZone has the timezone of +self+.
+  #
+  #   Time.zone = 'Hawaii'                   # => "Hawaii"
+  #   Time.zone.strptime('1999-12-31 14:00:00', '%Y-%m-%d %H:%M:%S') # => Fri, 31 Dec 1999 14:00:00 HST -10:00
+  #
+  # If upper components are missing from the string, they are supplied from
+  # TimeZone#now:
+  #
+  #   Time.zone.now                              # => Fri, 31 Dec 1999 14:00:00 HST -10:00
+  #   Time.zone.strptime('22:30:00', '%H:%M:%S') # => Fri, 31 Dec 1999 22:30:00 HST -10:00
+  #
+  # However, if the date component is not provided, but any other upper
+  # components are supplied, then the day of the month defaults to 1:
+  #
+  #   Time.zone.strptime('Mar 2000', '%b %Y') # => Wed, 01 Mar 2000 00:00:00 HST -10:00
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#500
+  def strptime(str, format, now = T.unsafe(nil)); end
+
+  # Returns a textual representation of this time zone.
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#347
+  def to_s; end
+
+  # Returns the current date in this time zone.
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#514
+  def today; end
+
+  # Returns the next date in this time zone.
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#519
+  def tomorrow; end
+
+  # Returns the value of attribute tzinfo.
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#297
+  def tzinfo; end
+
+  # Returns the offset of this time zone from UTC in seconds.
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#310
+  def utc_offset; end
+
+  # Adjust the given time to the simultaneous time in the time zone
+  # represented by +self+. Returns a local time with the appropriate offset
+  # -- if you want an ActiveSupport::TimeWithZone instance, use
+  # Time#in_time_zone() instead.
+  #
+  # As of tzinfo 2, utc_to_local returns a Time with a non-zero utc_offset.
+  # See the +utc_to_local_returns_utc_offset_times+ config for more info.
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#535
+  def utc_to_local(time); end
+
+  # Returns the previous date in this time zone.
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#524
+  def yesterday; end
+
+  private
+
+  # @raise [ArgumentError]
+  #
+  # source://activesupport//lib/active_support/values/time_zone.rb#574
+  def parts_to_time(parts, now); end
+
+  # source://activesupport//lib/active_support/values/time_zone.rb#599
+  def time_now; end
+
+  class << self
+    # Locate a specific time zone object. If the argument is a string, it
+    # is interpreted to mean the name of the timezone to locate. If it is a
+    # numeric value it is either the hour offset, or the second offset, of the
+    # timezone to find. (The first one with that offset will be returned.)
+    # Returns +nil+ if no such time zone is known to the system.
+    #
+    # source://activesupport//lib/active_support/values/time_zone.rb#232
+    def [](arg); end
+
+    # Returns an array of all TimeZone objects. There are multiple
+    # TimeZone objects per time zone, in many cases, to make it easier
+    # for users to find their own time zone.
+    #
+    # source://activesupport//lib/active_support/values/time_zone.rb#223
+    def all; end
+
+    # source://activesupport//lib/active_support/values/time_zone.rb#265
+    def clear; end
+
+    # A convenience method for returning a collection of TimeZone objects
+    # for time zones in the country specified by its ISO 3166-1 Alpha2 code.
+    #
+    # source://activesupport//lib/active_support/values/time_zone.rb#260
+    def country_zones(country_code); end
+
+    def create(*_arg0); end
+
+    # source://activesupport//lib/active_support/values/time_zone.rb#207
+    def find_tzinfo(name); end
+
+    # Returns a TimeZone instance with the given name, or +nil+ if no
+    # such TimeZone instance exists. (This exists to support the use of
+    # this class with the +composed_of+ macro.)
+    #
+    # source://activesupport//lib/active_support/values/time_zone.rb#216
+    def new(name); end
+
+    # Assumes self represents an offset from UTC in seconds (as returned from
+    # Time#utc_offset) and turns this into an +HH:MM formatted string.
+    #
+    #   ActiveSupport::TimeZone.seconds_to_utc_offset(-21_600) # => "-06:00"
+    #
+    # source://activesupport//lib/active_support/values/time_zone.rb#199
+    def seconds_to_utc_offset(seconds, colon = T.unsafe(nil)); end
+
+    # A convenience method for returning a collection of TimeZone objects
+    # for time zones in the USA.
+    #
+    # source://activesupport//lib/active_support/values/time_zone.rb#254
+    def us_zones; end
+
+    private
+
+    # source://activesupport//lib/active_support/values/time_zone.rb#273
+    def load_country_zones(code); end
+
+    # source://activesupport//lib/active_support/values/time_zone.rb#287
+    def zones_map; end
+  end
+end
+
+# Keys are \Rails TimeZone names, values are TZInfo identifiers.
+#
+# source://activesupport//lib/active_support/values/time_zone.rb#33
+ActiveSupport::TimeZone::MAPPING = T.let(T.unsafe(nil), Hash)
+
+# source://activesupport//lib/active_support/values/time_zone.rb#188
+ActiveSupport::TimeZone::UTC_OFFSET_WITHOUT_COLON = T.let(T.unsafe(nil), String)
+
+# source://activesupport//lib/active_support/values/time_zone.rb#187
+ActiveSupport::TimeZone::UTC_OFFSET_WITH_COLON = T.let(T.unsafe(nil), String)
+
+# source://activesupport//lib/active_support/core_ext/object/try.rb#6
+module ActiveSupport::Tryable
+  # source://activesupport//lib/active_support/core_ext/object/try.rb#7
+  def try(*args, **_arg1, &block); end
+
+  # source://activesupport//lib/active_support/core_ext/object/try.rb#20
+  def try!(*args, **_arg1, &block); end
+end
+
+# source://activesupport//lib/active_support/core_ext/array/extract_options.rb#14
+class Array
+  include ::Enumerable
+
+  # Extracts options from a set of arguments. Removes and returns the last
+  # element in the array if it's a hash, otherwise returns a blank hash.
+  #
+  #   def options(*args)
+  #     args.extract_options!
+  #   end
+  #
+  #   options(1, 2)        # => {}
+  #   options(1, 2, a: :b) # => {:a=>:b}
+  #
+  # source://activesupport//lib/active_support/core_ext/array/extract_options.rb#24
+  def extract_options!; end
+end
+
+class BigDecimal < ::Numeric
+  include ::ActiveSupport::BigDecimalWithDefaultFormat
+
+  # source://activesupport//lib/active_support/core_ext/big_decimal/conversions.rb#8
+  def to_s(format = T.unsafe(nil)); end
+end
+
+# source://activesupport//lib/active_support/core_ext/class/attribute.rb#5
+class Class < ::Module
+  # Declare a class-level attribute whose value is inheritable by subclasses.
+  # Subclasses can change their own value and it will not impact parent class.
+  #
+  # ==== Options
+  #
+  # * <tt>:instance_reader</tt> - Sets the instance reader method (defaults to true).
+  # * <tt>:instance_writer</tt> - Sets the instance writer method (defaults to true).
+  # * <tt>:instance_accessor</tt> - Sets both instance methods (defaults to true).
+  # * <tt>:instance_predicate</tt> - Sets a predicate method (defaults to true).
+  # * <tt>:default</tt> - Sets a default value for the attribute (defaults to nil).
+  #
+  # ==== Examples
+  #
+  #   class Base
+  #     class_attribute :setting
+  #   end
+  #
+  #   class Subclass < Base
+  #   end
+  #
+  #   Base.setting = true
+  #   Subclass.setting            # => true
+  #   Subclass.setting = false
+  #   Subclass.setting            # => false
+  #   Base.setting                # => true
+  #
+  # In the above case as long as Subclass does not assign a value to setting
+  # by performing <tt>Subclass.setting = _something_</tt>, <tt>Subclass.setting</tt>
+  # would read value assigned to parent class. Once Subclass assigns a value then
+  # the value assigned by Subclass would be returned.
+  #
+  # This matches normal Ruby method inheritance: think of writing an attribute
+  # on a subclass as overriding the reader method. However, you need to be aware
+  # when using +class_attribute+ with mutable structures as +Array+ or +Hash+.
+  # In such cases, you don't want to do changes in place. Instead use setters:
+  #
+  #   Base.setting = []
+  #   Base.setting                # => []
+  #   Subclass.setting            # => []
+  #
+  #   # Appending in child changes both parent and child because it is the same object:
+  #   Subclass.setting << :foo
+  #   Base.setting               # => [:foo]
+  #   Subclass.setting           # => [:foo]
+  #
+  #   # Use setters to not propagate changes:
+  #   Base.setting = []
+  #   Subclass.setting += [:foo]
+  #   Base.setting               # => []
+  #   Subclass.setting           # => [:foo]
+  #
+  # For convenience, an instance predicate method is defined as well.
+  # To skip it, pass <tt>instance_predicate: false</tt>.
+  #
+  #   Subclass.setting?       # => false
+  #
+  # Instances may overwrite the class value in the same way:
+  #
+  #   Base.setting = true
+  #   object = Base.new
+  #   object.setting          # => true
+  #   object.setting = false
+  #   object.setting          # => false
+  #   Base.setting            # => true
+  #
+  # To opt out of the instance reader method, pass <tt>instance_reader: false</tt>.
+  #
+  #   object.setting          # => NoMethodError
+  #   object.setting?         # => NoMethodError
+  #
+  # To opt out of the instance writer method, pass <tt>instance_writer: false</tt>.
+  #
+  #   object.setting = false  # => NoMethodError
+  #
+  # To opt out of both instance methods, pass <tt>instance_accessor: false</tt>.
+  #
+  # To set a default value for the attribute, pass <tt>default:</tt>, like so:
+  #
+  #   class_attribute :settings, default: {}
+  #
+  # source://activesupport//lib/active_support/core_ext/class/attribute.rb#85
+  def class_attribute(*attrs, instance_accessor: T.unsafe(nil), instance_reader: T.unsafe(nil), instance_writer: T.unsafe(nil), instance_predicate: T.unsafe(nil), default: T.unsafe(nil)); end
+end
+
+# source://activesupport//lib/active_support/core_ext/object/try.rb#117
+class Delegator < ::BasicObject
+  include ::ActiveSupport::Tryable
+end
+
+# source://activesupport//lib/active_support/core_ext/array/extract_options.rb#3
+class Hash
+  include ::Enumerable
+  include ::ActiveSupport::DeepMergeable
+
+  # Validates all keys in a hash match <tt>*valid_keys</tt>, raising
+  # +ArgumentError+ on a mismatch.
+  #
+  # Note that keys are treated differently than HashWithIndifferentAccess,
+  # meaning that string and symbol keys will not match.
+  #
+  #   { name: 'Rob', years: '28' }.assert_valid_keys(:name, :age) # => raises "ArgumentError: Unknown key: :years. Valid keys are: :name, :age"
+  #   { name: 'Rob', age: '28' }.assert_valid_keys('name', 'age') # => raises "ArgumentError: Unknown key: :name. Valid keys are: 'name', 'age'"
+  #   { name: 'Rob', age: '28' }.assert_valid_keys(:name, :age)   # => passes, raises nothing
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/keys.rb#48
+  def assert_valid_keys(*valid_keys); end
+
+  # :method: deep_merge!
+  # :call-seq: deep_merge!(other_hash, &block)
+  #
+  # Same as #deep_merge, but modifies +self+.
+  #
+  # --
+  # Implemented by ActiveSupport::DeepMergeable#deep_merge!.
+  #
+  # @return [Boolean]
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/deep_merge.rb#39
+  def deep_merge?(other); end
+
+  # Returns a new hash with all keys converted to strings.
+  # This includes the keys from the root hash and from all
+  # nested hashes and arrays.
+  #
+  #   hash = { person: { name: 'Rob', age: '28' } }
+  #
+  #   hash.deep_stringify_keys
+  #   # => {"person"=>{"name"=>"Rob", "age"=>"28"}}
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/keys.rb#84
+  def deep_stringify_keys; end
+
+  # Destructively converts all keys to strings.
+  # This includes the keys from the root hash and from all
+  # nested hashes and arrays.
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/keys.rb#91
+  def deep_stringify_keys!; end
+
+  # Returns a new hash with all keys converted to symbols, as long as
+  # they respond to +to_sym+. This includes the keys from the root hash
+  # and from all nested hashes and arrays.
+  #
+  #   hash = { 'person' => { 'name' => 'Rob', 'age' => '28' } }
+  #
+  #   hash.deep_symbolize_keys
+  #   # => {:person=>{:name=>"Rob", :age=>"28"}}
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/keys.rb#103
+  def deep_symbolize_keys; end
+
+  # Destructively converts all keys to symbols, as long as they respond
+  # to +to_sym+. This includes the keys from the root hash and from all
+  # nested hashes and arrays.
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/keys.rb#110
+  def deep_symbolize_keys!; end
+
+  # Returns a new hash with all keys converted by the block operation.
+  # This includes the keys from the root hash and from all
+  # nested hashes and arrays.
+  #
+  #   hash = { person: { name: 'Rob', age: '28' } }
+  #
+  #   hash.deep_transform_keys{ |key| key.to_s.upcase }
+  #   # => {"PERSON"=>{"NAME"=>"Rob", "AGE"=>"28"}}
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/keys.rb#65
+  def deep_transform_keys(&block); end
+
+  # Destructively converts all keys by using the block operation.
+  # This includes the keys from the root hash and from all
+  # nested hashes and arrays.
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/keys.rb#72
+  def deep_transform_keys!(&block); end
+
+  # Removes the given keys from hash and returns it.
+  #   hash = { a: true, b: false, c: nil }
+  #   hash.except!(:c) # => { a: true, b: false }
+  #   hash             # => { a: true, b: false }
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/except.rb#20
+  def except!(*keys); end
+
+  # Removes and returns the key/value pairs matching the given keys.
+  #
+  #   hash = { a: 1, b: 2, c: 3, d: 4 }
+  #   hash.extract!(:a, :b) # => {:a=>1, :b=>2}
+  #   hash                  # => {:c=>3, :d=>4}
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/slice.rb#24
+  def extract!(*keys); end
+
+  # By default, only instances of Hash itself are extractable.
+  # Subclasses of Hash may implement this method and return
+  # true to declare themselves as extractable. If a Hash
+  # is extractable, Array#extract_options! pops it from
+  # the Array when it is the last element of the Array.
+  #
+  # @return [Boolean]
+  #
+  # source://activesupport//lib/active_support/core_ext/array/extract_options.rb#9
+  def extractable_options?; end
+
+  # Returns an ActiveSupport::HashWithIndifferentAccess out of its receiver:
+  #
+  #   { a: 1 }.with_indifferent_access['a'] # => 1
+  # Called when object is nested under an object that receives
+  # #with_indifferent_access. This method will be called on the current object
+  # by the enclosing object and is aliased to #with_indifferent_access by
+  # default. Subclasses of Hash may override this method to return +self+ if
+  # converting to an ActiveSupport::HashWithIndifferentAccess would not be
+  # desirable.
+  #
+  #   b = { b: 1 }
+  #   { a: b }.with_indifferent_access['a'] # calls b.nested_under_indifferent_access
+  #   # => {"b"=>1}
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/indifferent_access.rb#9
+  def nested_under_indifferent_access; end
+
+  # Merges the caller into +other_hash+. For example,
+  #
+  #   options = options.reverse_merge(size: 25, velocity: 10)
+  #
+  # is equivalent to
+  #
+  #   options = { size: 25, velocity: 10 }.merge(options)
+  #
+  # This is particularly useful for initializing an options hash
+  # with default values.
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/reverse_merge.rb#14
+  def reverse_merge(other_hash); end
+
+  # Destructive +reverse_merge+.
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/reverse_merge.rb#20
+  def reverse_merge!(other_hash); end
+
+  # Destructive +reverse_merge+.
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/reverse_merge.rb#20
+  def reverse_update(other_hash); end
+
+  # Replaces the hash with only the given keys.
+  # Returns a hash containing the removed key/value pairs.
+  #
+  #   hash = { a: 1, b: 2, c: 3, d: 4 }
+  #   hash.slice!(:a, :b)  # => {:c=>3, :d=>4}
+  #   hash                 # => {:a=>1, :b=>2}
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/slice.rb#10
+  def slice!(*keys); end
+
+  # Returns a new hash with all keys converted to strings.
+  #
+  #   hash = { name: 'Rob', age: '28' }
+  #
+  #   hash.stringify_keys
+  #   # => {"name"=>"Rob", "age"=>"28"}
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/keys.rb#10
+  def stringify_keys; end
+
+  # Destructively converts all keys to strings. Same as
+  # +stringify_keys+, but modifies +self+.
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/keys.rb#16
+  def stringify_keys!; end
+
+  # Returns a new hash with all keys converted to symbols, as long as
+  # they respond to +to_sym+.
+  #
+  #   hash = { 'name' => 'Rob', 'age' => '28' }
+  #
+  #   hash.symbolize_keys
+  #   # => {:name=>"Rob", :age=>"28"}
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/keys.rb#27
+  def symbolize_keys; end
+
+  # Destructively converts all keys to symbols, as long as they respond
+  # to +to_sym+. Same as +symbolize_keys+, but modifies +self+.
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/keys.rb#34
+  def symbolize_keys!; end
+
+  # Returns a new hash with all keys converted to symbols, as long as
+  # they respond to +to_sym+.
+  #
+  #   hash = { 'name' => 'Rob', 'age' => '28' }
+  #
+  #   hash.symbolize_keys
+  #   # => {:name=>"Rob", :age=>"28"}
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/keys.rb#27
+  def to_options; end
+
+  # Destructively converts all keys to symbols, as long as they respond
+  # to +to_sym+. Same as +symbolize_keys+, but modifies +self+.
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/keys.rb#34
+  def to_options!; end
+
+  # Merges the caller into +other_hash+. For example,
+  #
+  #   options = options.reverse_merge(size: 25, velocity: 10)
+  #
+  # is equivalent to
+  #
+  #   options = { size: 25, velocity: 10 }.merge(options)
+  #
+  # This is particularly useful for initializing an options hash
+  # with default values.
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/reverse_merge.rb#14
+  def with_defaults(other_hash); end
+
+  # Destructive +reverse_merge+.
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/reverse_merge.rb#20
+  def with_defaults!(other_hash); end
+
+  # Returns an ActiveSupport::HashWithIndifferentAccess out of its receiver:
+  #
+  #   { a: 1 }.with_indifferent_access['a'] # => 1
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/indifferent_access.rb#9
+  def with_indifferent_access; end
+
+  private
+
+  # Support methods for deep transforming nested hashes and arrays.
+  #
+  # source://activesupport//lib/active_support/core_ext/hash/keys.rb#116
+  def _deep_transform_keys_in_object(object, &block); end
+
+  # source://activesupport//lib/active_support/core_ext/hash/keys.rb#129
+  def _deep_transform_keys_in_object!(object, &block); end
+end
+
+# :stopdoc:
+#
+# source://activesupport//lib/active_support/hash_with_indifferent_access.rb#443
+HashWithIndifferentAccess = ActiveSupport::HashWithIndifferentAccess
+
+# == Attribute Accessors per Thread
+#
+# Extends the module object with class/module and instance accessors for
+# class/module attributes, just like the native attr* accessors for instance
+# attributes, but does so on a per-thread basis.
+#
+# So the values are scoped within the Thread.current space under the class name
+# of the module.
+#
+# Note that it can also be scoped per-fiber if +Rails.application.config.active_support.isolation_level+
+# is set to +:fiber+.
+#
+# source://activesupport//lib/active_support/core_ext/module/delegation.rb#5
+class Module
+  # Defines both class and instance accessors for class attributes.
+  # All class and instance methods created will be public, even if
+  # this method is called with a private or protected access modifier.
+  #
+  #   module HairColors
+  #     mattr_accessor :hair_colors
+  #   end
+  #
+  #   class Person
+  #     include HairColors
+  #   end
+  #
+  #   HairColors.hair_colors = [:brown, :black, :blonde, :red]
+  #   HairColors.hair_colors # => [:brown, :black, :blonde, :red]
+  #   Person.new.hair_colors # => [:brown, :black, :blonde, :red]
+  #
+  # If a subclass changes the value then that would also change the value for
+  # parent class. Similarly if parent class changes the value then that would
+  # change the value of subclasses too.
+  #
+  #   class Citizen < Person
+  #   end
+  #
+  #   Citizen.new.hair_colors << :blue
+  #   Person.new.hair_colors # => [:brown, :black, :blonde, :red, :blue]
+  #
+  # To omit the instance writer method, pass <tt>instance_writer: false</tt>.
+  # To omit the instance reader method, pass <tt>instance_reader: false</tt>.
+  #
+  #   module HairColors
+  #     mattr_accessor :hair_colors, instance_writer: false, instance_reader: false
+  #   end
+  #
+  #   class Person
+  #     include HairColors
+  #   end
+  #
+  #   Person.new.hair_colors = [:brown]  # => NoMethodError
+  #   Person.new.hair_colors             # => NoMethodError
+  #
+  # Or pass <tt>instance_accessor: false</tt>, to omit both instance methods.
+  #
+  #   module HairColors
+  #     mattr_accessor :hair_colors, instance_accessor: false
+  #   end
+  #
+  #   class Person
+  #     include HairColors
+  #   end
+  #
+  #   Person.new.hair_colors = [:brown]  # => NoMethodError
+  #   Person.new.hair_colors             # => NoMethodError
+  #
+  # You can set a default value for the attribute.
+  #
+  #   module HairColors
+  #     mattr_accessor :hair_colors, default: [:brown, :black, :blonde, :red]
+  #     mattr_accessor(:hair_styles) { [:long, :short] }
+  #   end
+  #
+  #   class Person
+  #     include HairColors
+  #   end
+  #
+  #   Person.class_variable_get("@@hair_colors") # => [:brown, :black, :blonde, :red]
+  #   Person.class_variable_get("@@hair_styles") # => [:long, :short]
+  #
+  # source://activesupport//lib/active_support/core_ext/module/attribute_accessors.rb#208
+  def cattr_accessor(*syms, instance_reader: T.unsafe(nil), instance_writer: T.unsafe(nil), instance_accessor: T.unsafe(nil), default: T.unsafe(nil), &blk); end
+
+  # Defines a class attribute and creates a class and instance reader methods.
+  # The underlying class variable is set to +nil+, if it is not previously
+  # defined. All class and instance methods created will be public, even if
+  # this method is called with a private or protected access modifier.
+  #
+  #   module HairColors
+  #     mattr_reader :hair_colors
+  #   end
+  #
+  #   HairColors.hair_colors # => nil
+  #   HairColors.class_variable_set("@@hair_colors", [:brown, :black])
+  #   HairColors.hair_colors # => [:brown, :black]
+  #
+  # The attribute name must be a valid method name in Ruby.
+  #
+  #   module Foo
+  #     mattr_reader :"1_Badname"
+  #   end
+  #   # => NameError: invalid attribute name: 1_Badname
+  #
+  # To omit the instance reader method, pass
+  # <tt>instance_reader: false</tt> or <tt>instance_accessor: false</tt>.
+  #
+  #   module HairColors
+  #     mattr_reader :hair_colors, instance_reader: false
+  #   end
+  #
+  #   class Person
+  #     include HairColors
+  #   end
+  #
+  #   Person.new.hair_colors # => NoMethodError
+  #
+  # You can set a default value for the attribute.
+  #
+  #   module HairColors
+  #     mattr_reader :hair_colors, default: [:brown, :black, :blonde, :red]
+  #     mattr_reader(:hair_styles) { [:long, :short] }
+  #   end
+  #
+  #   class Person
+  #     include HairColors
+  #   end
+  #
+  #   Person.new.hair_colors # => [:brown, :black, :blonde, :red]
+  #   Person.new.hair_styles # => [:long, :short]
+  #
+  # @raise [TypeError]
+  #
+  # source://activesupport//lib/active_support/core_ext/module/attribute_accessors.rb#55
+  def cattr_reader(*syms, instance_reader: T.unsafe(nil), instance_accessor: T.unsafe(nil), default: T.unsafe(nil), location: T.unsafe(nil)); end
+
+  # Defines a class attribute and creates a class and instance writer methods to
+  # allow assignment to the attribute. All class and instance methods created
+  # will be public, even if this method is called with a private or protected
+  # access modifier.
+  #
+  #   module HairColors
+  #     mattr_writer :hair_colors
+  #   end
+  #
+  #   class Person
+  #     include HairColors
+  #   end
+  #
+  #   HairColors.hair_colors = [:brown, :black]
+  #   Person.class_variable_get("@@hair_colors") # => [:brown, :black]
+  #   Person.new.hair_colors = [:blonde, :red]
+  #   HairColors.class_variable_get("@@hair_colors") # => [:blonde, :red]
+  #
+  # To omit the instance writer method, pass
+  # <tt>instance_writer: false</tt> or <tt>instance_accessor: false</tt>.
+  #
+  #   module HairColors
+  #     mattr_writer :hair_colors, instance_writer: false
+  #   end
+  #
+  #   class Person
+  #     include HairColors
+  #   end
+  #
+  #   Person.new.hair_colors = [:blonde, :red] # => NoMethodError
+  #
+  # You can set a default value for the attribute.
+  #
+  #   module HairColors
+  #     mattr_writer :hair_colors, default: [:brown, :black, :blonde, :red]
+  #     mattr_writer(:hair_styles) { [:long, :short] }
+  #   end
+  #
+  #   class Person
+  #     include HairColors
+  #   end
+  #
+  #   Person.class_variable_get("@@hair_colors") # => [:brown, :black, :blonde, :red]
+  #   Person.class_variable_get("@@hair_styles") # => [:long, :short]
+  #
+  # @raise [TypeError]
+  #
+  # source://activesupport//lib/active_support/core_ext/module/attribute_accessors.rb#121
+  def cattr_writer(*syms, instance_writer: T.unsafe(nil), instance_accessor: T.unsafe(nil), default: T.unsafe(nil), location: T.unsafe(nil)); end
+
+  # Provides a +delegate+ class method to easily expose contained objects'
+  # public methods as your own.
+  #
+  # ==== Options
+  # * <tt>:to</tt> - Specifies the target object name as a symbol or string
+  # * <tt>:prefix</tt> - Prefixes the new method with the target name or a custom prefix
+  # * <tt>:allow_nil</tt> - If set to true, prevents a +Module::DelegationError+
+  #   from being raised
+  # * <tt>:private</tt> - If set to true, changes method visibility to private
+  #
+  # The macro receives one or more method names (specified as symbols or
+  # strings) and the name of the target object via the <tt>:to</tt> option
+  # (also a symbol or string).
+  #
+  # Delegation is particularly useful with Active Record associations:
+  #
+  #   class Greeter < ActiveRecord::Base
+  #     def hello
+  #       'hello'
+  #     end
+  #
+  #     def goodbye
+  #       'goodbye'
+  #     end
+  #   end
+  #
+  #   class Foo < ActiveRecord::Base
+  #     belongs_to :greeter
+  #     delegate :hello, to: :greeter
+  #   end
+  #
+  #   Foo.new.hello   # => "hello"
+  #   Foo.new.goodbye # => NoMethodError: undefined method `goodbye' for #<Foo:0x1af30c>
+  #
+  # Multiple delegates to the same target are allowed:
+  #
+  #   class Foo < ActiveRecord::Base
+  #     belongs_to :greeter
+  #     delegate :hello, :goodbye, to: :greeter
+  #   end
+  #
+  #   Foo.new.goodbye # => "goodbye"
+  #
+  # Methods can be delegated to instance variables, class variables, or constants
+  # by providing them as a symbols:
+  #
+  #   class Foo
+  #     CONSTANT_ARRAY = [0,1,2,3]
+  #     @@class_array  = [4,5,6,7]
+  #
+  #     def initialize
+  #       @instance_array = [8,9,10,11]
+  #     end
+  #     delegate :sum, to: :CONSTANT_ARRAY
+  #     delegate :min, to: :@@class_array
+  #     delegate :max, to: :@instance_array
+  #   end
+  #
+  #   Foo.new.sum # => 6
+  #   Foo.new.min # => 4
+  #   Foo.new.max # => 11
+  #
+  # It's also possible to delegate a method to the class by using +:class+:
+  #
+  #   class Foo
+  #     def self.hello
+  #       "world"
+  #     end
+  #
+  #     delegate :hello, to: :class
+  #   end
+  #
+  #   Foo.new.hello # => "world"
+  #
+  # Delegates can optionally be prefixed using the <tt>:prefix</tt> option. If the value
+  # is <tt>true</tt>, the delegate methods are prefixed with the name of the object being
+  # delegated to.
+  #
+  #   Person = Struct.new(:name, :address)
+  #
+  #   class Invoice < Struct.new(:client)
+  #     delegate :name, :address, to: :client, prefix: true
+  #   end
+  #
+  #   john_doe = Person.new('John Doe', 'Vimmersvej 13')
+  #   invoice = Invoice.new(john_doe)
+  #   invoice.client_name    # => "John Doe"
+  #   invoice.client_address # => "Vimmersvej 13"
+  #
+  # It is also possible to supply a custom prefix.
+  #
+  #   class Invoice < Struct.new(:client)
+  #     delegate :name, :address, to: :client, prefix: :customer
+  #   end
+  #
+  #   invoice = Invoice.new(john_doe)
+  #   invoice.customer_name    # => 'John Doe'
+  #   invoice.customer_address # => 'Vimmersvej 13'
+  #
+  # The delegated methods are public by default.
+  # Pass <tt>private: true</tt> to change that.
+  #
+  #   class User < ActiveRecord::Base
+  #     has_one :profile
+  #     delegate :first_name, to: :profile
+  #     delegate :date_of_birth, to: :profile, private: true
+  #
+  #     def age
+  #       Date.today.year - date_of_birth.year
+  #     end
+  #   end
+  #
+  #   User.new.first_name # => "Tomas"
+  #   User.new.date_of_birth # => NoMethodError: private method `date_of_birth' called for #<User:0x00000008221340>
+  #   User.new.age # => 2
+  #
+  # If the target is +nil+ and does not respond to the delegated method a
+  # +Module::DelegationError+ is raised. If you wish to instead return +nil+,
+  # use the <tt>:allow_nil</tt> option.
+  #
+  #   class User < ActiveRecord::Base
+  #     has_one :profile
+  #     delegate :age, to: :profile
+  #   end
+  #
+  #   User.new.age
+  #   # => Module::DelegationError: User#age delegated to profile.age, but profile is nil
+  #
+  # But if not having a profile yet is fine and should not be an error
+  # condition:
+  #
+  #   class User < ActiveRecord::Base
+  #     has_one :profile
+  #     delegate :age, to: :profile, allow_nil: true
+  #   end
+  #
+  #   User.new.age # nil
+  #
+  # Note that if the target is not +nil+ then the call is attempted regardless of the
+  # <tt>:allow_nil</tt> option, and thus an exception is still raised if said object
+  # does not respond to the method:
+  #
+  #   class Foo
+  #     def initialize(bar)
+  #       @bar = bar
+  #     end
+  #
+  #     delegate :name, to: :@bar, allow_nil: true
+  #   end
+  #
+  #   Foo.new("Bar").name # raises NoMethodError: undefined method `name'
+  #
+  # The target method must be public, otherwise it will raise +NoMethodError+.
+  #
+  # source://activesupport//lib/active_support/core_ext/module/delegation.rb#171
+  def delegate(*methods, to: T.unsafe(nil), prefix: T.unsafe(nil), allow_nil: T.unsafe(nil), private: T.unsafe(nil)); end
+
+  # When building decorators, a common pattern may emerge:
+  #
+  #   class Partition
+  #     def initialize(event)
+  #       @event = event
+  #     end
+  #
+  #     def person
+  #       detail.person || creator
+  #     end
+  #
+  #     private
+  #       def respond_to_missing?(name, include_private = false)
+  #         @event.respond_to?(name, include_private)
+  #       end
+  #
+  #       def method_missing(method, *args, &block)
+  #         @event.send(method, *args, &block)
+  #       end
+  #   end
+  #
+  # With <tt>Module#delegate_missing_to</tt>, the above is condensed to:
+  #
+  #   class Partition
+  #     delegate_missing_to :@event
+  #
+  #     def initialize(event)
+  #       @event = event
+  #     end
+  #
+  #     def person
+  #       detail.person || creator
+  #     end
+  #   end
+  #
+  # The target can be anything callable within the object, e.g. instance
+  # variables, methods, constants, etc.
+  #
+  # The delegated method must be public on the target, otherwise it will
+  # raise +DelegationError+. If you wish to instead return +nil+,
+  # use the <tt>:allow_nil</tt> option.
+  #
+  # The <tt>marshal_dump</tt> and <tt>_dump</tt> methods are exempt from
+  # delegation due to possible interference when calling
+  # <tt>Marshal.dump(object)</tt>, should the delegation target method
+  # of <tt>object</tt> add or remove instance variables.
+  #
+  # source://activesupport//lib/active_support/core_ext/module/delegation.rb#318
+  def delegate_missing_to(target, allow_nil: T.unsafe(nil)); end
+
+  # deprecate :foo, deprecator: MyLib.deprecator
+  #   deprecate :foo, bar: "warning!", deprecator: MyLib.deprecator
+  #
+  # A deprecator is typically an instance of ActiveSupport::Deprecation, but you can also pass any object that responds
+  # to <tt>deprecation_warning(deprecated_method_name, message, caller_backtrace)</tt> where you can implement your
+  # custom warning behavior.
+  #
+  #   class MyLib::Deprecator
+  #     def deprecation_warning(deprecated_method_name, message, caller_backtrace = nil)
+  #       message = "#{deprecated_method_name} is deprecated and will be removed from MyLibrary | #{message}"
+  #       Kernel.warn message
+  #     end
+  #   end
+  #
+  # source://activesupport//lib/active_support/core_ext/module/deprecation.rb#17
+  def deprecate(*method_names, deprecator: T.unsafe(nil), **options); end
+
+  # Defines both class and instance accessors for class attributes.
+  # All class and instance methods created will be public, even if
+  # this method is called with a private or protected access modifier.
+  #
+  #   module HairColors
+  #     mattr_accessor :hair_colors
+  #   end
+  #
+  #   class Person
+  #     include HairColors
+  #   end
+  #
+  #   HairColors.hair_colors = [:brown, :black, :blonde, :red]
+  #   HairColors.hair_colors # => [:brown, :black, :blonde, :red]
+  #   Person.new.hair_colors # => [:brown, :black, :blonde, :red]
+  #
+  # If a subclass changes the value then that would also change the value for
+  # parent class. Similarly if parent class changes the value then that would
+  # change the value of subclasses too.
+  #
+  #   class Citizen < Person
+  #   end
+  #
+  #   Citizen.new.hair_colors << :blue
+  #   Person.new.hair_colors # => [:brown, :black, :blonde, :red, :blue]
+  #
+  # To omit the instance writer method, pass <tt>instance_writer: false</tt>.
+  # To omit the instance reader method, pass <tt>instance_reader: false</tt>.
+  #
+  #   module HairColors
+  #     mattr_accessor :hair_colors, instance_writer: false, instance_reader: false
+  #   end
+  #
+  #   class Person
+  #     include HairColors
+  #   end
+  #
+  #   Person.new.hair_colors = [:brown]  # => NoMethodError
+  #   Person.new.hair_colors             # => NoMethodError
+  #
+  # Or pass <tt>instance_accessor: false</tt>, to omit both instance methods.
+  #
+  #   module HairColors
+  #     mattr_accessor :hair_colors, instance_accessor: false
+  #   end
+  #
+  #   class Person
+  #     include HairColors
+  #   end
+  #
+  #   Person.new.hair_colors = [:brown]  # => NoMethodError
+  #   Person.new.hair_colors             # => NoMethodError
+  #
+  # You can set a default value for the attribute.
+  #
+  #   module HairColors
+  #     mattr_accessor :hair_colors, default: [:brown, :black, :blonde, :red]
+  #     mattr_accessor(:hair_styles) { [:long, :short] }
+  #   end
+  #
+  #   class Person
+  #     include HairColors
+  #   end
+  #
+  #   Person.class_variable_get("@@hair_colors") # => [:brown, :black, :blonde, :red]
+  #   Person.class_variable_get("@@hair_styles") # => [:long, :short]
+  #
+  # source://activesupport//lib/active_support/core_ext/module/attribute_accessors.rb#208
+  def mattr_accessor(*syms, instance_reader: T.unsafe(nil), instance_writer: T.unsafe(nil), instance_accessor: T.unsafe(nil), default: T.unsafe(nil), &blk); end
+
+  # Defines a class attribute and creates a class and instance reader methods.
+  # The underlying class variable is set to +nil+, if it is not previously
+  # defined. All class and instance methods created will be public, even if
+  # this method is called with a private or protected access modifier.
+  #
+  #   module HairColors
+  #     mattr_reader :hair_colors
+  #   end
+  #
+  #   HairColors.hair_colors # => nil
+  #   HairColors.class_variable_set("@@hair_colors", [:brown, :black])
+  #   HairColors.hair_colors # => [:brown, :black]
+  #
+  # The attribute name must be a valid method name in Ruby.
+  #
+  #   module Foo
+  #     mattr_reader :"1_Badname"
+  #   end
+  #   # => NameError: invalid attribute name: 1_Badname
+  #
+  # To omit the instance reader method, pass
+  # <tt>instance_reader: false</tt> or <tt>instance_accessor: false</tt>.
+  #
+  #   module HairColors
+  #     mattr_reader :hair_colors, instance_reader: false
+  #   end
+  #
+  #   class Person
+  #     include HairColors
+  #   end
+  #
+  #   Person.new.hair_colors # => NoMethodError
+  #
+  # You can set a default value for the attribute.
+  #
+  #   module HairColors
+  #     mattr_reader :hair_colors, default: [:brown, :black, :blonde, :red]
+  #     mattr_reader(:hair_styles) { [:long, :short] }
+  #   end
+  #
+  #   class Person
+  #     include HairColors
+  #   end
+  #
+  #   Person.new.hair_colors # => [:brown, :black, :blonde, :red]
+  #   Person.new.hair_styles # => [:long, :short]
+  #
+  # @raise [TypeError]
+  #
+  # source://activesupport//lib/active_support/core_ext/module/attribute_accessors.rb#55
+  def mattr_reader(*syms, instance_reader: T.unsafe(nil), instance_accessor: T.unsafe(nil), default: T.unsafe(nil), location: T.unsafe(nil)); end
+
+  # Defines a class attribute and creates a class and instance writer methods to
+  # allow assignment to the attribute. All class and instance methods created
+  # will be public, even if this method is called with a private or protected
+  # access modifier.
+  #
+  #   module HairColors
+  #     mattr_writer :hair_colors
+  #   end
+  #
+  #   class Person
+  #     include HairColors
+  #   end
+  #
+  #   HairColors.hair_colors = [:brown, :black]
+  #   Person.class_variable_get("@@hair_colors") # => [:brown, :black]
+  #   Person.new.hair_colors = [:blonde, :red]
+  #   HairColors.class_variable_get("@@hair_colors") # => [:blonde, :red]
+  #
+  # To omit the instance writer method, pass
+  # <tt>instance_writer: false</tt> or <tt>instance_accessor: false</tt>.
+  #
+  #   module HairColors
+  #     mattr_writer :hair_colors, instance_writer: false
+  #   end
+  #
+  #   class Person
+  #     include HairColors
+  #   end
+  #
+  #   Person.new.hair_colors = [:blonde, :red] # => NoMethodError
+  #
+  # You can set a default value for the attribute.
+  #
+  #   module HairColors
+  #     mattr_writer :hair_colors, default: [:brown, :black, :blonde, :red]
+  #     mattr_writer(:hair_styles) { [:long, :short] }
+  #   end
+  #
+  #   class Person
+  #     include HairColors
+  #   end
+  #
+  #   Person.class_variable_get("@@hair_colors") # => [:brown, :black, :blonde, :red]
+  #   Person.class_variable_get("@@hair_styles") # => [:long, :short]
+  #
+  # @raise [TypeError]
+  #
+  # source://activesupport//lib/active_support/core_ext/module/attribute_accessors.rb#121
+  def mattr_writer(*syms, instance_writer: T.unsafe(nil), instance_accessor: T.unsafe(nil), default: T.unsafe(nil), location: T.unsafe(nil)); end
+
+  # source://activesupport//lib/active_support/core_ext/module/redefine_method.rb#30
+  def method_visibility(method); end
+
+  # Replaces the existing method definition, if there is one, with the passed
+  # block as its body.
+  #
+  # source://activesupport//lib/active_support/core_ext/module/redefine_method.rb#17
+  def redefine_method(method, &block); end
+
+  # Replaces the existing singleton method definition, if there is one, with
+  # the passed block as its body.
+  #
+  # source://activesupport//lib/active_support/core_ext/module/redefine_method.rb#26
+  def redefine_singleton_method(method, &block); end
+
+  # Marks the named method as intended to be redefined, if it exists.
+  # Suppresses the Ruby method redefinition warning. Prefer
+  # #redefine_method where possible.
+  #
+  # source://activesupport//lib/active_support/core_ext/module/redefine_method.rb#7
+  def silence_redefinition_of_method(method); end
+end
+
+# source://activesupport//lib/active_support/core_ext/module/delegation.rb#13
+Module::DELEGATION_RESERVED_KEYWORDS = T.let(T.unsafe(nil), Array)
+
+# source://activesupport//lib/active_support/core_ext/module/delegation.rb#14
+Module::DELEGATION_RESERVED_METHOD_NAMES = T.let(T.unsafe(nil), Set)
+
+# Error generated by +delegate+ when a method is called on +nil+ and +allow_nil+
+# option is not used.
+#
+# source://activesupport//lib/active_support/core_ext/module/delegation.rb#8
+class Module::DelegationError < ::NoMethodError; end
+
+# source://activesupport//lib/active_support/core_ext/module/delegation.rb#10
+Module::RUBY_RESERVED_KEYWORDS = T.let(T.unsafe(nil), Array)
+
 class NameError < ::StandardError
   include ::ErrorHighlight::CoreExt
   include ::DidYouMean::Correctable
 end
+
+# source://activesupport//lib/active_support/core_ext/object/try.rb#137
+class NilClass
+  # Calling +try+ on +nil+ always returns +nil+.
+  # It becomes especially helpful when navigating through associations that may return +nil+.
+  #
+  #   nil.try(:name) # => nil
+  #
+  # Without +try+
+  #   @person && @person.children.any? && @person.children.first.name
+  #
+  # With +try+
+  #   @person.try(:children).try(:first).try(:name)
+  #
+  # source://activesupport//lib/active_support/core_ext/object/try.rb#148
+  def try(*_arg0); end
+
+  # Calling +try!+ on +nil+ always returns +nil+.
+  #
+  #   nil.try!(:name) # => nil
+  #
+  # source://activesupport//lib/active_support/core_ext/object/try.rb#155
+  def try!(*_arg0); end
+end
+
+# --
+# Most objects are cloneable, but not all. For example you can't dup methods:
+#
+#   method(:puts).dup # => TypeError: allocator undefined for Method
+#
+# Classes may signal their instances are not duplicable removing +dup+/+clone+
+# or raising exceptions from them. So, to dup an arbitrary object you normally
+# use an optimistic approach and are ready to catch an exception, say:
+#
+#   arbitrary_object.dup rescue object
+#
+# Rails dups objects in a few critical spots where they are not that arbitrary.
+# That rescue is very expensive (like 40 times slower than a predicate), and it
+# is often triggered.
+#
+# That's why we hardcode the following cases and check duplicable? instead of
+# using that rescue idiom.
+# ++
+#
+# source://activesupport//lib/active_support/core_ext/object/try.rb#35
+class Object < ::BasicObject
+  include ::Kernel
+  include ::PP::ObjectMixin
+  include ::ActiveSupport::Tryable
+
+  # Returns a hash with string keys that maps instance variable names without "@" to their
+  # corresponding values.
+  #
+  #   class C
+  #     def initialize(x, y)
+  #       @x, @y = x, y
+  #     end
+  #   end
+  #
+  #   C.new(0, 1).instance_values # => {"x" => 0, "y" => 1}
+  #
+  # source://activesupport//lib/active_support/core_ext/object/instance_variables.rb#14
+  def instance_values; end
+
+  # Returns an array of instance variable names as strings including "@".
+  #
+  #   class C
+  #     def initialize(x, y)
+  #       @x, @y = x, y
+  #     end
+  #   end
+  #
+  #   C.new(0, 1).instance_variable_names # => ["@y", "@x"]
+  #
+  # source://activesupport//lib/active_support/core_ext/object/instance_variables.rb#30
+  def instance_variable_names; end
+end
+
+# String inflections define new methods on the String class to transform names for different purposes.
+# For instance, you can figure out the name of a table from the name of a class.
+#
+#   'ScaleScore'.tableize # => "scale_scores"
+#
+# source://activesupport//lib/active_support/core_ext/string/multibyte.rb#5
+class String
+  include ::Comparable
+
+  # By default, +camelize+ converts strings to UpperCamelCase. If the argument to camelize
+  # is set to <tt>:lower</tt> then camelize produces lowerCamelCase.
+  #
+  # +camelize+ will also convert '/' to '::' which is useful for converting paths to namespaces.
+  #
+  #   'active_record'.camelize                # => "ActiveRecord"
+  #   'active_record'.camelize(:lower)        # => "activeRecord"
+  #   'active_record/errors'.camelize         # => "ActiveRecord::Errors"
+  #   'active_record/errors'.camelize(:lower) # => "activeRecord::Errors"
+  #
+  # See ActiveSupport::Inflector.camelize.
+  #
+  # source://activesupport//lib/active_support/core_ext/string/inflections.rb#101
+  def camelcase(first_letter = T.unsafe(nil)); end
+
+  # By default, +camelize+ converts strings to UpperCamelCase. If the argument to camelize
+  # is set to <tt>:lower</tt> then camelize produces lowerCamelCase.
+  #
+  # +camelize+ will also convert '/' to '::' which is useful for converting paths to namespaces.
+  #
+  #   'active_record'.camelize                # => "ActiveRecord"
+  #   'active_record'.camelize(:lower)        # => "activeRecord"
+  #   'active_record/errors'.camelize         # => "ActiveRecord::Errors"
+  #   'active_record/errors'.camelize(:lower) # => "activeRecord::Errors"
+  #
+  # See ActiveSupport::Inflector.camelize.
+  #
+  # source://activesupport//lib/active_support/core_ext/string/inflections.rb#101
+  def camelize(first_letter = T.unsafe(nil)); end
+
+  # Creates a class name from a plural table name like \Rails does for table names to models.
+  # Note that this returns a string and not a class. (To convert to an actual class
+  # follow +classify+ with +constantize+.)
+  #
+  #   'ham_and_eggs'.classify # => "HamAndEgg"
+  #   'posts'.classify        # => "Post"
+  #
+  # See ActiveSupport::Inflector.classify.
+  #
+  # source://activesupport//lib/active_support/core_ext/string/inflections.rb#239
+  def classify; end
+
+  # +constantize+ tries to find a declared constant with the name specified
+  # in the string. It raises a NameError when the name is not in CamelCase
+  # or is not initialized.
+  #
+  #   'Module'.constantize  # => Module
+  #   'Class'.constantize   # => Class
+  #   'blargle'.constantize # => NameError: wrong constant name blargle
+  #
+  # See ActiveSupport::Inflector.constantize.
+  #
+  # source://activesupport//lib/active_support/core_ext/string/inflections.rb#73
+  def constantize; end
+
+  # Replaces underscores with dashes in the string.
+  #
+  #   'puni_puni'.dasherize # => "puni-puni"
+  #
+  # See ActiveSupport::Inflector.dasherize.
+  #
+  # source://activesupport//lib/active_support/core_ext/string/inflections.rb#148
+  def dasherize; end
+
+  # Removes the rightmost segment from the constant expression in the string.
+  #
+  #   'Net::HTTP'.deconstantize   # => "Net"
+  #   '::Net::HTTP'.deconstantize # => "::Net"
+  #   'String'.deconstantize      # => ""
+  #   '::String'.deconstantize    # => ""
+  #   ''.deconstantize            # => ""
+  #
+  # See ActiveSupport::Inflector.deconstantize.
+  #
+  # See also +demodulize+.
+  #
+  # source://activesupport//lib/active_support/core_ext/string/inflections.rb#177
+  def deconstantize; end
+
+  # Removes the module part from the constant expression in the string.
+  #
+  #   'ActiveSupport::Inflector::Inflections'.demodulize # => "Inflections"
+  #   'Inflections'.demodulize                           # => "Inflections"
+  #   '::Inflections'.demodulize                         # => "Inflections"
+  #   ''.demodulize                                      # => ''
+  #
+  # See ActiveSupport::Inflector.demodulize.
+  #
+  # See also +deconstantize+.
+  #
+  # source://activesupport//lib/active_support/core_ext/string/inflections.rb#162
+  def demodulize; end
+
+  # Converts the first character to lowercase.
+  #
+  #   'If they enjoyed The Matrix'.downcase_first # => "if they enjoyed The Matrix"
+  #   'I'.downcase_first                          # => "i"
+  #   ''.downcase_first                           # => ""
+  #
+  # See ActiveSupport::Inflector.downcase_first.
+  #
+  # source://activesupport//lib/active_support/core_ext/string/inflections.rb#284
+  def downcase_first; end
+
+  # Creates a foreign key name from a class name.
+  # +separate_class_name_and_id_with_underscore+ sets whether
+  # the method should put '_' between the name and 'id'.
+  #
+  #   'Message'.foreign_key        # => "message_id"
+  #   'Message'.foreign_key(false) # => "messageid"
+  #   'Admin::Post'.foreign_key    # => "post_id"
+  #
+  # See ActiveSupport::Inflector.foreign_key.
+  #
+  # source://activesupport//lib/active_support/core_ext/string/inflections.rb#297
+  def foreign_key(separate_class_name_and_id_with_underscore = T.unsafe(nil)); end
+
+  # Capitalizes the first word, turns underscores into spaces, and (by default) strips a
+  # trailing '_id' if present.
+  # Like +titleize+, this is meant for creating pretty output.
+  #
+  # The capitalization of the first word can be turned off by setting the
+  # optional parameter +capitalize+ to false.
+  # By default, this parameter is true.
+  #
+  # The trailing '_id' can be kept and capitalized by setting the
+  # optional parameter +keep_id_suffix+ to true.
+  # By default, this parameter is false.
+  #
+  #   'employee_salary'.humanize                    # => "Employee salary"
+  #   'author_id'.humanize                          # => "Author"
+  #   'author_id'.humanize(capitalize: false)       # => "author"
+  #   '_id'.humanize                                # => "Id"
+  #   'author_id'.humanize(keep_id_suffix: true)    # => "Author id"
+  #
+  # See ActiveSupport::Inflector.humanize.
+  #
+  # source://activesupport//lib/active_support/core_ext/string/inflections.rb#262
+  def humanize(capitalize: T.unsafe(nil), keep_id_suffix: T.unsafe(nil)); end
+
+  # Returns +true+ if string has utf_8 encoding.
+  #
+  #   utf_8_str = "some string".encode "UTF-8"
+  #   iso_str = "some string".encode "ISO-8859-1"
+  #
+  #   utf_8_str.is_utf8? # => true
+  #   iso_str.is_utf8?   # => false
+  #
+  # @return [Boolean]
+  #
+  # source://activesupport//lib/active_support/core_ext/string/multibyte.rb#48
+  def is_utf8?; end
+
+  # == Multibyte proxy
+  #
+  # +mb_chars+ is a multibyte safe proxy for string methods.
+  #
+  # It creates and returns an instance of the ActiveSupport::Multibyte::Chars class which
+  # encapsulates the original string. A Unicode safe version of all the String methods are defined on this proxy
+  # class. If the proxy class doesn't respond to a certain method, it's forwarded to the encapsulated string.
+  #
+  #   >> "ǉ".mb_chars.upcase.to_s
+  #   => "Ǉ"
+  #
+  # NOTE: Ruby 2.4 and later support native Unicode case mappings:
+  #
+  #   >> "ǉ".upcase
+  #   => "Ǉ"
+  #
+  # == Method chaining
+  #
+  # All the methods on the Chars proxy which normally return a string will return a Chars object. This allows
+  # method chaining on the result of any of these methods.
+  #
+  #   name.mb_chars.reverse.length # => 12
+  #
+  # == Interoperability and configuration
+  #
+  # The Chars object tries to be as interchangeable with String objects as possible: sorting and comparing between
+  # String and Char work like expected. The bang! methods change the internal string representation in the Chars
+  # object. Interoperability problems can be resolved easily with a +to_s+ call.
+  #
+  # For more information about the methods defined on the Chars proxy see ActiveSupport::Multibyte::Chars. For
+  # information about how to change the default Multibyte behavior see ActiveSupport::Multibyte.
+  #
+  # source://activesupport//lib/active_support/core_ext/string/multibyte.rb#37
+  def mb_chars; end
+
+  # Replaces special characters in a string so that it may be used as part of a 'pretty' URL.
+  #
+  # If the optional parameter +locale+ is specified,
+  # the word will be parameterized as a word of that language.
+  # By default, this parameter is set to <tt>nil</tt> and it will use
+  # the configured <tt>I18n.locale</tt>.
+  #
+  #   class Person
+  #     def to_param
+  #       "#{id}-#{name.parameterize}"
+  #     end
+  #   end
+  #
+  #   @person = Person.find(1)
+  #   # => #<Person id: 1, name: "Donald E. Knuth">
+  #
+  #   <%= link_to(@person.name, person_path) %>
+  #   # => <a href="/person/1-donald-e-knuth">Donald E. Knuth</a>
+  #
+  # To preserve the case of the characters in a string, use the +preserve_case+ argument.
+  #
+  #   class Person
+  #     def to_param
+  #       "#{id}-#{name.parameterize(preserve_case: true)}"
+  #     end
+  #   end
+  #
+  #   @person = Person.find(1)
+  #   # => #<Person id: 1, name: "Donald E. Knuth">
+  #
+  #   <%= link_to(@person.name, person_path) %>
+  #   # => <a href="/person/1-Donald-E-Knuth">Donald E. Knuth</a>
+  #
+  # See ActiveSupport::Inflector.parameterize.
+  #
+  # source://activesupport//lib/active_support/core_ext/string/inflections.rb#215
+  def parameterize(separator: T.unsafe(nil), preserve_case: T.unsafe(nil), locale: T.unsafe(nil)); end
+
+  # Returns the plural form of the word in the string.
+  #
+  # If the optional parameter +count+ is specified,
+  # the singular form will be returned if <tt>count == 1</tt>.
+  # For any other value of +count+ the plural will be returned.
+  #
+  # If the optional parameter +locale+ is specified,
+  # the word will be pluralized as a word of that language.
+  # By default, this parameter is set to <tt>:en</tt>.
+  # You must define your own inflection rules for languages other than English.
+  #
+  #   'post'.pluralize             # => "posts"
+  #   'octopus'.pluralize          # => "octopi"
+  #   'sheep'.pluralize            # => "sheep"
+  #   'words'.pluralize            # => "words"
+  #   'the blue mailman'.pluralize # => "the blue mailmen"
+  #   'CamelOctopus'.pluralize     # => "CamelOctopi"
+  #   'apple'.pluralize(1)         # => "apple"
+  #   'apple'.pluralize(2)         # => "apples"
+  #   'ley'.pluralize(:es)         # => "leyes"
+  #   'ley'.pluralize(1, :es)      # => "ley"
+  #
+  # See ActiveSupport::Inflector.pluralize.
+  #
+  # source://activesupport//lib/active_support/core_ext/string/inflections.rb#35
+  def pluralize(count = T.unsafe(nil), locale = T.unsafe(nil)); end
+
+  # +safe_constantize+ tries to find a declared constant with the name specified
+  # in the string. It returns +nil+ when the name is not in CamelCase
+  # or is not initialized.
+  #
+  #   'Module'.safe_constantize  # => Module
+  #   'Class'.safe_constantize   # => Class
+  #   'blargle'.safe_constantize # => nil
+  #
+  # See ActiveSupport::Inflector.safe_constantize.
+  #
+  # source://activesupport//lib/active_support/core_ext/string/inflections.rb#86
+  def safe_constantize; end
+
+  # The reverse of +pluralize+, returns the singular form of a word in a string.
+  #
+  # If the optional parameter +locale+ is specified,
+  # the word will be singularized as a word of that language.
+  # By default, this parameter is set to <tt>:en</tt>.
+  # You must define your own inflection rules for languages other than English.
+  #
+  #   'posts'.singularize            # => "post"
+  #   'octopi'.singularize           # => "octopus"
+  #   'sheep'.singularize            # => "sheep"
+  #   'word'.singularize             # => "word"
+  #   'the blue mailmen'.singularize # => "the blue mailman"
+  #   'CamelOctopi'.singularize      # => "CamelOctopus"
+  #   'leyes'.singularize(:es)       # => "ley"
+  #
+  # See ActiveSupport::Inflector.singularize.
+  #
+  # source://activesupport//lib/active_support/core_ext/string/inflections.rb#60
+  def singularize(locale = T.unsafe(nil)); end
+
+  # Creates the name of a table like \Rails does for models to table names. This method
+  # uses the +pluralize+ method on the last word in the string.
+  #
+  #   'RawScaledScorer'.tableize # => "raw_scaled_scorers"
+  #   'ham_and_egg'.tableize     # => "ham_and_eggs"
+  #   'fancyCategory'.tableize   # => "fancy_categories"
+  #
+  # See ActiveSupport::Inflector.tableize.
+  #
+  # source://activesupport//lib/active_support/core_ext/string/inflections.rb#227
+  def tableize; end
+
+  # Capitalizes all the words and replaces some characters in the string to create
+  # a nicer looking title. +titleize+ is meant for creating pretty output. It is not
+  # used in the \Rails internals.
+  #
+  # The trailing '_id','Id'.. can be kept and capitalized by setting the
+  # optional parameter +keep_id_suffix+ to true.
+  # By default, this parameter is false.
+  #
+  #   'man from the boondocks'.titleize                       # => "Man From The Boondocks"
+  #   'x-men: the last stand'.titleize                        # => "X Men: The Last Stand"
+  #   'string_ending_with_id'.titleize(keep_id_suffix: true)  # => "String Ending With Id"
+  #
+  # See ActiveSupport::Inflector.titleize.
+  #
+  # source://activesupport//lib/active_support/core_ext/string/inflections.rb#126
+  def titlecase(keep_id_suffix: T.unsafe(nil)); end
+
+  # Capitalizes all the words and replaces some characters in the string to create
+  # a nicer looking title. +titleize+ is meant for creating pretty output. It is not
+  # used in the \Rails internals.
+  #
+  # The trailing '_id','Id'.. can be kept and capitalized by setting the
+  # optional parameter +keep_id_suffix+ to true.
+  # By default, this parameter is false.
+  #
+  #   'man from the boondocks'.titleize                       # => "Man From The Boondocks"
+  #   'x-men: the last stand'.titleize                        # => "X Men: The Last Stand"
+  #   'string_ending_with_id'.titleize(keep_id_suffix: true)  # => "String Ending With Id"
+  #
+  # See ActiveSupport::Inflector.titleize.
+  #
+  # source://activesupport//lib/active_support/core_ext/string/inflections.rb#126
+  def titleize(keep_id_suffix: T.unsafe(nil)); end
+
+  # The reverse of +camelize+. Makes an underscored, lowercase form from the expression in the string.
+  #
+  # +underscore+ will also change '::' to '/' to convert namespaces to paths.
+  #
+  #   'ActiveModel'.underscore         # => "active_model"
+  #   'ActiveModel::Errors'.underscore # => "active_model/errors"
+  #
+  # See ActiveSupport::Inflector.underscore.
+  #
+  # source://activesupport//lib/active_support/core_ext/string/inflections.rb#139
+  def underscore; end
+
+  # Converts the first character to uppercase.
+  #
+  #   'what a Lovely Day'.upcase_first # => "What a Lovely Day"
+  #   'w'.upcase_first                 # => "W"
+  #   ''.upcase_first                  # => ""
+  #
+  # See ActiveSupport::Inflector.upcase_first.
+  #
+  # source://activesupport//lib/active_support/core_ext/string/inflections.rb#273
+  def upcase_first; end
+end
+
+# source://activesupport//lib/active_support/core_ext/time/conversions.rb#7
+class Time
+  include ::Comparable
+
+  # Converts to a formatted string. See DATE_FORMATS for built-in formats.
+  #
+  # This method is aliased to <tt>to_formatted_s</tt>.
+  #
+  #   time = Time.now                    # => 2007-01-18 06:10:17 -06:00
+  #
+  #   time.to_fs(:time)                  # => "06:10"
+  #   time.to_formatted_s(:time)         # => "06:10"
+  #
+  #   time.to_fs(:db)           # => "2007-01-18 06:10:17"
+  #   time.to_fs(:number)       # => "20070118061017"
+  #   time.to_fs(:short)        # => "18 Jan 06:10"
+  #   time.to_fs(:long)         # => "January 18, 2007 06:10"
+  #   time.to_fs(:long_ordinal) # => "January 18th, 2007 06:10"
+  #   time.to_fs(:rfc822)       # => "Thu, 18 Jan 2007 06:10:17 -0600"
+  #   time.to_fs(:iso8601)      # => "2007-01-18T06:10:17-06:00"
+  #
+  # == Adding your own time formats to +to_fs+
+  # You can add your own formats to the Time::DATE_FORMATS hash.
+  # Use the format name as the hash key and either a strftime string
+  # or Proc instance that takes a time argument as the value.
+  #
+  #   # config/initializers/time_formats.rb
+  #   Time::DATE_FORMATS[:month_and_year] = '%B %Y'
+  #   Time::DATE_FORMATS[:short_ordinal]  = ->(time) { time.strftime("%B #{time.day.ordinalize}") }
+  #
+  # source://activesupport//lib/active_support/core_ext/time/conversions.rb#53
+  def to_formatted_s(format = T.unsafe(nil)); end
+
+  # Converts to a formatted string. See DATE_FORMATS for built-in formats.
+  #
+  # This method is aliased to <tt>to_formatted_s</tt>.
+  #
+  #   time = Time.now                    # => 2007-01-18 06:10:17 -06:00
+  #
+  #   time.to_fs(:time)                  # => "06:10"
+  #   time.to_formatted_s(:time)         # => "06:10"
+  #
+  #   time.to_fs(:db)           # => "2007-01-18 06:10:17"
+  #   time.to_fs(:number)       # => "20070118061017"
+  #   time.to_fs(:short)        # => "18 Jan 06:10"
+  #   time.to_fs(:long)         # => "January 18, 2007 06:10"
+  #   time.to_fs(:long_ordinal) # => "January 18th, 2007 06:10"
+  #   time.to_fs(:rfc822)       # => "Thu, 18 Jan 2007 06:10:17 -0600"
+  #   time.to_fs(:iso8601)      # => "2007-01-18T06:10:17-06:00"
+  #
+  # == Adding your own time formats to +to_fs+
+  # You can add your own formats to the Time::DATE_FORMATS hash.
+  # Use the format name as the hash key and either a strftime string
+  # or Proc instance that takes a time argument as the value.
+  #
+  #   # config/initializers/time_formats.rb
+  #   Time::DATE_FORMATS[:month_and_year] = '%B %Y'
+  #   Time::DATE_FORMATS[:short_ordinal]  = ->(time) { time.strftime("%B #{time.day.ordinalize}") }
+  #
+  # source://activesupport//lib/active_support/core_ext/time/conversions.rb#53
+  def to_fs(format = T.unsafe(nil)); end
+end
+
+# source://activesupport//lib/active_support/core_ext/time/conversions.rb#8
+Time::DATE_FORMATS = T.let(T.unsafe(nil), Hash)
