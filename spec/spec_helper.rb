@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "double_entry_ledger"
+require "ledger"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

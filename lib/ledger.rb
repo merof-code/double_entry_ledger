@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "double_entry_ledger/version"
+require_relative "ledger/version"
 
-module DoubleEntryLedger
+module Ledger
   class Error < StandardError; end
   # Your code goes here...
 end

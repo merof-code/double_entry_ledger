@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in double_entry_ledger.gemspec
+# Specify your gem's dependencies in ledger.gemspec
 gemspec
 
 gem "rake", "~> 13.0"
