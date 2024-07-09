@@ -2,8 +2,9 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/ruby
 {
 	"name": "Ruby",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/ruby:1-3.3-bullseye",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
 	"features": {
 		"ghcr.io/itsmechlark/features/postgresql:1": {
 			"version": "latest"
@@ -14,7 +15,7 @@
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "bundle install",
+	"postCreateCommand": "sh .devcontainer/post-create.sh",
 	// Configure tool-specific properties.
 	"customizations": {
 		// Configure properties specific to VS Code.
@@ -26,7 +27,8 @@
 				"connorshea.vscode-ruby-test-adapter",
 				"eamodio.gitlens",
 				"Gruntfuggly.todo-tree",
-				"ninoseki.vscode-mogami"
+				"ninoseki.vscode-mogami",
+				"ms-azuretools.vscode-docker"
 			]
 		}
 	},
