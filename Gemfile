@@ -5,13 +5,15 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in ledger.gemspec
 gemspec
 
-gem "rake", "~> 13.0"
-
+# Development and testing dependencies
+gem "factory_bot"
+gem "mysql2"
+gem "pg"
+gem "rake", "~> 13.2.1"
 gem "rspec", "~> 3.0"
-
 gem "rubocop", "~> 1.21"
-
-gem "sorbet", group: :development
-gem "tapioca", require: false, group: %i[development test]
-# TODO: perhaps delete this
-gem "sorbet-runtime", group: :development
+gem "shoulda-matchers"
+gem "sorbet"
+gem "sorbet-runtime"
+gem "sqlite3"
+gem "tapioca", require: false
