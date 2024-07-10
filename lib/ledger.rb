@@ -1,7 +1,24 @@
 # typed: true
 # frozen_string_literal: true
 
+require "sorbet-runtime"
+
+require "active_record"
+require "active_record/locking_extensions"
+require "active_record/locking_extensions/log_subscriber"
+require "money"
+# TODO: check if i even need this railtie
+# require "rails/railtie"
+# TODO: check if i even need this active_support/all
+require "active_support/all"
+
 require_relative "ledger/version"
+require_relative "ledger/account"
+require_relative "ledger/transfer"
+require_relative "ledger/entry"
+# TODO: this one, do i need it
+# require_relative "ledger/configurable"
+require_relative "ledger/locking"
 
 module Ledger
   class Error < StandardError; end

@@ -18,7 +18,8 @@ module Ledger
   # script/jack_hammer can be used to run concurrency tests on the ledger to
   # validates that locking works properly.
   module Locking
-    include Configurable
+    # TODO: Configuration
+    # include Configurable
     class Configuration
       # Set this in your tests if you're using transactional_fixtures, so we know
       # not to complain about a containing transaction when you call lock_accounts.

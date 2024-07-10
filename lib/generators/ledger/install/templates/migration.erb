@@ -1,0 +1,103 @@
+class CreateLedgerDoubleEntryTables < ActiveRecord::Migration<%= migration_version %>
+  def self.up
+    create_table "ledger_documents", force: :cascade do |t|
+      t.date "date", null: false
+      t.string "number", limit: 100, default: "", null: false
+      t.string "description", limit: 300, default: "", null: false
+      t.text "comments", default: "", null: false
+      t.text "internal_comments", default: "", null: false
+      t.string "documentable_type"
+      t.bigint "documentable_id"
+      t.string "external_id", limit: 255, default: "", null: false
+      t.datetime "created_at", null: false
+      t.datetime "updated_at", null: false
+      t.integer :document_type, limit:3, null:false, default:0
+      t.index ["document_type"], name: "index_ledger_documents_on_document_type"
+      t.index ["date"], name: "index_ledger_documents_on_date"
+      t.index ["documentable_type", "documentable_id"], name: "index_ledger_documents_on_documentable"
+    end
+
+    create_table "ledger_accounts", force: :cascade do |t|
+      t.string "account_name", limit: 255, default: "", null: false
+      t.integer "account_type", limit: 2, default: 0, null: false
+      t.string "official_code", limit: 20, default: "", null: false
+      t.datetime "created_at", null: false
+      t.datetime "updated_at", null: false
+      t.index ["account_type"], name: "index_ledger_accounts_on_account_type"
+      t.index ["official_code"], name: "index_ledger_accounts_on_official_code"
+    end
+
+    create_table "ledger_entries", force: :cascade do |t|
+      t.bigint "ledger_transfer_id", null: false
+      t.bigint "ledger_account_id", null: false
+      t.bigint "ledger_person_id"
+      t.boolean "is_debit", default: false, null: false
+      t.integer "amount_cents", default: 0, null: false
+      t.string "amount_currency", limit: 3, default: "USD", null: false
+      t.datetime "created_at", null: false
+      t.datetime "updated_at", null: false
+      t.index ["is_debit"], name: "index_ledger_entries_on_is_debit"
+      t.index ["ledger_account_id"], name: "index_ledger_entries_on_ledger_account_id"
+      t.index ["ledger_transfer_id"], name: "index_ledger_entries_on_ledger_transfer_id"
+      t.index ["ledger_person_id"], name: "index_ledger_entries_on_ledger_person_id"
+    end
+
+    create_table "ledger_transfers", force: :cascade do |t|
+      t.date "date", null: false
+      t.bigint "ledger_document_id", null: false
+      t.string "description", limit: 255, default: "", null: false
+      t.datetime "created_at", null: false
+      t.datetime "updated_at", null: false
+      t.index ["date"], name: "index_ledger_transfers_on_date"
+    end
+
+    create_table "ledger_people", force: :cascade do |t|
+      t.string "personable_type", null: false
+      t.bigint "personable_id", null: false
+      t.datetime "created_at", null: false
+      t.datetime "updated_at", null: false
+      t.index ["personable_type", "personable_id"], name: "index_ledger_people_on_personable"
+    end
+
+    create_table "ledger_person_account_balances", force: :cascade do |t|
+      t.bigint "ledger_person_id", null: false
+      t.integer "balance_cents", default: 0, null: false
+      t.string "balance_currency", default: "USD", null: false
+      t.bigint "ledger_account_id", null: false
+      t.date "date"
+      t.datetime "created_at", null: false
+      t.datetime "updated_at", null: false
+      t.index ["date"], name: "index_ledger_person_account_balances_on_date"
+      t.index ["ledger_account_id"], name: "index_ledger_person_account_balances_on_ledger_account_id"
+      t.index ["ledger_person_id"], name: "index_ledger_person_account_balances_on_ledger_person_id"
+      t.index ["ledger_account_id", "ledger_person_id", "date"], unique: true, name: 'index_ledger_person_account_balances_on_account_person_date'
+      <%- column_name = 'date' -%>
+      <%- constraint_command =
+        case ActiveRecord::Base.connection.adapter_name
+        when 'PostgreSQL'
+          "EXTRACT(DAY FROM #{column_name}) = 1"
+        when 'Mysql2'
+          "DAY(#{column_name}) = 1"
+        when 'SQLServer'
+          "DATEPART(DAY, #{column_name}) = 1"
+        else
+          raise "Unsupported database adapter"
+        end -%>
+      t.check_constraint <%= constraint_command.inspect %>, name: "check_first_day"
+    end
+
+    add_foreign_key "ledger_transfers", "ledger_documents"
+    add_foreign_key "ledger_entries", "ledger_accounts"
+    add_foreign_key "ledger_entries", "ledger_transfers"
+    add_foreign_key "ledger_person_account_balances", "ledger_people", column: "ledger_person_id"
+    add_foreign_key "ledger_person_account_balances", "ledger_accounts"
+    add_foreign_key "ledger_entries", "ledger_people", column: "ledger_person_id"
+  end
+
+  def self.down
+    drop_table "ledger_transfers"
+    drop_table "ledger_entries"
+    drop_table "ledger_accounts"
+    drop_table "ledger_documents"
+  end
+end

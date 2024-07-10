@@ -15,7 +15,8 @@ class Ledger::Entry < ActiveRecord::Base
   validates :amount_cents, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :amount_currency, presence: true, length: { is: 3 }
 
-  monetize :amount
+  # TODO: monetize, fix it, I think it need money-rails
+  # monetize :amount
   # TODO: check if Monetize will work in model. if it is needed at all
   # TODO: add person, add cost center
 end
