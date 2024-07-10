@@ -5,8 +5,8 @@ require_relative "ledger/version"
 
 module Ledger
   class Error < StandardError; end
-
   class << self
+    extend T::Sig
     # Transfer money from one account to another.
     #
     # Only certain transfers are allowed. Define legal transfers in your
@@ -58,6 +58,7 @@ module Ledger
     # @raise [Ledger::TransferAlreadyExists] The provided transfer instance is already recorded in the db.
     # @raise [Ledger::InsufficientMoney] The amount in the person's account is not enough.
     # @raise [Ledger::TransferNotAllowed] Transfer is not allowed.
+    sig { params(transfer: Transfer, options: Hash).returns(T.untyped) }
     def transfer(transfer, options = {})
       transactions = options[:transactions] || [{
         amount: options[:amount],

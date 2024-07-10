@@ -17,17 +17,20 @@ module Ledger
     validates :description, presence: true, length: { in: 0..255 }
 
     class << self
-      # @param [Ledger::Transfer::Instance] transfer is a prepared object that is _not_ saved in the db!
+      extend T::Sig
+
+      # @param [Ledger::Transfer::Instance] transfer A prepared object that is _not_ saved in the db!
       # With all the fields filled out, like :document, :date, :description.
-      # @param [Array<Hash>] transactions with :debit, :credit, :amount and optional :person
-      # @return [[Line, Line]] The credit & debit (in that order) created by the transfer
-      # @raise [Ledger::TransferIsNegative] The amount is less than zero.
-      # @raise [Ledger::TransferAlreadyExists] The provided transfer instance is already recorded in the db.
-      # @raise [Ledger::InsufficientMoney] The amount in the person's account is not enough.
-      # @raise [Ledger::TransferNotAllowed] Transfer is not allowed.
+      # @param [Array<Hash>] transactions An array of hashes with :debit, :credit, :amount, and optional :person keys.
+      # @return [[Line, Line]] The credit & debit (in that order) created by the transfer.
+      # @raise [Ledger::TransferIsNegative] If the amount is less than zero.
+      # @raise [Ledger::TransferAlreadyExists] If the provided transfer instance is already recorded in the db.
+      # @raise [Ledger::InsufficientMoney] If the amount in the person's account is not enough.
+      # @raise [Ledger::TransferNotAllowed] If the transfer is not allowed.
+      sig { params(transfer: Transfer, transactions: T::Array[Hash]).returns(T.untyped) }
       def transfer(transfer, transactions)
         raise TransferAlreadyExists if transfer.persisted?
-        raise DuplicateTransactions if transactions.uniq.length != transactions.length?
+        raise DuplicateTransactions if transactions.uniq.length != transactions.length
 
         # may be empty
         people = transactions.map { |tr| tr[:person] }.compact
