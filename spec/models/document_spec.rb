@@ -3,6 +3,7 @@ RSpec.describe Ledger::Document, type: :model do
   describe "setup" do
     describe "validations" do
       it { is_expected.to validate_presence_of(:date) }
+      it { is_expected.to validate_presence_of(:description) }
       it { is_expected.to validate_length_of(:number).is_at_most(100) }
       it { is_expected.to validate_length_of(:description).is_at_most(300) }
       it { is_expected.to validate_length_of(:external_id).is_at_most(255) }
@@ -16,8 +17,12 @@ RSpec.describe Ledger::Document, type: :model do
 
     describe "associations" do
       it {
-        expect(subject).to belong_to(:documentable)
-          .optional
+        expect(subject).to belong_to(:documentable).optional
+      }
+
+      it {
+        expect(subject).to belong_to(:document_type)
+          .class_name("Ledger::DocumentType").with_foreign_key("ledger_document_type_id")
       }
 
       it {

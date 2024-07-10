@@ -3,9 +3,9 @@
 class Ledger::Entry < ActiveRecord::Base
   belongs_to :ledger_transfer, class_name: "Ledger::Transfer", foreign_key: "ledger_transfer_id", inverse_of: :entries,
                                required: true
-  belongs_to :ledger_account, class_name: "Ledger::Account", foreign_key: "ledger_account_id", inverse_of: :entries,
+  belongs_to :ledger_account, class_name: "Ledger::Account", foreign_key: "ledger_account_id", inverse_of: :ledger_entries,
                               required: true
-  belongs_to :ledger_person, class_name: "Ledger::Person", foreign_key: "ledger_person_id", inverse_of: :entries,
+  belongs_to :ledger_person, class_name: "Ledger::Person", foreign_key: "ledger_person_id", inverse_of: :ledger_entries,
                              required: true
 
   validates :ledger_transfer_id, presence: true

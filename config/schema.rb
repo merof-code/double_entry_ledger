@@ -1,3 +1,5 @@
+# typed: true
+
 ActiveRecord::Schema.define(version: 20_240_701_000_001) do
   self.verbose = false
 
@@ -12,10 +14,18 @@ ActiveRecord::Schema.define(version: 20_240_701_000_001) do
     t.string "external_id", limit: 255, default: "", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer :document_type, limit: 3, null: false, default: 0
-    t.index ["document_type"], name: "index_ledger_documents_on_document_type"
+    t.bigint "ledger_document_type_id", null: false
+    t.index ["ledger_document_type_id"], name: "index_ledger_documents_on_ledger_document_type_id"
     t.index ["date"], name: "index_ledger_documents_on_date"
     t.index %w[documentable_type documentable_id], name: "index_ledger_documents_on_documentable"
+  end
+
+  create_table "ledger_document_types", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "description", null: false, default: ""
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_ledger_document_types_on_name"
   end
 
   create_table "ledger_accounts", force: :cascade do |t|
@@ -88,6 +98,7 @@ ActiveRecord::Schema.define(version: 20_240_701_000_001) do
     t.check_constraint constraint_command, name: "check_first_day"
   end
 
+  add_foreign_key "ledger_documents", "ledger_document_types"
   add_foreign_key "ledger_transfers", "ledger_documents"
   add_foreign_key "ledger_entries", "ledger_accounts"
   add_foreign_key "ledger_entries", "ledger_transfers"

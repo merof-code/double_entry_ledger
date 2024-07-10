@@ -18,7 +18,7 @@ RSpec.describe Ledger::Person, type: :model do
       }
 
       it {
-        expect(subject).to have_many(:entries)
+        expect(subject).to have_many(:ledger_entries)
           .class_name("Ledger::Entry")
           .with_foreign_key("ledger_person_id")
           .inverse_of(:ledger_person)
