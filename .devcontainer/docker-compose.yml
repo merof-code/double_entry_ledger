@@ -1,0 +1,31 @@
+services:
+  devcontainer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../..:/workspaces:cached
+    network_mode: service:db
+    command: sleep infinity
+
+  mysql:
+    image: mysql
+    restart: unless-stopped
+    volumes:
+      - mysql-data:/var/lib/postgresql/data
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+      MYSQL_DATABASE: ledger_test
+
+  postgres:
+    image: postgres:alpine
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_DB: ledger_test
+
+volumes:
+  postgres-data:
+  mysql-data:
