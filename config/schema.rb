@@ -1,4 +1,4 @@
-ActiveRecord::Schema.define do
+ActiveRecord::Schema.define(version: 20_240_701_000_001) do
   self.verbose = false
 
   create_table "ledger_documents", force: :cascade do |t|
@@ -12,10 +12,10 @@ ActiveRecord::Schema.define do
     t.string "external_id", limit: 255, default: "", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer :document_type, limit:3, null:false, default:0
+    t.integer :document_type, limit: 3, null: false, default: 0
     t.index ["document_type"], name: "index_ledger_documents_on_document_type"
     t.index ["date"], name: "index_ledger_documents_on_date"
-    t.index ["documentable_type", "documentable_id"], name: "index_ledger_documents_on_documentable"
+    t.index %w[documentable_type documentable_id], name: "index_ledger_documents_on_documentable"
   end
 
   create_table "ledger_accounts", force: :cascade do |t|
@@ -57,7 +57,7 @@ ActiveRecord::Schema.define do
     t.bigint "personable_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["personable_type", "personable_id"], name: "index_ledger_people_on_personable"
+    t.index %w[personable_type personable_id], name: "index_ledger_people_on_personable"
   end
 
   create_table "ledger_person_account_balances", force: :cascade do |t|
@@ -71,15 +71,16 @@ ActiveRecord::Schema.define do
     t.index ["date"], name: "index_ledger_person_account_balances_on_date"
     t.index ["ledger_account_id"], name: "index_ledger_person_account_balances_on_ledger_account_id"
     t.index ["ledger_person_id"], name: "index_ledger_person_account_balances_on_ledger_person_id"
-    t.index ["ledger_account_id", "ledger_person_id", "date"], unique: true, name: 'index_ledger_person_account_balances_on_account_person_date'
-    column_name = 'date'
+    t.index %w[ledger_account_id ledger_person_id date], unique: true,
+                                                         name: "index_ledger_person_account_balances_on_account_person_date"
+    column_name = "date"
     constraint_command =
       case ActiveRecord::Base.connection.adapter_name
-      when 'PostgreSQL'
+      when "PostgreSQL"
         "EXTRACT(DAY FROM #{column_name}) = 1"
-      when 'Mysql2'
+      when "Mysql2"
         "DAY(#{column_name}) = 1"
-      when 'SQLServer'
+      when "SQLServer"
         "DATEPART(DAY, #{column_name}) = 1"
       else
         raise "Unsupported database adapter"
@@ -95,9 +96,9 @@ ActiveRecord::Schema.define do
   add_foreign_key "ledger_entries", "ledger_people", column: "ledger_person_id"
 
   # test table only
-  create_table "users", force: true do |t|
-    t.string     "username", null: false
-    t.timestamps             null: false
+  create_table "users", force: :cascade do |t|
+    t.string "username", null: false
+    t.timestamps null: false
   end
 
   add_index "users", ["username"], name: "index_users_on_username", unique: true
