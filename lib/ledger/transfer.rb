@@ -1,0 +1,69 @@
+# typed: true
+
+module Ledger
+  # This is not the ledger itself, this is a transaction, which may have 2 or more lines in the ledger,
+  # so that all lines in the ledger under the same transaction have total credit - debit = 0.
+  # Connects to (source) documents, and
+  # based on https://www.codeproject.com/Articles/5163401/Database-for-Financial-Accounting-Application-II
+  class Transfer < ActiveRecord::Base
+    # TODO: test this
+    # TODO: add relation to ledger, and perhaps some checking of the fact that debit - credit = 0.
+    # This is the point around which locking could be done
+
+    belongs_to :ledger_document, class_name: "Ledger::Document", foreign_key: "ledger_document_id", required: true
+    has_many :entries, class_name: "Ledger::Entry", foreign_key: "ledger_transfer_id", inverse_of: :ledger_transfer
+
+    validates :date, presence: true
+    validates :description, presence: true, length: { in: 0..255 }
+
+    class << self
+      # @param [Ledger::Transfer::Instance] transfer is a prepared object that is _not_ saved in the db!
+      # With all the fields filled out, like :document, :date, :description.
+      # @param [Array<Hash>] transactions with :debit, :credit, :amount and optional :person
+      # @return [[Line, Line]] The credit & debit (in that order) created by the transfer
+      # @raise [Ledger::TransferIsNegative] The amount is less than zero.
+      # @raise [Ledger::TransferAlreadyExists] The provided transfer instance is already recorded in the db.
+      # @raise [Ledger::InsufficientMoney] The amount in the person's account is not enough.
+      # @raise [Ledger::TransferNotAllowed] Transfer is not allowed.
+      def transfer(transfer, transactions)
+        raise TransferAlreadyExists if transfer.persisted?
+        raise DuplicateTransactions if transactions.uniq.length != transactions.length?
+
+        # may be empty
+        people = transactions.map { |tr| tr[:person] }.compact
+        Locking.lock_accounts(people) do
+          transfer.save
+          # for each transaction set
+          transactions.each do |transaction|
+            create_entries(transfer, transaction)
+          end
+        end
+      end
+
+      # @param [Hash] transactions with :debit, :credit, :amount and optional :person
+      # @param [Ledger::Transfer::Instance] transfer persisted record, need only id
+      def create_entries(transfer, transaction)
+        raise Ledger::TransferIsNegative unless transaction[:amount].positive?
+
+        person = transaction[person]
+        base = Entry.new(amount: transaction[:amount], transfer:, person:)
+
+        # TODO: test this dup, associations
+        debit = base.dup
+        credit = base.dup
+        debit.account = transaction[:debit]
+        debit.debit!
+
+        credit.account = transaction[:credit]
+        credit.save!
+
+        return [debit, credit] unless person
+
+        person_balance = Locking.balance_for_locked_account(person)
+        person_balance.amount += debit.amount
+        person_balance.save!
+        # TODO: the + or - depending on the side
+      end
+    end
+  end
+end

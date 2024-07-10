@@ -2,5 +2,9 @@
   "cSpell.words": [
     "activerecord",
     "shoulda"
-  ]
+  ],
+  "[ruby]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "Shopify.ruby-lsp"
+  }
 }
