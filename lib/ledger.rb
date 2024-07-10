@@ -86,5 +86,11 @@ module Ledger
       }]
       Transfer.transfer(transfer, transactions)
     end
+
+    # This is for proper location of tables, there is no rails here to take care of this for us
+    # @api private
+    def table_name_prefix
+      "ledger_"
+    end
   end
 end

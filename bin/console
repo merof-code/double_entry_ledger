@@ -7,5 +7,18 @@ require "ledger"
 # You can add fixtures and/or initialization code here to make experimenting
 # with your gem easier. You can also use a different console, if you like.
 
+db_engine = ENV["DB"] || "postgres"
+database_config_file = File.join(__dir__, "../spec/support/database.yml")
+
+raise <<-MSG.strip_heredoc unless File.exist?(database_config_file)
+  Please configure your spec/support/database.yml file.
+MSG
+
+ActiveRecord::Base.belongs_to_required_by_default = true if ActiveRecord.version.version >= "5"
+database_config_raw = File.read(database_config_file)
+database_config_yaml = ERB.new(database_config_raw).result
+database_config = YAML.load(database_config_yaml)
+ActiveRecord::Base.establish_connection(database_config[db_engine])
+
 require "irb"
 IRB.start(__FILE__)
