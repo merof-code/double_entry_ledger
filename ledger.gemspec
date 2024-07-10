@@ -39,8 +39,9 @@ Gem::Specification.new do |spec|
   # spec.add_dependency "activemodel", ">= 7.1.0"
   spec.add_dependency "activerecord",          ">= 7.1.0"
   spec.add_dependency "activesupport",         ">= 7.1.0"
-  spec.add_dependency "money",                 ">= 6.0.0"
-  spec.add_dependency "railties",              ">= 7.1.0"
+  spec.add_dependency "money", ">= 6.0.0"
+  spec.add_dependency "money-rails"
+  # spec.add_dependency "railties",              ">= 7.1.0"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
