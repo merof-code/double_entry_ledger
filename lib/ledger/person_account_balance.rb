@@ -1,6 +1,6 @@
 # typed: true
 
-class Ledger::PersonAccountBalance < ApplicationRecord
+class Ledger::PersonAccountBalance < ActiveRecord::Base
   belongs_to :ledger_person, class_name: "Ledger::Person", foreign_key: "ledger_person_id",
                              inverse_of: :person_account_balances
   belongs_to :ledger_account, class_name: "Ledger::Account", foreign_key: "ledger_account_id",
@@ -11,7 +11,8 @@ class Ledger::PersonAccountBalance < ApplicationRecord
                    uniqueness: { scope: %i[ledger_account_id ledger_person_id], message: "should be unique within the scope of ledger account and person" }
   validate :date_cannot_be_earlier_than_last
 
-  monetize :balance
+  # TODO: uncomment this
+  # monetize :balance
 
   private
 

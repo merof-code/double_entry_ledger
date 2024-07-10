@@ -43,7 +43,7 @@ RSpec.describe Ledger::Account, type: :model do
   describe "valid model" do
     # Assuming you have FactoryBot set up with a valid ledger_account factory
     let(:valid_account) do
-      build(:ledger_account)
+      build(:account)
     end
 
     it "is valid with valid attributes" do
