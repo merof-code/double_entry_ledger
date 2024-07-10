@@ -36,6 +36,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   # Uncomment to register a new dependency of your gem
+  # spec.add_dependency "activemodel", ">= 7.1.0"
   spec.add_dependency "activerecord",          ">= 7.1.0"
   spec.add_dependency "activesupport",         ">= 7.1.0"
   spec.add_dependency "money",                 ">= 6.0.0"

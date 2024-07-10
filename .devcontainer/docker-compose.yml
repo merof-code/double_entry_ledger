@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ../..:/workspaces:cached
-    network_mode: service:db
+    network_mode: service:mysql
     command: sleep infinity
 
   mysql:
@@ -16,15 +16,14 @@ services:
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "true"
       MYSQL_DATABASE: ledger_test
-
-  postgres:
-    image: postgres:alpine
-    restart: unless-stopped
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_HOST_AUTH_METHOD: trust
-      POSTGRES_DB: ledger_test
+  # postgres:
+  #   image: postgres:alpine
+  #   restart: unless-stopped
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+  #   environment:
+  #     POSTGRES_HOST_AUTH_METHOD: trust
+  #     POSTGRES_DB: ledger_test
 
 volumes:
   postgres-data:

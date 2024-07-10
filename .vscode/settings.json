@@ -17,5 +17,31 @@
     "editor.tabSize": 2, // Use 2 spaces for indentation
     "editor.insertSpaces": true, // Use spaces and not tabs for indentantion
     "editor.semanticHighlighting.enabled": true, // Enable semantic highlighting
-  }
+  },
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "name": "postgres-test-db",
+      "database": "ledger_test",
+      "username": "any",
+      "password": ""
+    },
+    {
+      "mysqlOptions": {
+        "authProtocol": "default",
+        "enableSsl": "Disabled"
+      },
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 3306,
+      "driver": "MySQL",
+      "name": "mysql",
+      "database": "ledger_test",
+      "username": "any",
+      "password": ""
+    }
+  ]
 }

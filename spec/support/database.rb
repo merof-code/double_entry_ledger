@@ -1,11 +1,11 @@
 # TODO: add db cleaner
 require "active_record"
-# require "database_cleaner"
+require 'database_cleaner/active_record'
 require "erb"
 require "yaml"
 
 FileUtils.mkdir_p "tmp"
-
+# postgres
 db_engine = ENV["DB"] || "mysql"
 database_config_file = File.join(__dir__, "database.yml")
 
@@ -22,10 +22,10 @@ ActiveRecord::Base.establish_connection(database_config[db_engine])
 
 RSpec.configure do |config|
   config.before(:suite) do
-    # DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.strategy = :truncation
   end
 
   config.before do
-    # DatabaseCleaner.clean
+    DatabaseCleaner.clean
   end
 end

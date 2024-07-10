@@ -21,3 +21,6 @@ gem "sorbet-runtime"
 gem "sqlite3"
 gem "tapioca", require: false
 gem "yard"
+group :test do
+  gem "database_cleaner-active_record"
+end

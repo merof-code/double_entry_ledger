@@ -6,6 +6,8 @@
 	// 	"dockerfile": "Dockerfile"
 	// },
 	"dockerComposeFile": "docker-compose.yml",
+	"service": "devcontainer",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	//
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
@@ -24,7 +26,9 @@
 				"eamodio.gitlens",
 				"Gruntfuggly.todo-tree",
 				"ninoseki.vscode-mogami",
-				"ms-azuretools.vscode-docker"
+				"mtxr.sqltools",
+				"mtxr.sqltools-driver-pg",
+				"mtxr.sqltools-driver-mysql"
 			]
 		}
 	},
