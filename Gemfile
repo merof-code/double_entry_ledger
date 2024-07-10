@@ -20,3 +20,4 @@ gem "sorbet-rails"
 gem "sorbet-runtime"
 gem "sqlite3"
 gem "tapioca", require: false
+gem "yard"
