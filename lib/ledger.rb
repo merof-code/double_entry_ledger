@@ -15,6 +15,7 @@ require "active_support/all"
 require_relative "ledger/version"
 require_relative "ledger/account"
 require_relative "ledger/transfer"
+require_relative "ledger/document"
 require_relative "ledger/entry"
 # TODO: this one, do i need it
 # require_relative "ledger/configurable"
