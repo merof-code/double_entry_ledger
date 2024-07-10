@@ -21,12 +21,12 @@
   "sqltools.connections": [
     {
       "previewLimit": 50,
-      "server": "localhost",
+      "server": "postgres",
       "port": 5432,
       "driver": "PostgreSQL",
       "name": "postgres-test-db",
       "database": "ledger_test",
-      "username": "any",
+      "username": "postgres",
       "password": ""
     },
     {
@@ -35,12 +35,12 @@
         "enableSsl": "Disabled"
       },
       "previewLimit": 50,
-      "server": "localhost",
+      "server": "mysql",
       "port": 3306,
       "driver": "MySQL",
       "name": "mysql",
       "database": "ledger_test",
-      "username": "any",
+      "username": "root",
       "password": ""
     }
   ]

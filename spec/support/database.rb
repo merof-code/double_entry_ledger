@@ -1,17 +1,14 @@
-# TODO: add db cleaner
 require "active_record"
-require 'database_cleaner/active_record'
+require "database_cleaner/active_record"
 require "erb"
 require "yaml"
 
-FileUtils.mkdir_p "tmp"
 # postgres
-db_engine = ENV["DB"] || "mysql"
+db_engine = ENV["DB"] || "postgres"
 database_config_file = File.join(__dir__, "database.yml")
 
 raise <<-MSG.strip_heredoc unless File.exist?(database_config_file)
   Please configure your spec/support/database.yml file.
-  See spec/support/database.example.yml'
 MSG
 
 ActiveRecord::Base.belongs_to_required_by_default = true if ActiveRecord.version.version >= "5"
@@ -23,6 +20,7 @@ ActiveRecord::Base.establish_connection(database_config[db_engine])
 RSpec.configure do |config|
   config.before(:suite) do
     DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.clean_with :truncation
   end
 
   config.before do
