@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+# load the db and turn on the monetize:, this should be before MoneyRails::Hooks.init
+require "./config/database"
+require "money-rails"
+MoneyRails::Hooks.init
+
 require "ledger"
 
 RSpec.configure do |config|
@@ -24,3 +29,5 @@ Shoulda::Matchers.configure do |config|
     with.library :active_model
   end
 end
+
+require "money-rails/test_helpers"

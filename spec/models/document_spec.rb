@@ -10,7 +10,7 @@ RSpec.describe Ledger::Document, type: :model do
     end
 
     describe "indexes" do
-      it { is_expected.to have_db_index(:document_type) }
+      it { is_expected.to have_db_index(:ledger_document_type_id) }
       it { is_expected.to have_db_index(:date) }
       it { is_expected.to have_db_index(%i[documentable_type documentable_id]) }
     end

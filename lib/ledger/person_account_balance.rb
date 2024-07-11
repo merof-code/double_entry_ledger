@@ -11,8 +11,7 @@ class Ledger::PersonAccountBalance < ActiveRecord::Base
                    uniqueness: { scope: %i[ledger_account_id ledger_person_id], message: "should be unique within the scope of ledger account and person" }
   validate :date_cannot_be_earlier_than_last
 
-  # TODO: uncomment this
-  # monetize :balance
+  monetize :balance_cents, as: :balance, with_model_currency: :balance_currency
 
   private
 

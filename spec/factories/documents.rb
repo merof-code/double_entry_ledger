@@ -11,6 +11,5 @@ FactoryBot.define do
     documentable_type { nil }
     documentable_id { nil }
     external_id { "EXT123" }
-    document_type { 0 } # Assuming 0 is a valid value for one of the enum types
   end
 end

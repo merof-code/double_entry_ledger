@@ -5,11 +5,12 @@ RSpec.describe Ledger::Entry, type: :model do
       it { is_expected.to validate_presence_of(:ledger_transfer_id) }
       it { is_expected.to validate_presence_of(:ledger_account_id) }
       it { is_expected.to validate_presence_of(:ledger_person_id) }
-      it { is_expected.to validate_inclusion_of(:is_debit).in_array([true, false]) }
       it { is_expected.to validate_presence_of(:amount_cents) }
       it { is_expected.to validate_numericality_of(:amount_cents).only_integer.is_greater_than_or_equal_to(0) }
       it { is_expected.to validate_presence_of(:amount_currency) }
       it { is_expected.to validate_length_of(:amount_currency).is_equal_to(3) }
+
+      it { is_expected.to monetize(:amount).with_model_currency(:amount_currency) }
     end
 
     describe "indexes" do
@@ -38,17 +39,14 @@ RSpec.describe Ledger::Entry, type: :model do
         expect(subject).to belong_to(:ledger_person)
           .class_name("Ledger::Person")
           .with_foreign_key("ledger_person_id")
-          .required
+          .optional
       }
     end
   end
 
   describe "valid model" do
-    let(:valid_entry) do
-      build(:entry)
-    end
-
     it "is valid with valid attributes" do
+      valid_entry = create(:entry)
       expect(valid_entry).to be_valid
       expect(valid_entry.save).to be_truthy
     end

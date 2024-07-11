@@ -6,6 +6,7 @@ require "sorbet-runtime"
 require "active_record"
 require "active_record/locking_extensions"
 require "active_record/locking_extensions/log_subscriber"
+require "money-rails"
 require "money"
 # TODO: check if i even need this railtie
 # require "rails/railtie"

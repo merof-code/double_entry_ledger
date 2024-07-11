@@ -25,7 +25,7 @@ ActiveRecord::Schema.define(version: 20_240_701_000_001) do
     t.string "description", null: false, default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_ledger_document_types_on_name"
+    t.index ["name"], name: "index_ledger_document_types_on_name", unique: true
   end
 
   create_table "ledger_accounts", force: :cascade do |t|

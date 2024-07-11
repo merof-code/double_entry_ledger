@@ -6,6 +6,8 @@ RSpec.describe Ledger::DocumentType, type: :model do
   end
 
   describe "validations" do
+    subject { create(:ledger_document_type) } # Ensure an existing record is created
+
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_uniqueness_of(:name) }
     it { is_expected.to validate_presence_of(:description) }
