@@ -10,6 +10,7 @@ RSpec.describe Ledger::PersonAccountBalance, type: :model do
   end
 
   describe "validations" do
+    it { is_expected.to monetize(:balance).with_model_currency(:balance_currency) }
     it { is_expected.to validate_presence_of(:date) }
 
     it "validates uniqueness of date scoped to ledger_account_id and ledger_person_id" do

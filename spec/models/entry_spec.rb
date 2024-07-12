@@ -9,7 +9,6 @@ RSpec.describe Ledger::Entry, type: :model do
       it { is_expected.to validate_numericality_of(:amount_cents).only_integer.is_greater_than_or_equal_to(0) }
       it { is_expected.to validate_presence_of(:amount_currency) }
       it { is_expected.to validate_length_of(:amount_currency).is_equal_to(3) }
-
       it { is_expected.to monetize(:amount).with_model_currency(:amount_currency) }
     end
 

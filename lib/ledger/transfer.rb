@@ -14,7 +14,7 @@ module Ledger
     has_many :entries, class_name: "Ledger::Entry", foreign_key: "ledger_transfer_id", inverse_of: :ledger_transfer
 
     validates :date, presence: true
-    validates :description, presence: true, length: { in: 0..255 }
+    validates :description, presence: true, length: { in: 5..255 }
 
     class << self
       extend T::Sig

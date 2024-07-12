@@ -15,5 +15,7 @@ require "factory_bot"
 FactoryBot.find_definitions
 include FactoryBot::Syntax::Methods
 
+require "./spec/support/money"
+
 require "irb"
 IRB.start(__FILE__)
