@@ -21,8 +21,7 @@ require_relative "ledger/document_type"
 require_relative "ledger/person_account_balance"
 require_relative "ledger/entry"
 require_relative "ledger/person"
-# TODO: this one, do i need it
-# require_relative "ledger/configurable"
+require_relative "ledger/configurable"
 require_relative "ledger/locking"
 
 module Ledger
@@ -80,7 +79,7 @@ module Ledger
     # @raise [Ledger::TransferAlreadyExists] The provided transfer instance is already recorded in the db.
     # @raise [Ledger::InsufficientMoney] The amount in the person's account is not enough.
     # @raise [Ledger::TransferNotAllowed] Transfer is not allowed.
-    sig { params(transfer: Transfer, options: Hash).returns(T.untyped) }
+    sig { params(transfer: Transfer, options: Hash).returns(T::Array[Hash]) }
     def transfer(transfer, options = {})
       transactions = options[:transactions] || [{
         amount: options[:amount],

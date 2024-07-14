@@ -19,7 +19,7 @@ module Ledger
   # validates that locking works properly.
   module Locking
     # TODO: Configuration
-    # include Configurable
+    include Configurable
     class Configuration
       # Set this in your tests if you're using transactional_fixtures, so we know
       # not to complain about a containing transaction when you call lock_accounts.
@@ -177,19 +177,15 @@ module Ledger
     end
 
     # Raised when lock_accounts is called inside an existing transaction.
-    class LockMustBeOutermostTransaction < RuntimeError
-    end
+    class LockMustBeOutermostTransaction < RuntimeError; end
 
     # Raised when attempting a transfer on an account that's not locked.
-    class LockNotHeld < RuntimeError
-    end
+    class LockNotHeld < RuntimeError; end
 
     # Raised if things go horribly, horribly wrong. This should never happen.
-    class LockDisaster < RuntimeError
-    end
+    class LockDisaster < RuntimeError; end
 
     # Raised if waiting for locks times out.
-    class LockWaitTimeout < RuntimeError
-    end
+    class LockWaitTimeout < RuntimeError; end
   end
 end
