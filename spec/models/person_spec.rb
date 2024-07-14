@@ -14,14 +14,14 @@ RSpec.describe Ledger::Person, type: :model do
         expect(subject).to have_many(:person_account_balances)
           .class_name("Ledger::PersonAccountBalance")
           .with_foreign_key("ledger_person_id")
-          .inverse_of(:ledger_person)
+          .inverse_of(:person)
       }
 
       it {
-        expect(subject).to have_many(:ledger_entries)
+        expect(subject).to have_many(:entries)
           .class_name("Ledger::Entry")
           .with_foreign_key("ledger_person_id")
-          .inverse_of(:ledger_person)
+          .inverse_of(:person)
       }
     end
   end

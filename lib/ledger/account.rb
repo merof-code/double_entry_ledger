@@ -9,8 +9,8 @@ module Ledger
     # TODO: add associations
     self.primary_key = "id"
     has_many :person_account_balances, class_name: "Ledger::PersonAccountBalance", foreign_key: "ledger_account_id",
-                                       inverse_of: :ledger_account
-    has_many :ledger_entries, class_name: "Ledger::Entry", foreign_key: "ledger_account_id", inverse_of: :ledger_account
+                                       inverse_of: :account
+    has_many :entries, class_name: "Ledger::Entry", foreign_key: "ledger_account_id", inverse_of: :account
 
     # TODO: use account ACCOUNT_TYPES
     enum :account_type, %i[equity liability revenue expense asset], validate: true, presence: true

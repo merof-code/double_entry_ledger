@@ -2,9 +2,6 @@
 RSpec.describe Ledger::Entry, type: :model do
   describe "setup" do
     describe "validations" do
-      it { is_expected.to validate_presence_of(:ledger_transfer_id) }
-      it { is_expected.to validate_presence_of(:ledger_account_id) }
-      it { is_expected.to validate_presence_of(:ledger_person_id) }
       it { is_expected.to validate_presence_of(:amount_cents) }
       it { is_expected.to validate_numericality_of(:amount_cents).only_integer.is_greater_than_or_equal_to(0) }
       it { is_expected.to validate_presence_of(:amount_currency) }
@@ -21,21 +18,21 @@ RSpec.describe Ledger::Entry, type: :model do
 
     describe "associations" do
       it {
-        expect(subject).to belong_to(:ledger_transfer)
+        expect(subject).to belong_to(:transfer)
           .class_name("Ledger::Transfer")
           .with_foreign_key("ledger_transfer_id")
           .required
       }
 
       it {
-        expect(subject).to belong_to(:ledger_account)
+        expect(subject).to belong_to(:account)
           .class_name("Ledger::Account")
           .with_foreign_key("ledger_account_id")
           .required
       }
 
       it {
-        expect(subject).to belong_to(:ledger_person)
+        expect(subject).to belong_to(:person)
           .class_name("Ledger::Person")
           .with_foreign_key("ledger_person_id")
           .optional

@@ -13,7 +13,7 @@ RSpec.describe Ledger::Transfer, type: :model do
 
     describe "associations" do
       it {
-        expect(subject).to belong_to(:ledger_document)
+        expect(subject).to belong_to(:document)
           .class_name("Ledger::Document")
           .with_foreign_key("ledger_document_id")
           .required
@@ -23,7 +23,7 @@ RSpec.describe Ledger::Transfer, type: :model do
         expect(subject).to have_many(:entries)
           .class_name("Ledger::Entry")
           .with_foreign_key("ledger_transfer_id")
-          .inverse_of(:ledger_transfer)
+          .inverse_of(:transfer)
       }
     end
   end
@@ -48,5 +48,8 @@ RSpec.describe Ledger::Transfer, type: :model do
     it "does not allow to create transfer by user" do
       expect { create(:transfer) }.to raise_error(ActiveRecord::RecordInvalid)
     end
+  end
+
+  describe "transfers" do
   end
 end

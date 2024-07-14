@@ -83,7 +83,7 @@ module Ledger
         @accounts.each do |account|
           unless lock?(account)
             raise LockNotHeld,
-                  "No lock held for account: person: #{account.ledger_person}, ledger_account #{account.ledger_account}"
+                  "No lock held for account: person: #{account.person}, ledger_account #{account.account}"
           end
         end
       end

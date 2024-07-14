@@ -26,7 +26,7 @@ RSpec.describe Ledger::Document, type: :model do
       }
 
       it {
-        expect(subject).to have_many(:ledger_transfers)
+        expect(subject).to have_many(:transfers)
           .class_name("Ledger::Transfer")
           .with_foreign_key("ledger_document_id")
       }

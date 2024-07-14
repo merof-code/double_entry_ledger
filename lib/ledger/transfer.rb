@@ -10,8 +10,8 @@ module Ledger
     # TODO: add relation to ledger, and perhaps some checking of the fact that debit - credit = 0.
     # This is the point around which locking could be done
 
-    belongs_to :ledger_document, class_name: "Ledger::Document", foreign_key: "ledger_document_id", required: true
-    has_many :entries, class_name: "Ledger::Entry", foreign_key: "ledger_transfer_id", inverse_of: :ledger_transfer
+    belongs_to :document, class_name: "Ledger::Document", foreign_key: "ledger_document_id", required: true
+    has_many :entries, class_name: "Ledger::Entry", foreign_key: "ledger_transfer_id", inverse_of: :transfer
 
     validates :date, presence: true
     validates :description, presence: true, length: { in: 5..255 }

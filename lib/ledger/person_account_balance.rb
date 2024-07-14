@@ -1,10 +1,10 @@
 # typed: true
 
 class Ledger::PersonAccountBalance < ActiveRecord::Base
-  belongs_to :ledger_person, class_name: "Ledger::Person", foreign_key: "ledger_person_id",
-                             inverse_of: :person_account_balances, required: true
-  belongs_to :ledger_account, class_name: "Ledger::Account", foreign_key: "ledger_account_id",
-                              inverse_of: :person_account_balances, required: true
+  belongs_to :person, class_name: "Ledger::Person", foreign_key: "ledger_person_id",
+                      inverse_of: :person_account_balances, required: true
+  belongs_to :account, class_name: "Ledger::Account", foreign_key: "ledger_account_id",
+                       inverse_of: :person_account_balances, required: true
 
   before_validation :set_date_to_first_day_of_month
   validates :date, presence: true,

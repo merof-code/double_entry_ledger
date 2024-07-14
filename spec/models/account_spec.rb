@@ -32,20 +32,20 @@ RSpec.describe Ledger::Account, type: :model do
         expect(subject).to have_many(:person_account_balances)
           .class_name("Ledger::PersonAccountBalance")
           .with_foreign_key("ledger_account_id")
-          .inverse_of(:ledger_account)
+          .inverse_of(:account)
       }
 
       it {
-        expect(subject).to have_many(:ledger_entries)
+        expect(subject).to have_many(:entries)
           .class_name("Ledger::Entry")
           .with_foreign_key("ledger_account_id")
-          .inverse_of(:ledger_account)
+          .inverse_of(:account)
       }
     end
   end
 
   describe "valid model" do
-    # Assuming you have FactoryBot set up with a valid ledger_account factory
+    # Assuming you have FactoryBot set up with a valid account factory
     let(:valid_account) do
       build(:account)
     end

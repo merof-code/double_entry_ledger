@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :document, class: "Ledger::Document" do
-    association :document_type, factory: :ledger_document_type
+    association :document_type, factory: :document_type
     date { Date.today }
     sequence(:number) { |n| "DOC#{n}" }
     description { "Test Description" }
