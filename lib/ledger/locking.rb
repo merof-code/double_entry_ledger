@@ -18,6 +18,7 @@ module Ledger
   # script/jack_hammer can be used to run concurrency tests on the ledger to
   # validates that locking works properly.
   module Locking
+    extend T::Sig
     # TODO: Configuration
     include Configurable
     class Configuration
@@ -34,6 +35,7 @@ module Ledger
     #
     # The transaction must be the outermost transaction to ensure data integrity. A
     # LockMustBeOutermostTransaction will be raised if it isn't.
+    sig { params(accounts: T::Array[PersonAccountBalance], block: T.proc.returns(T.untyped)).returns(T.untyped) }
     def self.lock_accounts(*accounts, &block)
       lock = Lock.new(accounts)
 
@@ -51,6 +53,7 @@ module Ledger
 
     # Return the PersonAccountBalance record if there's a
     # lock on it, or raise a LockNotHeld if there isn't.
+    sig { params(account: PersonAccountBalance).returns(PersonAccountBalance) }
     def self.balance_for_locked_account(account)
       Lock.new([account]).balance_for(account)
     end
@@ -70,7 +73,6 @@ module Ledger
 
         return if lock_and_call(&block)
 
-        create_missing_account_balances
         raise LockDisaster unless lock_and_call(&block)
       end
 
@@ -83,7 +85,7 @@ module Ledger
         @accounts.each do |account|
           unless lock?(account)
             raise LockNotHeld,
-                  "No lock held for account: person: #{account.person}, ledger_account #{account.account}"
+                  "No lock held for PersonAccountBalance: #{account}"
           end
         end
       end
@@ -91,7 +93,7 @@ module Ledger
       def balance_for(account)
         ensure_locked!
 
-        locks[account]
+        locks.find { |lock_account| lock_account == account }
       end
 
       private
@@ -110,7 +112,7 @@ module Ledger
 
       # Return true if there's a lock on the given account.
       def lock?(account)
-        in_a_locked_transaction? && locks.key?(account)
+        in_a_locked_transaction? && locks.include?(account)
       end
 
       # Raise an exception unless we're outside any transactions.
@@ -124,8 +126,9 @@ module Ledger
       # Start a transaction, grab locks on the given accounts, then call the block
       # from within the transaction.
       #
-      # If any account can't be locked (because there isn't a corresponding account
-      # balance record), don't call the block, and return false.
+      # If any account can't be locked, don't call the block, and return false.
+      # Originally, was because: (because there isn't a corresponding account balance record)
+      # but that does not apply here, but we leave it anyway.
       def lock_and_call
         locks_succeeded = nil
         PersonAccountBalance.restartable_transaction do
@@ -150,29 +153,7 @@ module Ledger
       # If one or more account balance records don't exist, set
       # accounts_with_balances to the corresponding accounts, and return false.
       def grab_locks
-        account_balances = @accounts.map { |account| PersonAccountBalance.find_by_account(account, lock: true) }
-
-        if account_balances.any?(&:nil?)
-          @accounts_without_balances =
-            @accounts
-            .zip(account_balances)
-            .select { |_account, account_balance| account_balance.nil? }
-            .collect { |account, _account_balance| account }
-          false
-        else
-          self.locks = Hash[*@accounts.zip(account_balances).flatten]
-          true
-        end
-      end
-
-      # Create all the account_balances for the given accounts.
-      def create_missing_account_balances
-        @accounts_without_balances.each do |account|
-          # Get the initial balance from the lines table.
-          balance = account.balance
-          # Try to create the balance record, but ignore it if someone else has done it in the meantime.
-          PersonAccountBalance.create_ignoring_duplicates!(account:, balance:)
-        end
+        self.locks = @accounts.flatten
       end
     end
 

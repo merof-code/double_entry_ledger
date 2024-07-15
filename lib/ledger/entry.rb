@@ -13,4 +13,9 @@ class Ledger::Entry < ActiveRecord::Base
   validates :amount_currency, presence: true, length: { is: 3 }
 
   monetize :amount_cents, as: :amount, with_model_currency: :amount_currency
+
+  def debit!
+    self.is_debit = true
+    save!
+  end
 end

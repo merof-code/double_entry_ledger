@@ -14,6 +14,7 @@ require "money"
 require "active_support/all"
 
 require_relative "ledger/version"
+require_relative "ledger/errors"
 require_relative "ledger/account"
 require_relative "ledger/transfer"
 require_relative "ledger/document"
@@ -23,6 +24,7 @@ require_relative "ledger/entry"
 require_relative "ledger/person"
 require_relative "ledger/configurable"
 require_relative "ledger/locking"
+require_relative "ledger/transaction_result"
 
 module Ledger
   class Error < StandardError; end
@@ -79,7 +81,7 @@ module Ledger
     # @raise [Ledger::TransferAlreadyExists] The provided transfer instance is already recorded in the db.
     # @raise [Ledger::InsufficientMoney] The amount in the person's account is not enough.
     # @raise [Ledger::TransferNotAllowed] Transfer is not allowed.
-    sig { params(transfer: Transfer, options: Hash).returns(T::Array[Hash]) }
+    sig { params(transfer: Transfer, options: Hash).returns(T::Array[TransactionResult]) }
     def transfer(transfer, options = {})
       transactions = options[:transactions] || [{
         amount: options[:amount],

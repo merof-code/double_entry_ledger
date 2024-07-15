@@ -8,53 +8,12 @@ RSpec.describe Ledger do
   end
 
   describe ".transfer" do
-    let(:document) { create(:document) }
-    let(:account_a) { create(:account, balance_cents: 10_000) }
+    let(:account_a) { create(:account) }
     let(:account_b) { create(:account) }
     let(:account_c) { create(:account) }
-    let(:person_a) { create(:person) }
+    let(:transfer) { build(:transfer) }
 
-    context "with a single transaction without a person" do
-      let(:transfer) { Ledger.transfer.new(document:, date: Date.today, description: "Transfer description") }
-      let(:amount) { Money.new(2000, "USD") }
-
-      it "returns the correct result" do
-        result = Ledger.transfer(
-          transfer:,
-          amount:,
-          debit: account_a,
-          credit: account_b
-        )
-
-        expect(result).to be_an(Array)
-        expect(result.size).to eq(2)
-        expect(result[0]).to have_key(:credit)
-        expect(result[0]).to have_key(:debit)
-      end
-    end
-
-    context "with a single transaction with a person" do
-      let(:transfer) { Ledger.transfer.new(document:, date: Date.today, description: "Transfer description") }
-      let(:amount) { Money.new(2000, "USD") }
-
-      it "returns the correct result" do
-        result = Ledger.transfer(
-          transfer:,
-          amount:,
-          debit: account_a,
-          credit: account_b,
-          person: person_a
-        )
-
-        expect(result).to be_an(Array)
-        expect(result.size).to eq(2)
-        expect(result[0]).to have_key(:credit)
-        expect(result[0]).to have_key(:debit)
-      end
-    end
-
-    context "with multiple transactions" do
-      let(:transfer) { Ledger.transfer.new(document:, date: Date.today, description: "Transfer description") }
+    context "without a person" do
       let(:transactions) do
         [
           { amount: Money.new(2000, "USD"), debit: account_a, credit: account_b },
@@ -62,9 +21,24 @@ RSpec.describe Ledger do
         ]
       end
 
-      it "returns the correct result" do
+      it "works with one transaction" do
+        result = described_class.transfer(
+          transfer,
+          amount: Money.new(2000, "USD"),
+          debit: account_a,
+          credit: account_b
+        )
+
+        expect(result).to be_an(Array)
+        expect(result[0]).to be_an(Ledger::TransactionResult)
+        expect(result.size).to eq(1)
+        expect(result[0].person_balance_credit).to be_nil
+        expect(result[0].person_balance_debit).to be_nil
+      end
+
+      it "works fine with many transactions" do
         result = Ledger.transfer(
-          transfer:,
+          transfer,
           transactions:
         )
 
@@ -72,21 +46,56 @@ RSpec.describe Ledger do
         expect(result.size).to eq(2)
 
         result.each do |transaction|
-          expect(transaction).to have_key(:credit)
-          expect(transaction).to have_key(:debit)
+          expect(transaction).to be_an(Ledger::TransactionResult)
+        end
+      end
+    end
+
+    context "with a person" do
+      let(:person) { create(:person) }
+      let(:transactions) do
+        [
+          { amount: Money.new(2000, "USD"), debit: account_a, credit: account_b, person: create(:person) },
+          { amount: Money.new(2000, "USD"), debit: account_a, credit: account_c, person: create(:person) }
+        ]
+      end
+
+      it "works with one transaction" do
+        result = described_class.transfer(
+          transfer,
+          amount: Money.new(2000, "USD"),
+          debit: account_a,
+          credit: account_b,
+          person:
+        )
+
+        expect(result[0].person_balance_credit).to be_not_nil
+        expect(result[0].person_balance_debit).to be_not_nil
+      end
+
+      it "works fine with many transactions" do
+        result = Ledger.transfer(
+          transfer,
+          transactions:
+        )
+
+        expect(result).to be_an(Array)
+        expect(result.size).to eq(2)
+
+        result.each do |transaction|
+          expect(transaction.person_balance_credit).to be_not_nil
+          expect(transaction.person_balance_debit).to be_not_nil
         end
       end
     end
 
     context "when sending a fully created transfer object" do
-      let(:saved_transfer) do
-        Ledger.transfer.create!(document:, date: Date.today, description: "Saved transfer")
-      end
+      let(:saved_transfer) { create(:transfer) }
 
       it "raises a Ledger::TransferAlreadyExists error" do
         expect do
-          Ledger.transfer(
-            transfer: saved_transfer,
+          described_class.transfer(
+            saved_transfer,
             amount: Money.new(2000, "USD"),
             debit: account_a,
             credit: account_b

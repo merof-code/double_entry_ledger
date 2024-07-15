@@ -7,14 +7,27 @@ class Ledger::PersonAccountBalance < ActiveRecord::Base
                        inverse_of: :person_account_balances, required: true
 
   before_validation :set_date_to_first_day_of_month
+
   validates :date, presence: true,
                    uniqueness: { scope: %i[ledger_account_id ledger_person_id], message: "should be unique within the scope of ledger account and person" }
   validate :date_cannot_be_earlier_than_last
 
-  monetize :balance_cents, as: :balance, with_model_currency: :balance_currency
+  monetize :balance_cents, as: :balance, with_model_currency: :balance_currency, numericality: {
+    greater_than_or_equal_to: 0
+  }
+
+  scope :for_person_and_account, lambda { |person, account|
+    where(person:, account:)
+  }
+
+  def self.find_or_create_for(person, account, date)
+    # TODO: check that the date goes through before validation
+    for_person_and_account(person, account).find_or_create_by(date:)
+  end
 
   private
 
+  # TODO: check that this is not a closed period or smth
   def set_date_to_first_day_of_month
     self.date = date.beginning_of_month if date.present?
   end
