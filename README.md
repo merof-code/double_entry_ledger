@@ -1,5 +1,27 @@
 # Ledger
 
+## Introduction
+
+Double entry Ledger is a full implementation a ledger, adhering to the principles of a
+[Double-entry Bookkeeping](http://en.wikipedia.org/wiki/Double-entry_bookkeeping_system)
+system.
+While this gem acts like a double-entry ledger bookkeeping system, as it
+
+- requires source documents
+- create transfers
+- creates double-entry lines (may be more then just 2) in the database for each transfer
+- keeps the current balances for each person accounts 
+
+TODO: about this one
+it does _not_ enforce accounting rules, other than optionally ensuring a balance is positive, and through an allowlist of approved transfers.
+
+This gem uses the [Money gem](https://github.com/RubyMoney/money) to encapsulate operations on currency values.
+
+
+What this gem does 
+- Has a base table for documents, which can connect to your business models via a polymorphic association.
+- Has a chart of accounts table that has its `id` as the account number. Like `ledger_accounts.id` = 331  
+
 
 if used without rails, 
 `MoneyRails::Hooks.init` add after db is initialized, 
