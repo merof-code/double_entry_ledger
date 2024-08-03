@@ -17,7 +17,7 @@ require_relative "ledger/version"
 require_relative "ledger/errors"
 require_relative "ledger/account"
 require_relative "ledger/transfer"
-require_relative "ledger/transfer_logic"
+require_relative "ledger/transaction_processor"
 require_relative "ledger/document"
 require_relative "ledger/document_type"
 require_relative "ledger/person_account_balance"
@@ -41,7 +41,7 @@ module Ledger
     #
     # If you're doing more than one transaction in one hit, you need to put them into the transactions array.
     #
-    # @example Single transaction without a person
+    # @example Single transaction without a person on either side
     #   transfer = Transfer.new(document: document, date: Date.today, description: 'Transfer description')
     #   Ledger.transfer(
     #     transfer: transfer,
@@ -50,28 +50,49 @@ module Ledger
     #     credit: 222
     #   )
     #
-    # @example Single transaction with a person
+    # :person_debit and :person_credit fields are optional
+    #
+    # A person may be on either side of a single transaction, from the debit or credit side. the keys are person_debit
+    # and :person_debit and a :person_credit. The transactions will find or create a person_balance_account entry with
+    # the respective :debit, or :credit account and month.
+    # TODO: make month optional
+    # TODO: handle creating a balance record when there existed one before or after
+    #
+    # @example Single transaction with a person on debit side
     #   transfer = Transfer.new(document: document, date: Date.today, description: 'Transfer description')
     #   Ledger.transfer(
     #     transfer: transfer,
     #     amount: Money.new(20_00, 'USD'),
     #     debit: ledger_account_a,
     #     credit: ledger_account_b,
-    #     person: person_a
+    #     person_debit: person_a
+    #   )
+    # This will create or find person_account_balance record with person_a, ledger_account_a, and date from transfer.
+    #
+    # using both sides:
+    # @example Single transaction with a person on debit side
+    #   transfer = Transfer.new(document: document, date: Date.today, description: 'Transfer description')
+    #   Ledger.transfer(
+    #     transfer: transfer,
+    #     amount: Money.new(20_00, 'USD'),
+    #     debit: ledger_account_a,
+    #     credit: ledger_account_b,
+    #     person_debit: person_a
+    #     person_credit: person_b
     #   )
     #
+    # A transfer with multiple transactions will look like th following.
     # @example Complex transfer with multiple transactions
     #   transfer = Transfer.new(document: document, date: Date.today, description: 'Transfer description')
     #   Ledger.transfer(
     #     transfer: transfer,
     #     transactions: [
     #       {amount: Money.new(20_00, 'USD'), debit: account_a, credit: account_b},
-    #       {amount: Money.new(20_00, 'USD'), debit: account_a, credit: account_c}
+    #       {amount: Money.new(20_00, 'USD'), debit: account_a, credit: account_c, person_debit: person_a}
     #     ]
     #   )
     #
     # @param [Ledger::Transfer::Instance] transfer is a prepared object that is _not_ saved in the db!
-    # With all the fields filled out, like :document, :date, :description.
     # @option options [Money] :amount The quantity of money to transfer in this transaction.
     # @option options [Ledger::Account::Instance, Integer] :debit The debit side. If an Integer, the respective Ledger::Account::Instance must already exist.
     # @option options [Ledger::Account::Instance, Integer] :credit The credit side. Same as debit.
@@ -84,13 +105,10 @@ module Ledger
     # @raise [Ledger::TransferNotAllowed] Transfer is not allowed.
     sig { params(transfer: Transfer, options: Hash).returns(T::Array[TransactionResult]) }
     def transfer(transfer, options = {})
-      transactions = options[:transactions] || [{
-        amount: options[:amount],
-        credit: options[:credit],
-        debit: options[:debit],
-        person: options[:person]
-      }]
-      Transfer.transfer(transfer, transactions)
+      transactions = options[:transactions] ||=
+        options.slice(:amount, :credit, :debit, :person_debit, :person_credit).compact
+
+      TransactionProcessor.transfer(transfer, transactions)
     end
 
     # This is for proper location of tables, there is no rails here to take care of this for us
