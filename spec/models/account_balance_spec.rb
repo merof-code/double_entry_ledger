@@ -1,4 +1,4 @@
-RSpec.describe Ledger::PersonAccountBalance, type: :model do
+RSpec.describe Ledger::AccountBalance, type: :model do
   describe "associations" do
     it {
       expect(subject).to belong_to(:person).class_name("Ledger::Person").with_foreign_key("ledger_person_id").required

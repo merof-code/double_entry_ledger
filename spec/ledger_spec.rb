@@ -32,8 +32,8 @@ RSpec.describe Ledger do
         expect(result).to be_an(Array)
         expect(result[0]).to be_an(Ledger::TransactionResult)
         expect(result.size).to eq(1)
-        expect(result[0].person_balance_credit).to be_nil
-        expect(result[0].person_balance_debit).to be_nil
+        expect(result[0].balance_credit).to be_nil
+        expect(result[0].balance_debit).to be_nil
       end
 
       it "works fine with many transactions" do
@@ -52,11 +52,14 @@ RSpec.describe Ledger do
     end
 
     context "with a person" do
-      let(:person) { create(:person) }
+      let(:person_a) { create(:person) }
+      let(:person_b) { create(:person) }
       let(:transactions) do
         [
-          { amount: Money.new(2000, "USD"), debit: account_a, credit: account_b, person: create(:person) },
-          { amount: Money.new(2000, "USD"), debit: account_a, credit: account_c, person: create(:person) }
+          { amount: Money.new(1000, "USD"), debit: account_a, credit: account_b, person_debit: person_b,
+            person_credit: person_a },
+          { amount: Money.new(1000, "USD"), debit: account_a, credit: account_c, person_debit: person_b,
+            person_credit: person_a }
         ]
       end
 
@@ -66,11 +69,11 @@ RSpec.describe Ledger do
           amount: Money.new(2000, "USD"),
           debit: account_a,
           credit: account_b,
-          person:
+          person_credit: person_a
         )
 
-        expect(result[0].person_balance_credit).to be_not_nil
-        expect(result[0].person_balance_debit).to be_not_nil
+        expect(result[0].balance_credit).to be_present
+        expect(result[0].balance_debit).to be_nil
       end
 
       it "works fine with many transactions" do
@@ -83,8 +86,8 @@ RSpec.describe Ledger do
         expect(result.size).to eq(2)
 
         result.each do |transaction|
-          expect(transaction.person_balance_credit).to be_not_nil
-          expect(transaction.person_balance_debit).to be_not_nil
+          expect(transaction.balance_credit).to be_present
+          expect(transaction.balance_debit).to be_present
         end
       end
     end

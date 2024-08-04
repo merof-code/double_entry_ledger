@@ -29,7 +29,7 @@ ActiveRecord::Schema.define(version: 20_240_701_000_001) do
   end
 
   create_table "ledger_accounts", force: :cascade do |t|
-    t.string "account_name", limit: 255, default: "", null: false
+    t.string "name", limit: 255, default: "", null: false
     t.integer "account_type", limit: 2, default: 0, null: false
     t.string "official_code", limit: 20, default: "", null: false
     t.datetime "created_at", null: false
@@ -70,7 +70,7 @@ ActiveRecord::Schema.define(version: 20_240_701_000_001) do
     t.index %w[personable_type personable_id], name: "index_ledger_people_on_personable"
   end
 
-  create_table "ledger_person_account_balances", force: :cascade do |t|
+  create_table "ledger_account_balances", force: :cascade do |t|
     t.bigint "ledger_person_id", null: false
     t.integer "balance_cents", default: 0, null: false
     t.string "balance_currency", default: "USD", null: false
@@ -78,11 +78,11 @@ ActiveRecord::Schema.define(version: 20_240_701_000_001) do
     t.date "date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["date"], name: "index_ledger_person_account_balances_on_date"
-    t.index ["ledger_account_id"], name: "index_ledger_person_account_balances_on_ledger_account_id"
-    t.index ["ledger_person_id"], name: "index_ledger_person_account_balances_on_ledger_person_id"
+    t.index ["date"], name: "index_ledger_account_balances_on_date"
+    t.index ["ledger_account_id"], name: "index_ledger_account_balances_on_ledger_account_id"
+    t.index ["ledger_person_id"], name: "index_ledger_account_balances_on_ledger_person_id"
     t.index %w[ledger_account_id ledger_person_id date], unique: true,
-                                                         name: "index_ledger_person_account_balances_on_account_person_date"
+                                                         name: "index_ledger_account_balances_on_account_person_date"
     column_name = "date"
     constraint_command =
       case ActiveRecord::Base.connection.adapter_name
@@ -102,8 +102,8 @@ ActiveRecord::Schema.define(version: 20_240_701_000_001) do
   add_foreign_key "ledger_transfers", "ledger_documents"
   add_foreign_key "ledger_entries", "ledger_accounts"
   add_foreign_key "ledger_entries", "ledger_transfers"
-  add_foreign_key "ledger_person_account_balances", "ledger_people", column: "ledger_person_id"
-  add_foreign_key "ledger_person_account_balances", "ledger_accounts"
+  add_foreign_key "ledger_account_balances", "ledger_people", column: "ledger_person_id"
+  add_foreign_key "ledger_account_balances", "ledger_accounts"
   add_foreign_key "ledger_entries", "ledger_people", column: "ledger_person_id"
 
   # test table only

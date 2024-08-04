@@ -11,7 +11,7 @@ module Ledger
   # See Ledger.lock_accounts and Ledger.transfer for the public interface
   # to this stuff.
   #
-  # Locking is done on Ledger::PersonAccountBalance records. If an PersonAccountBalance
+  # Locking is done on Ledger::AccountBalance records. If an AccountBalance
   # record for an account doesn't exist when you try to lock it, the locking
   # code will create one.
   #
@@ -35,7 +35,7 @@ module Ledger
     #
     # The transaction must be the outermost transaction to ensure data integrity. A
     # LockMustBeOutermostTransaction will be raised if it isn't.
-    sig { params(accounts: T::Array[PersonAccountBalance], block: T.proc.returns(T.untyped)).returns(T.untyped) }
+    sig { params(accounts: T::Array[AccountBalance], block: T.proc.returns(T.untyped)).returns(T.untyped) }
     def self.lock_accounts(*accounts, &block)
       lock = Lock.new(accounts)
 
@@ -51,9 +51,9 @@ module Ledger
       raise
     end
 
-    # Return the PersonAccountBalance record if there's a
+    # Return the AccountBalance record if there's a
     # lock on it, or raise a LockNotHeld if there isn't.
-    sig { params(account: PersonAccountBalance).returns(PersonAccountBalance) }
+    sig { params(account: AccountBalance).returns(AccountBalance) }
     def self.balance_for_locked_account(account)
       Lock.new([account]).balance_for(account)
     end
@@ -85,7 +85,7 @@ module Ledger
         @accounts.each do |account|
           unless lock?(account)
             raise LockNotHeld,
-                  "No lock held for PersonAccountBalance: #{account}"
+                  "No lock held for AccountBalance: #{account}"
           end
         end
       end
@@ -118,7 +118,7 @@ module Ledger
       # Raise an exception unless we're outside any transactions.
       def ensure_outermost_transaction!
         minimum_transaction_level = Locking.configuration.running_inside_transactional_fixtures ? 1 : 0
-        return if PersonAccountBalance.connection.open_transactions <= minimum_transaction_level
+        return if AccountBalance.connection.open_transactions <= minimum_transaction_level
 
         raise LockMustBeOutermostTransaction
       end
@@ -131,8 +131,8 @@ module Ledger
       # but that does not apply here, but we leave it anyway.
       def lock_and_call
         locks_succeeded = nil
-        PersonAccountBalance.restartable_transaction do
-          locks_succeeded = PersonAccountBalance.with_restart_on_deadlock { grab_locks }
+        AccountBalance.restartable_transaction do
+          locks_succeeded = AccountBalance.with_restart_on_deadlock { grab_locks }
           if locks_succeeded
             begin
               yield

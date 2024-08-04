@@ -6,13 +6,13 @@ RSpec.describe Ledger::Account, type: :model do
       it { is_expected.to validate_presence_of(:id) }
       it { is_expected.to validate_uniqueness_of(:id) }
 
-      it { is_expected.to validate_presence_of(:account_name) }
-      it { is_expected.to validate_length_of(:account_name).is_at_most(255) }
+      it { is_expected.to validate_presence_of(:name) }
+      it { is_expected.to validate_length_of(:name).is_at_most(255) }
       it { is_expected.to validate_length_of(:official_code).is_at_most(20) }
 
       it {
         expect(subject).to define_enum_for(:account_type)
-          .with_values(%i[equity liability revenue expense asset])
+          .with_values(%i[active passive mixed])
       }
       # This was added in https://github.com/thoughtbot/shoulda-matchers/commit/3c88e1c3e85dbc51a75ae65a2cd6df5e8838655d
       # but not yet released after that. will uncomment then.
@@ -29,8 +29,8 @@ RSpec.describe Ledger::Account, type: :model do
 
     describe "associations" do
       it {
-        expect(subject).to have_many(:person_account_balances)
-          .class_name("Ledger::PersonAccountBalance")
+        expect(subject).to have_many(:account_balances)
+          .class_name("Ledger::AccountBalance")
           .with_foreign_key("ledger_account_id")
           .inverse_of(:account)
       }

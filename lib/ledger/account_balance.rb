@@ -1,12 +1,12 @@
 # typed: true
 
 module Ledger
-  class PersonAccountBalance < ActiveRecord::Base
+  class AccountBalance < ActiveRecord::Base
     extend T::Sig
     belongs_to :person, class_name: "Ledger::Person", foreign_key: "ledger_person_id",
-                        inverse_of: :person_account_balances, required: true
+                        inverse_of: :account_balances, required: true
     belongs_to :account, class_name: "Ledger::Account", foreign_key: "ledger_account_id",
-                         inverse_of: :person_account_balances, required: true
+                         inverse_of: :account_balances, required: true
 
     before_validation :set_date_to_first_day_of_month
 
@@ -25,11 +25,12 @@ module Ledger
     # use the way plutus provides tenancy support.
     scope :with_tenant, ->(tenant) { where(tenant:) }
 
-    sig { params(person: Person, account: Account, transfer: Transfer).returns(PersonAccountBalance) }
+    sig { params(person: Person, account: Account, transfer: Transfer).returns(AccountBalance) }
     def self.find_or_create_for(person, account, transfer)
       # all validations apply
-      for_person_and_account(person, account).with_tenant(transfer.tenant)
-      .find_or_create_by(date: transfer.date.beginning_of_month)
+      # .with_tenant(transfer.tenant)
+      for_person_and_account(person, account)
+        .find_or_create_by(date: transfer.date.beginning_of_month)
     end
 
     private
@@ -40,8 +41,8 @@ module Ledger
     end
 
     def date_cannot_be_earlier_than_last
-      last_balance = PersonAccountBalance.where(ledger_account_id:,
-                                                ledger_person_id:).order(date: :desc).first
+      last_balance = AccountBalance.where(ledger_account_id:,
+                                          ledger_person_id:).order(date: :desc).first
       return unless last_balance && date < last_balance.date
 
       errors.add(:date, "cannot be earlier than the last entry's date within the same ledger account and person")

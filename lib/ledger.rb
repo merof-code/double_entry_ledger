@@ -20,7 +20,7 @@ require_relative "ledger/transfer"
 require_relative "ledger/transaction_processor"
 require_relative "ledger/document"
 require_relative "ledger/document_type"
-require_relative "ledger/person_account_balance"
+require_relative "ledger/account_balance"
 require_relative "ledger/entry"
 require_relative "ledger/person"
 require_relative "ledger/configurable"
@@ -106,7 +106,7 @@ module Ledger
     sig { params(transfer: Transfer, options: Hash).returns(T::Array[TransactionResult]) }
     def transfer(transfer, options = {})
       transactions = options[:transactions] ||=
-        options.slice(:amount, :credit, :debit, :person_debit, :person_credit).compact
+        [options.slice(:amount, :credit, :debit, :person_debit, :person_credit).compact]
 
       TransactionProcessor.transfer(transfer, transactions)
     end

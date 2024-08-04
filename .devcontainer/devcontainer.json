@@ -28,7 +28,8 @@
 				"ninoseki.vscode-mogami",
 				"mtxr.sqltools",
 				"mtxr.sqltools-driver-pg",
-				"mtxr.sqltools-driver-mysql"
+				"mtxr.sqltools-driver-mysql",
+				"bierner.markdown-mermaid"
 			]
 		}
 	},

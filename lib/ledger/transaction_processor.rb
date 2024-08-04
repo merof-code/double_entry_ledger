@@ -23,7 +23,7 @@ module Ledger
       end
       def transfer(transfer, transactions)
         raise Ledger::TransferAlreadyExists if transfer.persisted?
-        raise Ledger::DuplicateTransactions if transactions.uniq.length != @transactions.length
+        raise Ledger::DuplicateTransactions if transactions.uniq.length != transactions.length
 
         @transfer = transfer
         result = T.let([], T::Array[Ledger::TransactionResult])
@@ -32,7 +32,7 @@ module Ledger
         Locking.lock_accounts(account_balances) do
           transfer.save!
           t = TransactionProcessor.new(transfer)
-          result = @transactions.map { |transaction| t.create_entry(transaction) }
+          result = transactions.map { |transaction| t.create_entry(transaction) }
         end
         result
       end
@@ -40,7 +40,7 @@ module Ledger
       private
 
       # Finds or creates account balances for all transactions in the provided array and adds (debit, credit)_account_balance to each hash that has a person.
-      sig { params(transactions: T::Array[Hash]).returns(T::Array[Ledger::PersonAccountBalance]) }
+      sig { params(transactions: T::Array[Hash]).returns(T::Array[Ledger::AccountBalance]) }
       def find_or_create_account_balances_for(transactions)
         all_account_balances = []
 
@@ -49,7 +49,7 @@ module Ledger
           all_account_balances << process_person_account_balance(transaction, :debit)
         end
 
-        all_account_balances.uniq
+        all_account_balances.uniq.compact
       end
 
       # Processes the account balance for a person based on the accounting side key (debit or credit).
@@ -59,7 +59,7 @@ module Ledger
         return unless person
 
         account_balance =
-          PersonAccountBalance.find_or_create_for(person, transaction[accounting_side_key], T.must(@transfer))
+          AccountBalance.find_or_create_for(person, transaction[accounting_side_key], T.must(@transfer))
         transaction["#{key}_balance".to_sym] = account_balance
         account_balance
       end
@@ -79,9 +79,9 @@ module Ledger
       raise Ledger::TransactionNegative unless @transaction[:amount].positive?
 
       result = create_ledger_entries
-      return result unless @transaction[:person_debit] || @transaction[:person_credit]
-
       update_person_balance(result)
+      # we can also do account_balances without person, also can make it optional
+      # That would require creating and maintaining balance records for those accounts.
     end
 
     private
@@ -89,8 +89,8 @@ module Ledger
     # Whenever there is a transaction with a person, both entries of the ledger are affected, and so are the
     # 2 balances. For example we have balance and savings, with each, both are affected.
     def update_person_balance(result)
-      result.person_balance_debit = handle_person_side(:debit)
-      result.person_balance_credit = handle_person_side(:credit)
+      result.balance_debit = handle_person_side(:debit)
+      result.balance_credit = handle_person_side(:credit)
       result
     end
 
@@ -104,10 +104,11 @@ module Ledger
       raise Ledger::MismatchedCurrencies unless balance_account.balance.currency == amount.currency
 
       amount -= amount if side == :debit
-      side.balance += amount
-      raise Ledger::InsufficientFunds, "Insufficient funds in the #{side}" if side.balance.negative?
+      balance_account.balance += amount
+      raise Ledger::InsufficientFunds, "Insufficient funds in the #{side}" if balance_account.balance.negative?
 
-      side.save!
+      balance_account.save!
+      balance_account
     end
 
     sig { returns(TransactionResult) }
@@ -115,13 +116,13 @@ module Ledger
       base_entry = Entry.new(amount: @transaction[:amount], transfer: @transfer)
       # TODO: test this dup, associations
       debit = base_entry.dup
-      credit = base_entry.dup
       debit.account = @transaction[:debit]
-      debit.person = @transaction[:person_debit_balance]
+      debit.person = @transaction[:person_debit]
       debit.debit!
 
+      credit = base_entry.dup
       credit.account = @transaction[:credit]
-      debit.person = @transaction[:person_debit_balance]
+      credit.person = @transaction[:person_credit]
       credit.save!
 
       TransactionResult.new(credit:, debit:)
