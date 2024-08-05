@@ -15,6 +15,21 @@ jobs:
       matrix:
         ruby:
           - '3.1.4'
+    services:
+      mysql:
+        image: mysql
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+          MYSQL_DATABASE: ledger_test
+      postgres:
+        image: postgres:alpine
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_DB: ledger_test
 
     steps:
     - uses: actions/checkout@v4
@@ -23,5 +38,18 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
+    # - name: Wait for MySQL
+    #   run: |
+    #     while ! mysqladmin ping -h"127.0.0.1" --silent; do
+    #       sleep 1
+    #     done
+    - name: Wait for PostgreSQL
+      run: |
+        until pg_isready -h 127.0.0.1 -d ledger_test; do
+          sleep 1
+        done
     - name: Run the default task
       run: bundle exec rake
+      # env:
+        # POSTGRES_HOST: 127.0.0.1
+        # MYSQL_HOST: 127.0.0.1
