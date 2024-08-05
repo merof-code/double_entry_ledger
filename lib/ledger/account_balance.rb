@@ -11,7 +11,7 @@ module Ledger
     before_validation :set_date_to_first_day_of_month
 
     validates :date, presence: true,
-                     uniqueness: { scope: %i[ledger_account_id ledger_person_id], message: "should be unique within the scope of ledger account and person" }
+                     uniqueness: { scope: %i[ledger_account_id ledger_person_id balance_currency] }
     validate :date_cannot_be_earlier_than_last
 
     monetize :balance_cents, as: :balance, with_model_currency: :balance_currency, numericality: {
@@ -25,13 +25,13 @@ module Ledger
     # use the way plutus provides tenancy support.
     scope :with_tenant, ->(tenant) { where(tenant:) }
 
-    sig { params(person: Person, account: Account, transfer: Transfer).returns(AccountBalance) }
-    def self.find_or_create_for(person, account, transfer)
-      # all validations apply
-      # .with_tenant(transfer.tenant)
-      for_person_and_account(person, account)
-        .find_or_create_by(date: transfer.date.beginning_of_month)
-    end
+    # sig { params(person: Person, account: Account, transfer: Transfer).returns(AccountBalance) }
+    # def self.find_or_create_for(person, account, transfer)
+    #   # all validations apply
+    #   # .with_tenant(transfer.tenant)
+    #   for_person_and_account(person, account)
+    #     .find_or_create_by(date: transfer.date.beginning_of_month)
+    # end
 
     private
 

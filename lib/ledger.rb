@@ -67,7 +67,7 @@ module Ledger
     #     credit: ledger_account_b,
     #     person_debit: person_a
     #   )
-    # This will create or find person_account_balance record with person_a, ledger_account_a, and date from transfer.
+    # This will create or find account_balance record with person_a, ledger_account_a, and date from transfer.
     #
     # using both sides:
     # @example Single transaction with a person on debit side

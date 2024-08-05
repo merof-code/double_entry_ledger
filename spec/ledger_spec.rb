@@ -90,6 +90,42 @@ RSpec.describe Ledger do
           expect(transaction.balance_debit).to be_present
         end
       end
+
+      it "Throws when transfer results in negative funds" do
+        expect do
+          described_class.transfer(
+            transfer,
+            amount: Money.new(2000, "USD"),
+            debit: account_a,
+            credit: account_b,
+            person_debit: person_a
+          )
+        end.to raise_error(Ledger::InsufficientFunds)
+      end
+
+      it "actually persists account balance records" do
+        expect do
+          result = described_class.transfer(
+            transfer,
+            amount: Money.new(2000, "USD"),
+            debit: account_a,
+            credit: account_b,
+            person_credit: person_a
+          )
+        end.to change(Ledger::AccountBalance, :count).by(1)
+      end
+
+      it "actually persists account balance records" do
+        expect do
+          result = described_class.transfer(
+            transfer,
+            amount: Money.new(2000, "USD"),
+            debit: account_a,
+            credit: account_b,
+            person_credit: person_a
+          )
+        end.to change(Ledger::AccountBalance, :count).by(1)
+      end
     end
 
     context "when sending a fully created transfer object" do

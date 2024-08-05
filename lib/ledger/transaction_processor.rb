@@ -45,21 +45,26 @@ module Ledger
         all_account_balances = []
 
         transactions.each do |transaction|
-          all_account_balances << process_person_account_balance(transaction, :credit)
-          all_account_balances << process_person_account_balance(transaction, :debit)
+          all_account_balances << process_account_balance(transaction, :credit)
+          all_account_balances << process_account_balance(transaction, :debit)
         end
 
         all_account_balances.uniq.compact
       end
 
       # Processes the account balance for a person based on the accounting side key (debit or credit).
-      def process_person_account_balance(transaction, accounting_side_key)
+      def process_account_balance(transaction, accounting_side_key)
         key = "person_#{accounting_side_key}".to_sym
         person = transaction[key]
         return unless person
 
-        account_balance =
-          AccountBalance.find_or_create_for(person, transaction[accounting_side_key], T.must(@transfer))
+        search_or_create_keys = {
+          person:, account: transaction[accounting_side_key],
+          date: @transfer.date.beginning_of_month,
+          balance_currency: transaction[:amount].currency
+        }
+        account_balance = AccountBalance.find_or_create_by(search_or_create_keys)
+
         transaction["#{key}_balance".to_sym] = account_balance
         account_balance
       end
@@ -103,9 +108,13 @@ module Ledger
       amount = @transaction[:amount]
       raise Ledger::MismatchedCurrencies unless balance_account.balance.currency == amount.currency
 
-      amount -= amount if side == :debit
-      balance_account.balance += amount
-      raise Ledger::InsufficientFunds, "Insufficient funds in the #{side}" if balance_account.balance.negative?
+      multiplier = 1
+      multiplier = -1 if side == :debit
+      balance_account.balance += multiplier * amount
+      if balance_account.balance.negative?
+        raise Ledger::InsufficientFunds,
+              "Insufficient funds in #{side}, #{balance_account.balance}"
+      end
 
       balance_account.save!
       balance_account

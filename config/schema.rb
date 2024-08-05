@@ -81,8 +81,8 @@ ActiveRecord::Schema.define(version: 20_240_701_000_001) do
     t.index ["date"], name: "index_ledger_account_balances_on_date"
     t.index ["ledger_account_id"], name: "index_ledger_account_balances_on_ledger_account_id"
     t.index ["ledger_person_id"], name: "index_ledger_account_balances_on_ledger_person_id"
-    t.index %w[ledger_account_id ledger_person_id date], unique: true,
-                                                         name: "index_ledger_account_balances_on_account_person_date"
+    t.index %w[ledger_account_id ledger_person_id date balance_currency],
+            unique: true, name: "index_ledger_account_balances_on_account_person_date"
     column_name = "date"
     constraint_command =
       case ActiveRecord::Base.connection.adapter_name
