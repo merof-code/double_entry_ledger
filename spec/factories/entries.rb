@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/factories/entries.rb
 FactoryBot.define do
   factory :entry, class: "Ledger::Entry" do

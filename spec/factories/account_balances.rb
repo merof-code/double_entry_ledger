@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :account_balance, class: "Ledger::AccountBalance" do
     association :person, factory: :person

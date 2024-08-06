@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 require "active_support/log_subscriber"
 
 module ActiveRecord
   module LockingExtensions
+    # :nodoc:
     class LogSubscriber < ActiveSupport::LogSubscriber
       def deadlock_restart(event)
         info "Deadlock causing restart"

@@ -1,6 +1,12 @@
+# frozen_string_literal: true
 # typed: true
 
 module Ledger
+  # Holds account balances for Person for a specific account from chart of accounts
+  # at a specific date - accounting period
+  # TODO: use the way plutus provides tenancy support.
+  # Or better, make the user use person class and make it tenant, but the transfer will need to have tenant, as well as
+  # entries
   class AccountBalance < ActiveRecord::Base
     include Comparable # read Locking::Lock#initialize
     extend T::Sig
@@ -22,9 +28,6 @@ module Ledger
     scope :for_person_and_account, lambda { |person, account|
       where(person:, account:)
     }
-
-    # use the way plutus provides tenancy support.
-    scope :with_tenant, ->(tenant) { where(tenant:) }
 
     def <=>(other)
       balance_cents <=> other.balance_cents

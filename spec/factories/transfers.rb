@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/factories/transfers.rb
 FactoryBot.define do
   factory :transfer, class: "Ledger::Transfer" do

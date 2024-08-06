@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Ledger::DocumentType, type: :model do
   describe "associations" do
     it {

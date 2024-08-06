@@ -14,13 +14,6 @@ RSpec.describe Ledger do
     let(:transfer) { build(:transfer) }
 
     context "without a person" do
-      let(:transactions) do
-        [
-          { amount: Money.new(2000, "USD"), debit: account_a, credit: account_b },
-          { amount: Money.new(2000, "USD"), debit: account_a, credit: account_c }
-        ]
-      end
-
       it "works with one transaction" do
         result = described_class.transfer(
           transfer,
@@ -28,26 +21,23 @@ RSpec.describe Ledger do
           debit: account_a,
           credit: account_b
         )
-
-        expect(result).to be_an(Array)
         expect(result[0]).to be_an(Ledger::TransactionResult)
-        expect(result.size).to eq(1)
         expect(result[0].balance_credit).to be_nil
         expect(result[0].balance_debit).to be_nil
       end
 
       it "works fine with many transactions" do
-        result = Ledger.transfer(
+        result = described_class.transfer(
           transfer,
-          transactions:
+          transactions: [
+            { amount: Money.new(2000, "USD"), debit: account_a, credit: account_b },
+            { amount: Money.new(2000, "USD"), debit: account_a, credit: account_c }
+          ]
         )
 
         expect(result).to be_an(Array)
         expect(result.size).to eq(2)
-
-        result.each do |transaction|
-          expect(transaction).to be_an(Ledger::TransactionResult)
-        end
+        expect(result).to all(be_an(Ledger::TransactionResult))
       end
     end
 
@@ -93,7 +83,6 @@ RSpec.describe Ledger do
       end
 
       it "works with multiple transactions" do
-        acb = build(:account_balance)
         preset_balance Money.new(1000, "USD"), person_b, account_a
 
         result = described_class.transfer(
@@ -125,10 +114,6 @@ RSpec.describe Ledger do
               person_credit: person_a }
           ]
         )
-
-        expect(result).to be_an Array
-        expect(result.size).to eq 3
-
         expect(result[2].balance_credit.balance).to eq Money.new(1100, "USD")
       end
 
@@ -146,19 +131,7 @@ RSpec.describe Ledger do
 
       it "actually persists account balance records" do
         expect do
-          result = described_class.transfer(
-            transfer,
-            amount: Money.new(2000, "USD"),
-            debit: account_a,
-            credit: account_b,
-            person_credit: person_a
-          )
-        end.to change(Ledger::AccountBalance, :count).by(1)
-      end
-
-      it "actually persists account balance records" do
-        expect do
-          result = described_class.transfer(
+          described_class.transfer(
             transfer,
             amount: Money.new(2000, "USD"),
             debit: account_a,

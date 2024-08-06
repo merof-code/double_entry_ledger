@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # File: ledger/transaction_result.rb
 require_relative "entry"
 require_relative "account_balance"

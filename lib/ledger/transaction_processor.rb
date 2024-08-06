@@ -1,6 +1,10 @@
+# frozen_string_literal: true
 # typed: true
 
+# rubocop:disable Metrics/MethodLength
+
 module Ledger
+  # A service class that takes care of proper transaction management in the gem
   class TransactionProcessor
     extend T::Sig
     class << self
@@ -39,7 +43,8 @@ module Ledger
 
       private
 
-      # Finds or creates account balances for all transactions in the provided array and adds (debit, credit)_account_balance to each hash that has a person.
+      # Finds or creates account balances for all transactions in the provided array
+      # and adds (debit, credit)_account_balance to each hash that has a person.
       sig { params(transactions: T::Array[Hash]).returns(T::Array[Ledger::AccountBalance]) }
       def find_or_create_account_balances_for(transactions)
         all_account_balances = []
@@ -55,7 +60,7 @@ module Ledger
 
       # Processes the account balance for a person based on the accounting side key (debit or credit).
       def process_account_balance(transaction, accounting_side_key, account_balance_cache)
-        key = "person_#{accounting_side_key}".to_sym
+        key = :"person_#{accounting_side_key}"
         person = transaction[key]
         return unless person
 
@@ -68,7 +73,7 @@ module Ledger
         account_balance = account_balance_cache[cache_key] || AccountBalance.find_or_create_by!(search_or_create_keys)
         account_balance_cache[cache_key] = account_balance
 
-        transaction["#{key}_balance".to_sym] = account_balance
+        transaction[:"#{key}_balance"] = account_balance
         account_balance
       end
     end
@@ -103,8 +108,7 @@ module Ledger
     end
 
     def handle_person_side(side)
-      key = "person_#{side}_balance".to_sym
-      balance_account = @transaction[key]
+      balance_account = @transaction[:"person_#{side}_balance"]
       return unless balance_account
 
       balance_account = Locking.balance_for_locked_account(balance_account)
@@ -140,3 +144,4 @@ module Ledger
     end
   end
 end
+# rubocop:enable Metrics/MethodLength

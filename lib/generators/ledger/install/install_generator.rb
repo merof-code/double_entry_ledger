@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # typed: true
 
 require "rails/generators"
@@ -5,7 +6,9 @@ require "rails/generators/migration"
 require "rails/generators/active_record"
 
 module Ledger
+  # :nodoc:
   module Generators
+    # :nodoc:
     class InstallGenerator < Rails::Generators::Base
       include Rails::Generators::Migration
 

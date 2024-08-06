@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/models/ledger/document_spec.rb
 RSpec.describe Ledger::Document, type: :model do
   describe "setup" do

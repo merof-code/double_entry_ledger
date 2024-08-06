@@ -13,7 +13,7 @@ require "ledger"
 
 require "factory_bot"
 FactoryBot.find_definitions
-include FactoryBot::Syntax::Methods
+include FactoryBot::Syntax::Methods # rubocop:disable Style/MixinUsage
 
 require "./spec/support/money"
 

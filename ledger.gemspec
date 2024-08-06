@@ -10,11 +10,11 @@ Gem::Specification.new do |spec|
   spec.email = ["misha.rosh@gmail.com"]
 
   spec.summary = "Tools to build your double entry financial ledger"
-  spec.description = "Creates and manages all the required entities to maintain a fully functioning accounting ledger with chart of accounts"
+  spec.description = "Maintains and manages double entry ledger"
   # TODO: spec.homepage
   # spec.homepage = "TODO: Put your gem's website or public repo URL here."
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 2.6.0"
+  spec.required_ruby_version = ">= 3.3.0"
 
   # spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
 
@@ -45,4 +45,5 @@ Gem::Specification.new do |spec|
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
+  spec.metadata["rubygems_mfa_required"] = "true"
 end

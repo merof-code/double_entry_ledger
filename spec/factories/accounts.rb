@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/factories/accounts.rb
 FactoryBot.define do
   factory :account, class: "Ledger::Account" do

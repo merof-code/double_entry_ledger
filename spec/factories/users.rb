@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 User = Class.new(ActiveRecord::Base)
 
 FactoryBot.define do

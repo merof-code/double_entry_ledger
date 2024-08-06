@@ -1,5 +1,7 @@
+# frozen_string_literal: true
 # typed: true
 
+# The main point of the entire gem, double entries, it should theoretically be not touched by user nor edited, at all
 class Ledger::Entry < ActiveRecord::Base
   belongs_to :transfer, class_name: "Ledger::Transfer", foreign_key: "ledger_transfer_id", inverse_of: :entries,
                         required: true

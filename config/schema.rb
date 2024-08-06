@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 # typed: true
 
-ActiveRecord::Schema.define(version: 20_240_701_000_001) do
+ActiveRecord::Schema.define(version: 20_240_701_000_001) do # rubocop:disable Metrics/BlockLength
   self.verbose = false
 
   create_table "ledger_documents", force: :cascade do |t|

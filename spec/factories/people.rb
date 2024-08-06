@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/factories/people.rb
 FactoryBot.define do
   factory :person, class: "Ledger::Person" do

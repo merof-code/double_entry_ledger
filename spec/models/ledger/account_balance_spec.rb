@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Ledger::AccountBalance, type: :model do
   describe "associations" do
     it {
@@ -27,7 +29,8 @@ RSpec.describe Ledger::AccountBalance, type: :model do
       new_balance = build(:account_balance, date: "2022-12-01", person:,
                                             account:)
       expect(new_balance).not_to be_valid
-      expect(new_balance.errors[:date]).to include("cannot be earlier than the last entry's date within the same ledger account and person")
+      expect(new_balance.errors[:date])
+        .to include("cannot be earlier than the last entry's date within the same ledger account and person")
     end
   end
 

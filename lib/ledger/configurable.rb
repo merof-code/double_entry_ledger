@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Ledger
   # Make configuring a module or a class simple.
   #

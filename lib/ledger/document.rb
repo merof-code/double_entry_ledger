@@ -1,6 +1,9 @@
+# frozen_string_literal: true
 # typed: true
 
 module Ledger
+  # Connects events in form of a document to transfer, a "physical" reason for the transfer
+  # Has a polymorph filed and api_id field for integration
   class Document < ActiveRecord::Base
     # Associations
     belongs_to :documentable, polymorphic: true, optional: true

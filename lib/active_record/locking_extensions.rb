@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "active_support/notifications"
 
 module ActiveRecord
@@ -5,8 +7,8 @@ module ActiveRecord
   module LockingExtensions
     # Execute the given block within a database transaction, and retry the
     # transaction from the beginning if a RestartTransaction exception is raised.
-    def restartable_transaction(&block)
-      transaction(&block)
+    def restartable_transaction(&)
+      transaction(&)
     rescue ActiveRecord::RestartTransaction
       retry
     end
@@ -42,7 +44,7 @@ module ActiveRecord
       #   ActiveRecord::RecordNotUnique  SQLite3::ConstraintException: column username is not unique: INSERT INTO "users"...
       yield
     rescue ActiveRecord::StatementInvalid, ActiveRecord::RecordNotUnique => e
-      raise unless e.message =~ /duplicate/i || e.message =~ /ConstraintException/
+      raise unless e.message =~ /duplicate/i || e.message.include?("ConstraintException")
 
       ActiveSupport::Notifications.publish("duplicate_ignore.ledger", exception: e)
 

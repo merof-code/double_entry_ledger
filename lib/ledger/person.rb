@@ -1,6 +1,8 @@
 # typed: true
 # frozen_string_literal: true
 
+# TODO: make option to connect users person class
+# A polymorph association to the records
 class Ledger::Person < ActiveRecord::Base
   belongs_to :personable, polymorphic: true, required: true
   has_many :account_balances, class_name: "Ledger::AccountBalance", foreign_key: "ledger_person_id",

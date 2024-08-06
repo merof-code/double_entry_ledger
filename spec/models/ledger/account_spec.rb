@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # typed: false
 
 RSpec.describe Ledger::Account, type: :model do

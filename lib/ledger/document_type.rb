@@ -1,5 +1,7 @@
+# frozen_string_literal: true
 # typed: true
 
+# For types of documents
 class Ledger::DocumentType < ActiveRecord::Base
   has_many :documents, class_name: "Ledger::Document", foreign_key: "ledger_document_type_id",
                        inverse_of: :document_type

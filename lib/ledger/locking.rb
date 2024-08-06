@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # typed: true
 
 module Ledger
@@ -21,6 +22,7 @@ module Ledger
     extend T::Sig
     # TODO: Configuration
     include Configurable
+    # config
     class Configuration
       # Set this in your tests if you're using transactional_fixtures, so we know
       # not to complain about a containing transaction when you call lock_accounts.
@@ -35,15 +37,14 @@ module Ledger
     #
     # The transaction must be the outermost transaction to ensure data integrity. A
     # LockMustBeOutermostTransaction will be raised if it isn't.
-    sig { params(accounts: T::Array[AccountBalance], block: T.proc.returns(T.untyped)).returns(T.untyped) }
-    def self.lock_accounts(*accounts, &block)
+    def self.lock_accounts(*accounts, &)
       lock = Lock.new(accounts)
 
       if lock.in_a_locked_transaction?
         lock.ensure_locked!
         yield
       else
-        lock.perform_lock(&block)
+        lock.perform_lock(&)
       end
     rescue ActiveRecord::StatementInvalid => e
       raise LockWaitTimeout if /lock wait timeout/i.match?(e.message)
@@ -58,8 +59,9 @@ module Ledger
       Lock.new([account]).balance_for(account)
     end
 
+    # Locks, service object
     class Lock
-      @@locks = {}
+      @@locks = {} # rubocop:disable Style/ClassVars
 
       def initialize(accounts)
         # Make sure we always lock in the same order, to avoid deadlocks.
@@ -68,12 +70,12 @@ module Ledger
 
       # Lock the given accounts, creating account balance records for them if
       # needed.
-      def perform_lock(&block)
+      def perform_lock(&)
         ensure_outermost_transaction!
 
-        return if lock_and_call(&block)
+        return if lock_and_call(&)
 
-        raise LockDisaster unless lock_and_call(&block)
+        raise LockDisaster unless lock_and_call(&)
       end
 
       # Return true if we're inside a lock_accounts block.
@@ -99,11 +101,11 @@ module Ledger
       private
 
       def locks
-        @@locks[Thread.current.object_id]
+        @@locks[Thread.current.object_id] # rubocop:disable Lint/HashCompareByIdentity
       end
 
       def locks=(locks)
-        @@locks[Thread.current.object_id] = locks
+        @@locks[Thread.current.object_id] = locks # rubocop:disable Lint/HashCompareByIdentity
       end
 
       def remove_locks
@@ -129,7 +131,7 @@ module Ledger
       # If any account can't be locked, don't call the block, and return false.
       # Originally, was because: (because there isn't a corresponding account balance record)
       # but that does not apply here, but we leave it anyway.
-      def lock_and_call
+      def lock_and_call # rubocop:disable Metrics/MethodLength
         locks_succeeded = nil
         AccountBalance.restartable_transaction do
           locks_succeeded = AccountBalance.with_restart_on_deadlock { grab_locks }

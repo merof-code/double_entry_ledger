@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/models/ledger/transfer_spec.rb
 RSpec.describe Ledger::Transfer, type: :model do
   describe "setup" do
@@ -37,8 +39,5 @@ RSpec.describe Ledger::Transfer, type: :model do
       expect(valid_transfer).to be_valid
       expect(valid_transfer.save).to be_truthy
     end
-  end
-
-  describe "transfers" do
   end
 end
