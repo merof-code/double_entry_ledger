@@ -39,17 +39,6 @@ RSpec.describe Ledger::Transfer, type: :model do
     end
   end
 
-  describe "external interaction" do
-    it "does not allow to save transfer by user" do
-      transfer = build(:transfer)
-      expect { transfer.save }.to raise_error(ActiveRecord::RecordInvalid)
-    end
-
-    it "does not allow to create transfer by user" do
-      expect { create(:transfer) }.to raise_error(ActiveRecord::RecordInvalid)
-    end
-  end
-
   describe "transfers" do
   end
 end

@@ -54,13 +54,11 @@ RSpec.describe Ledger do
     context "with a person" do
       let(:person_a) { create(:person) }
       let(:person_b) { create(:person) }
-      let(:transactions) do
-        [
-          { amount: Money.new(1000, "USD"), debit: account_a, credit: account_b, person_debit: person_b,
-            person_credit: person_a },
-          { amount: Money.new(1000, "USD"), debit: account_a, credit: account_c, person_debit: person_b,
-            person_credit: person_a }
-        ]
+
+      def preset_balance(balance, person, account)
+        acb = build(:account_balance)
+        acb.balance = balance
+        acb.update!(person:, account:, date: transfer.date)
       end
 
       it "works with one transaction" do
@@ -76,19 +74,62 @@ RSpec.describe Ledger do
         expect(result[0].balance_debit).to be_nil
       end
 
-      it "works fine with many transactions" do
-        result = Ledger.transfer(
+      # TODO: add active-passive accoutn can only transfer within the same account
+      it "transfers from one person to another" do
+        preset_balance Money.new(2100, "USD"), person_b, account_a
+
+        result = described_class.transfer(
           transfer,
-          transactions:
+          amount: Money.new(2000, "USD"),
+          debit: account_a,
+          person_debit: person_b,
+          credit: account_a,
+          person_credit: person_a
+        )
+
+        expect(result[0].balance_credit).to be_present
+        expect(result[0].balance_debit).to be_present
+        expect(result[0].balance_debit.balance).to eq Money.new(100, "USD")
+      end
+
+      it "works with multiple transactions" do
+        acb = build(:account_balance)
+        preset_balance Money.new(1000, "USD"), person_b, account_a
+
+        result = described_class.transfer(
+          transfer,
+          transactions: [
+            { amount: Money.new(1000, "USD"), debit: account_a, credit: account_b, person_debit: person_b },
+            { amount: Money.new(1000, "USD"), debit: account_b, credit: account_c, person_credit: person_b }
+          ]
         )
 
         expect(result).to be_an(Array)
         expect(result.size).to eq(2)
 
-        result.each do |transaction|
-          expect(transaction.balance_credit).to be_present
-          expect(transaction.balance_debit).to be_present
-        end
+        expect(result[1].balance_credit.balance).to eq Money.new(1000, "USD")
+      end
+
+      it "works fine multiple fully person-ed transactions" do
+        preset_balance Money.new(1000, "USD"), person_b, account_a
+        preset_balance Money.new(1000, "USD"), person_b, account_b
+
+        result = described_class.transfer(
+          transfer,
+          transactions: [
+            { amount: Money.new(500, "USD"), debit: account_a, credit: account_b, person_debit: person_b,
+              person_credit: person_a },
+            { amount: Money.new(600, "USD"), debit: account_b, credit: account_c, person_debit: person_b,
+              person_credit: person_a },
+            { amount: Money.new(500, "USD"), debit: account_b, credit: account_c, person_debit: person_a,
+              person_credit: person_a }
+          ]
+        )
+
+        expect(result).to be_an Array
+        expect(result.size).to eq 3
+
+        expect(result[2].balance_credit.balance).to eq Money.new(1100, "USD")
       end
 
       it "Throws when transfer results in negative funds" do

@@ -2,6 +2,7 @@
 
 module Ledger
   class AccountBalance < ActiveRecord::Base
+    include Comparable # read Locking::Lock#initialize
     extend T::Sig
     belongs_to :person, class_name: "Ledger::Person", foreign_key: "ledger_person_id",
                         inverse_of: :account_balances, required: true
@@ -25,13 +26,9 @@ module Ledger
     # use the way plutus provides tenancy support.
     scope :with_tenant, ->(tenant) { where(tenant:) }
 
-    # sig { params(person: Person, account: Account, transfer: Transfer).returns(AccountBalance) }
-    # def self.find_or_create_for(person, account, transfer)
-    #   # all validations apply
-    #   # .with_tenant(transfer.tenant)
-    #   for_person_and_account(person, account)
-    #     .find_or_create_by(date: transfer.date.beginning_of_month)
-    # end
+    def <=>(other)
+      balance_cents <=> other.balance_cents
+    end
 
     private
 
@@ -46,6 +43,10 @@ module Ledger
       return unless last_balance && date < last_balance.date
 
       errors.add(:date, "cannot be earlier than the last entry's date within the same ledger account and person")
+    end
+
+    def to_s
+      "id:#{id}@#{date} #{balance}#{balance.currency} for #{person.id}"
     end
   end
 end

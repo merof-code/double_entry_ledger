@@ -43,17 +43,18 @@ module Ledger
       sig { params(transactions: T::Array[Hash]).returns(T::Array[Ledger::AccountBalance]) }
       def find_or_create_account_balances_for(transactions)
         all_account_balances = []
+        account_balance_cache = {}
 
         transactions.each do |transaction|
-          all_account_balances << process_account_balance(transaction, :credit)
-          all_account_balances << process_account_balance(transaction, :debit)
+          all_account_balances << process_account_balance(transaction, :credit, account_balance_cache)
+          all_account_balances << process_account_balance(transaction, :debit, account_balance_cache)
         end
 
         all_account_balances.uniq.compact
       end
 
       # Processes the account balance for a person based on the accounting side key (debit or credit).
-      def process_account_balance(transaction, accounting_side_key)
+      def process_account_balance(transaction, accounting_side_key, account_balance_cache)
         key = "person_#{accounting_side_key}".to_sym
         person = transaction[key]
         return unless person
@@ -61,9 +62,11 @@ module Ledger
         search_or_create_keys = {
           person:, account: transaction[accounting_side_key],
           date: @transfer.date.beginning_of_month,
-          balance_currency: transaction[:amount].currency
+          balance_currency: transaction[:amount].currency.to_s
         }
-        account_balance = AccountBalance.find_or_create_by(search_or_create_keys)
+        cache_key = search_or_create_keys.hash
+        account_balance = account_balance_cache[cache_key] || AccountBalance.find_or_create_by!(search_or_create_keys)
+        account_balance_cache[cache_key] = account_balance
 
         transaction["#{key}_balance".to_sym] = account_balance
         account_balance
@@ -112,8 +115,7 @@ module Ledger
       multiplier = -1 if side == :debit
       balance_account.balance += multiplier * amount
       if balance_account.balance.negative?
-        raise Ledger::InsufficientFunds,
-              "Insufficient funds in #{side}, #{balance_account.balance}"
+        raise Ledger::InsufficientFunds, "Insufficient funds in #{balance_account}, for #{balance_account.person}"
       end
 
       balance_account.save!
