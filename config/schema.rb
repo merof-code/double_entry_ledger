@@ -3,6 +3,9 @@
 
 ActiveRecord::Schema.define(version: 20_240_701_000_001) do # rubocop:disable Metrics/BlockLength
   self.verbose = false
+  # tenant_table_name = "YOUR TENANT TABLE NAME FOR THE LEDGER"
+  tenant_table_name = "tenants"
+  user_accounts_table_name = "accounts"
 
   create_table "ledger_documents", force: :cascade do |t|
     t.date "date", null: false
@@ -42,7 +45,7 @@ ActiveRecord::Schema.define(version: 20_240_701_000_001) do # rubocop:disable Me
   create_table "ledger_entries", force: :cascade do |t|
     t.bigint "ledger_transfer_id", null: false
     t.bigint "ledger_account_id", null: false
-    t.bigint "ledger_person_id"
+    t.bigint "person_id"
     t.boolean "is_debit", default: false, null: false
     t.integer "amount_cents", default: 0, null: false
     t.string "amount_currency", limit: 3, default: "USD", null: false
@@ -51,28 +54,22 @@ ActiveRecord::Schema.define(version: 20_240_701_000_001) do # rubocop:disable Me
     t.index ["is_debit"], name: "index_ledger_entries_on_is_debit"
     t.index ["ledger_account_id"], name: "index_ledger_entries_on_ledger_account_id"
     t.index ["ledger_transfer_id"], name: "index_ledger_entries_on_ledger_transfer_id"
-    t.index ["ledger_person_id"], name: "index_ledger_entries_on_ledger_person_id"
+    t.index ["person_id"], name: "index_ledger_entries_on_person_id"
   end
 
   create_table "ledger_transfers", force: :cascade do |t|
     t.date "date", null: false
+    t.bigint "tenant_id", null: false
     t.bigint "ledger_document_id", null: false
     t.string "description", limit: 255, default: "", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["tenant_id"], name: "index_ledger_transfers_on_tenant_id"
     t.index ["date"], name: "index_ledger_transfers_on_date"
   end
 
-  create_table "ledger_people", force: :cascade do |t|
-    t.string "personable_type", null: false
-    t.bigint "personable_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index %w[personable_type personable_id], name: "index_ledger_people_on_personable"
-  end
-
   create_table "ledger_account_balances", force: :cascade do |t|
-    t.bigint "ledger_person_id", null: false
+    t.bigint "person_id", null: false
     t.integer "balance_cents", default: 0, null: false
     t.string "balance_currency", default: "USD", null: false
     t.bigint "ledger_account_id", null: false
@@ -81,8 +78,8 @@ ActiveRecord::Schema.define(version: 20_240_701_000_001) do # rubocop:disable Me
     t.datetime "updated_at", null: false
     t.index ["date"], name: "index_ledger_account_balances_on_date"
     t.index ["ledger_account_id"], name: "index_ledger_account_balances_on_ledger_account_id"
-    t.index ["ledger_person_id"], name: "index_ledger_account_balances_on_ledger_person_id"
-    t.index %w[ledger_account_id ledger_person_id date balance_currency],
+    t.index ["person_id"], name: "index_ledger_account_balances_on_person_id"
+    t.index %w[ledger_account_id person_id date balance_currency],
             unique: true, name: "index_ledger_account_balances_on_account_person_date"
     column_name = "date"
     constraint_command =
@@ -103,15 +100,31 @@ ActiveRecord::Schema.define(version: 20_240_701_000_001) do # rubocop:disable Me
   add_foreign_key "ledger_transfers", "ledger_documents"
   add_foreign_key "ledger_entries", "ledger_accounts"
   add_foreign_key "ledger_entries", "ledger_transfers"
-  add_foreign_key "ledger_account_balances", "ledger_people", column: "ledger_person_id"
   add_foreign_key "ledger_account_balances", "ledger_accounts"
-  add_foreign_key "ledger_entries", "ledger_people", column: "ledger_person_id"
+  add_foreign_key "ledger_account_balances", user_accounts_table_name, column: "person_id"
+  add_foreign_key "ledger_entries", user_accounts_table_name, column: "person_id"
+  add_foreign_key "ledger_transfers", tenant_table_name
 
-  # test table only
+  # Tables needed to proper function of the gem, that are user-provided
   create_table "users", force: :cascade do |t|
     t.string "username", null: false
     t.timestamps null: false
   end
 
   add_index "users", ["username"], name: "index_users_on_username", unique: true
+
+  create_table user_accounts_table_name, force: :cascade do |t|
+    t.string "personable_type", null: false
+    t.bigint "personable_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index %w[personable_type personable_id], name: "index_people_on_personable"
+  end
+
+  create_table tenant_table_name, force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index "name", name: "tenants_on_name", unique: true
+  end
 end

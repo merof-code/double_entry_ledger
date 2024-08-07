@@ -7,7 +7,7 @@ class Ledger::Entry < ActiveRecord::Base
                         required: true
   belongs_to :account, class_name: "Ledger::Account", foreign_key: "ledger_account_id", inverse_of: :entries,
                        required: true
-  belongs_to :person, class_name: "Ledger::Person", foreign_key: "ledger_person_id", inverse_of: :entries,
+  belongs_to :person, class_name: Ledger.configuration.person_class_name, foreign_key: "person_id", inverse_of: :entries,
                       optional: true
 
   validates :is_debit, inclusion: { in: [true, false] }

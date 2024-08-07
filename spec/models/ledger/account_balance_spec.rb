@@ -3,7 +3,7 @@
 RSpec.describe Ledger::AccountBalance, type: :model do
   describe "associations" do
     it {
-      expect(subject).to belong_to(:person).class_name("Ledger::Person").with_foreign_key("ledger_person_id").required
+      expect(subject).to belong_to(:person).class_name("Ledger::Person").with_foreign_key("person_id").required
     }
 
     it {
@@ -18,7 +18,7 @@ RSpec.describe Ledger::AccountBalance, type: :model do
     it {
       create(:account_balance)
       expect(subject).to validate_uniqueness_of(:date)
-        .scoped_to(%i[ledger_account_id ledger_person_id balance_currency])
+        .scoped_to(%i[ledger_account_id person_id balance_currency])
     }
 
     it "does not allow date to be earlier than the last entry's date within the same ledger account and person" do

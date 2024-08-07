@@ -15,7 +15,7 @@ RSpec.describe Ledger::Entry, type: :model do
       it { is_expected.to have_db_index(:is_debit) }
       it { is_expected.to have_db_index(:ledger_account_id) }
       it { is_expected.to have_db_index(:ledger_transfer_id) }
-      it { is_expected.to have_db_index(:ledger_person_id) }
+      it { is_expected.to have_db_index(:person_id) }
     end
 
     describe "associations" do
@@ -36,7 +36,7 @@ RSpec.describe Ledger::Entry, type: :model do
       it {
         expect(subject).to belong_to(:person)
           .class_name("Ledger::Person")
-          .with_foreign_key("ledger_person_id")
+          .with_foreign_key("person_id")
           .optional
       }
     end

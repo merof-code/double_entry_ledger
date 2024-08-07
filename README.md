@@ -1,5 +1,5 @@
 # Ledger
-
+[![Ruby](https://github.com/merof-code/double_entry_ledger/actions/workflows/main.yml/badge.svg)](https://github.com/merof-code/double_entry_ledger/actions/workflows/main.yml)
 ## Introduction
 
 The Ledger gem is a comprehensive implementation of a double-entry bookkeeping system, following the principles of [Double-Entry Bookkeeping](http://en.wikipedia.org/wiki/Double-entry_bookkeeping_system). Key features include:
@@ -15,15 +15,37 @@ The Ledger gem is a comprehensive implementation of a double-entry bookkeeping s
 - Provides a base table for documents, connectable to business models via a polymorphic association
 - Includes a chart of accounts table where the `id` represents the account number (e.g., `ledger_accounts.id = 331`)
 
-### Non-Rails Usage
-
-If not using Rails, initialize with:
-
-```ruby
-MoneyRails::Hooks.init
-```
 
 ## Installation
+
+### Before you install
+
+GEM IS STILL IN ALPHA MODE, NOT DEPLOYED YET
+### Steps to install
+
+1. `bundle add double_entry_ledger` or `gem install double_entry_ledger` if you are not in rails and also [check out additional steps](#non-rails)
+2. `rails g ledger::install`
+3. In the migration, update `tenant_table_name` and `user_accounts_table_name` to your tables, for all the required FKs.
+```ruby
+tenant_table_name = "tenants"
+user_accounts_table_name = "accounts"
+```
+4. In the created ``
+5. Add the following code to your `Tenant` and `Person` models:
+```ruby
+# models\tenant.rb
+class Tenant < ApplicationRecord
+  has_many :transfers, class_name: "Ledger::Transfer", foreign_key: "tenant_id"
+end
+
+# models\person.rb # This is an example of a name.
+class Person < ApplicationRecord
+  has_many :account_balances, class_name: "Ledger::AccountBalance", foreign_key: "person_id"
+  has_many :entries, class_name: "Ledger::Entry", foreign_key: "person_id", inverse_of: :person
+  has_many :transfers, through: :entries, source: :ledger_transfer
+  has_many :documents, through: :transfers, source: :ledger_document
+end
+``` 
 
 Replace `UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG` with your gem name after releasing it to RubyGems.org. If not releasing to RubyGems.org, replace this section with installation instructions from git.
 
@@ -37,6 +59,19 @@ If not using Bundler, install the gem with:
 
 ```bash
 $ gem install UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
+```
+
+In order to use this gem you need to have `tenant` and `person` models in your app already.
+When running 
+`rails g ledger::install`
+
+### Configuration 
+### Non-Rails
+
+If not using Rails, initialize with:
+
+```ruby
+MoneyRails::Hooks.init
 ```
 
 ## Usage
@@ -64,7 +99,7 @@ erDiagram
     ledger_entries {
         bigint ledger_transfer_id
         bigint ledger_account_id
-        bigint ledger_person_id
+        bigint account_id
         boolean is_debit
         integer amount_cents
         string amount_currency
@@ -78,7 +113,7 @@ erDiagram
 
     
     ledger_account_balances {
-        bigint ledger_person_id
+        bigint account_id
         integer balance_cents
         string balance_currency
         bigint ledger_account_id

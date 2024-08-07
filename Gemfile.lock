@@ -60,6 +60,9 @@ GEM
     erubi (1.13.0)
     factory_bot (6.4.6)
       activesupport (>= 5.0.0)
+    generator_spec (0.10.0)
+      activesupport (>= 3.0.0)
+      railties (>= 3.0.0)
     highline (3.0.1)
     i18n (1.14.5)
       concurrent-ruby (~> 1.0)
@@ -245,6 +248,7 @@ PLATFORMS
 DEPENDENCIES
   database_cleaner-active_record
   factory_bot
+  generator_spec
   ledger!
   mysql2
   pg

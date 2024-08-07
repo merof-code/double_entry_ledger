@@ -23,7 +23,7 @@ require_relative "ledger/document_type"
 require_relative "ledger/account_balance"
 require_relative "ledger/entry"
 require_relative "ledger/person"
-require_relative "ledger/configurable"
+require_relative "ledger/configuration"
 require_relative "ledger/locking"
 require_relative "ledger/transaction_result"
 

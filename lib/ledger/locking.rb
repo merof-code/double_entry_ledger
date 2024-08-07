@@ -20,18 +20,6 @@ module Ledger
   # validates that locking works properly.
   module Locking
     extend T::Sig
-    # TODO: Configuration
-    include Configurable
-    # config
-    class Configuration
-      # Set this in your tests if you're using transactional_fixtures, so we know
-      # not to complain about a containing transaction when you call lock_accounts.
-      attr_accessor :running_inside_transactional_fixtures
-
-      def initialize # :nodoc:
-        @running_inside_transactional_fixtures = false
-      end
-    end
 
     # Run the passed in block in a transaction with the given accounts locked for update.
     #
